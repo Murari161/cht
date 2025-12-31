@@ -1,11 +1,12 @@
-CREATE MATERIALIZED VIEW cht.mv_anc_visit_follow_up
+CREATE MATERIALIZED VIEW cht.mv_child_health_escalation
 TABLESPACE ts_report
-AS 
-select
---columns
-	doc ->> '_id'::text AS doc_id,
-    doc ->> '_rev'::text                             AS rev,                                 -- [NEW FIELD]
-    to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
+AS
+SELECT
+  --- indentifiers
+    doc ->> '_id'                                           AS doc_id,
+    doc ->> '_rev'                                          AS rev,                                  -- [NEW FIELD]
+    doc ->> 'form'                                          AS form,
+    to_timestamp(NULLIF(doc ->> 'reported_date','')::bigint / 1000.0) AS reported,
      (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
      (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
      TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS month,
@@ -17,94 +18,83 @@ select
      doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
      doc ->'geolocation'->>'code' AS geolocation_code,
      doc ->'geolocation'->>'message' AS geolocation_message,
-     doc ->> 'from'::text                             AS  "from",
-     doc #>> '{fields,inputs,source}'::text[] AS source,
-     doc #>> '{fields,inputs,source_id}'::text[] AS source_id,
-     doc #>> '{fields,inputs,current_edd_std}'::text[] AS current_edd_std,
+     doc ->> 'from'                                          AS submitter,                             -- [NEW FIELD]
 
-    doc #>> '{fields,inputs,contact,date_of_birth}'::text[]  AS contact_date_of_birth,
-    doc #>> '{fields,inputs,contact,sex}'::text[] AS contact_sex,
-    doc #>> '{fields,inputs,contact,_id}'::text[] AS contact_id,
-    doc #>> '{fields,inputs,contact,name}'::text[] AS contact_name,
-    doc #>> '{fields,inputs,contact,parent,_id}'::text[] AS parent_id,
+    /* ===== Top-level metadata ===== */
+    doc ->> 'content_type'                                  AS top_content_type,                      -- [NEW FIELD]
+    to_timestamp(NULLIF(doc #>> '{form_version,time}','')::bigint / 1000.0) AS form_version_time,     -- [NEW FIELD]
 
-    doc #>> '{fields,is_of_child_bearing_age}'::text[]               AS is_of_child_bearing_age,
-    doc #>> '{fields,visited_contact_uuid}'::text[]                  AS visited_contact_uuid,
-    doc #>> '{fields,patient_age_in_years}'::text[]                  AS patient_age_in_years,
-    doc #>> '{fields,patient_age_in_months}'::text[]                 AS patient_age_in_months,
-    doc #>> '{fields,patient_age_in_days}'::text[]                   AS patient_age_in_days,
-    doc #>> '{fields,patient_age_display}'::text[]                   AS patient_age_display,
-    doc #>> '{fields,patient_id}'::text[]                            AS patient_id,
-    doc #>> '{fields,patient_name}'::text[]                          AS patient_name,
-    doc #>> '{fields,patient_name_with_s}'::text[]                   AS patient_name_with_s,
-    doc #>> '{fields,patient_gender}'::text[]                        AS patient_gender,
-    doc #>> '{fields,current_edd_local}'::text[]                     AS current_edd_local,
-    doc #>> '{fields,current_pregnancy_age_in_weeks}'::text[]        AS current_pregnancy_age_in_weeks,
-    doc #>> '{fields,edd_std}'::text[]                               AS edd_std,
-    doc #>> '{fields,edd_local}'::text[]                             AS edd_local,
-    doc #>> '{fields,pregnancy_ended}'::text[]                       AS pregnancy_ended, --(yes/no)
-    doc #>> '{fields,referred_for_nutrition_follow_up}'::text[]      AS referred_for_nutrition_follow_up,--(yes/no)
-    
-    doc #>> '{fields,group_follow_up,assess_this_pregnancy}'::text[]     AS assess_this_pregnancy,--(yes/no)
-    doc #>> '{fields,group_follow_up,start_this_pregnancy}'::text[]      AS start_this_pregnancy, --(delivered/miscarriage/abortion/refusing_care/migrated/died/follow_up_later)
-    doc #>> '{fields,group_follow_up,is_available}'::text[]              AS is_available,--(yes/no)
+    /* ===== Inputs: source & ids ===== */
+    doc #>> '{fields,inputs,source}'                        AS inputs_source,                         
+    doc #>> '{fields,inputs,source_id}'                     AS source_id,
+    doc #>> '{fields,inputs,user,contact_id}'               AS inputs_chw_id,  
 
-    /* ===== Group: Update Pregnancy Details ===== */
-    doc #>> '{fields,update_pregnancy,edd_upto_date}'::text[]                    AS edd_upto_date,--(yes/no)
-    doc #>> '{fields,update_pregnancy,refused_care_action}'::text[]              AS refused_care_action, --(clear_this_task/no_more_tasks)
-    doc #>> '{fields,update_pregnancy,migrated_action}'::text[]                  AS migrated_action,--(clear_this_task/no_more_tasks)
+    --- Inputs: triage / detail fields 
+    doc #>> '{fields,inputs,t_place_name}'                  AS village_name,
+    doc #>> '{fields,inputs,t_vht_name}'                    AS t_vht_name,
+    doc #>> '{fields,inputs,t_vht_phone}'                   AS t_vht_phone,
+    doc #>> '{fields,inputs,t_danger_signs}'                AS t_danger_signs,
+    doc #>> '{fields,inputs,t_blood_in_stool}'              AS t_blood_in_stool,
+    doc #>> '{fields,inputs,t_cough_duration}'              AS t_cough_duration,
+    doc #>> '{fields,inputs,t_fast_breathing}'              AS t_fast_breathing,
+    doc #>> '{fields,inputs,t_fever_duration}'              AS t_fever_duration,
+    doc #>> '{fields,inputs,t_chest_indrawing}'             AS t_chest_indrawing,
+    doc #>> '{fields,inputs,t_diarrhoea_duration}'          AS t_diarrhoea_duration,
+    doc #>> '{fields,inputs,t_immunization_referral}'       AS t_immunization_referral,
 
-    /* ===== Group: Past ANC Visits ===== */
-    doc #>> '{fields,group_past_anc_visits,completed_scheduled_anc_visit}'::text[]          AS completed_scheduled_anc_visit,--(yes/no)
-    doc #>> '{fields,group_past_anc_visits,anc_visits}'::text[]                             AS anc_visits, --(anc_1/anc_1 anc_2/anc_1 anc_2 anc_3/anc_1 anc_2 anc_3 anc_4/anc_1 anc_2 anc_3 anc_4 anc_gt_4)
-    doc #>> '{fields,group_past_anc_visits,date_anc_1}'::text[]                             AS date_anc_1,
-    doc #>> '{fields,group_past_anc_visits,date_anc_2}'::text[]                             AS date_anc_2,
-    doc #>> '{fields,group_past_anc_visits,date_anc_3}'::text[]                             AS date_anc_3,
-    doc #>> '{fields,group_past_anc_visits,date_anc_4}'::text[]                             AS date_anc_4,
-    doc #>> '{fields,group_past_anc_visits,person_who_accompanied_expectant_mother}'::text[] AS person_who_accompanied_expectant_mother, --(parent/chw/husband/other_relative/non_family_member)
+    /* ===== Root fields.* patient basics ===== */
+    doc #>> '{fields,dob}'                                  AS dob,
+    doc #>> '{fields,patient_id}'                           AS patient_id,
+    doc #>> '{fields,patient_name}'                         AS patient_name,
+    doc #>> '{fields,patient_gender}'                       AS patient_gender,
+    doc #>> '{fields,patient_age_display}'                  AS patient_age_display,
+    doc #>> '{fields,patient_age_in_days}'                  AS patient_age_in_days,
+    doc #>> '{fields,patient_age_in_months}'                AS patient_age_in_months,
+    doc #>> '{fields,patient_age_in_years}'                 AS patient_age_in_years,
+    doc #>> '{fields,needs_signoff}'                        AS needs_signoff,
 
-    /* ===== Group: Missed ANC Visits ===== */
-    doc #>> '{fields,group_missed_anc_visits,why_missed_anc_visit}'::text[]               AS why_missed_anc_visit, --(was_not_reminded/had_traveled/too_early_start_clinic)
-    doc #>> '{fields,group_missed_anc_visits,missed_anc_actions_taken}'::text[]           AS missed_anc_actions_taken, --(referred/provided_key_health_message/accompanied_to_facility)
-    doc #>> '{fields,group_missed_anc_visits,refer_to_health_facility}'::text[]           AS refer_to_health_facility, --(yes)
+    /* ===== Action taken ===== */
+    doc #>> '{fields,action_taken,completed_referral_follow_up}'     AS completed_referral_follow_up, --(yes/no)
+    doc #>> '{fields,action_taken,reason_vht_did_not_follow_up}'     AS reason_vht_did_not_follow_up, --()
+    doc #>> '{fields,action_taken,specify}'                          AS reason_specify,
+    doc #>> '{fields,action_taken,text_explain_vht_did_not_submit_form}' AS text_explain_vht_did_not_submit_form,
+    doc #>> '{fields,action_taken,call_chw}'                         AS action_call_chw,              
+    doc #>> '{fields,action_taken,call_button}'                      AS action_call_button,           
+    doc #>> '{fields,action_taken,note_health_educate}'              AS note_health_educate,           
 
-    /* ===== Group: Safe Pregnancy Practices ===== */
-    doc #>> '{fields,group_safe_pregnancy_practices,client_on_art_treatment}'::text[]       AS client_on_art_treatment,--(yes/no)
-    doc #>> '{fields,group_safe_pregnancy_practices,client_taking_medication}'::text[]    AS client_taking_medication,--(yes/no)
-    doc #>> '{fields,group_safe_pregnancy_practices,current_hiv_test_result}'::text[]     AS current_hiv_test_result, --(positive/negative/unknown)
-    doc #>> '{fields,group_safe_pregnancy_practices,hiv_test_result}'::text[]             AS hiv_test_result,--(positive/negative/unknown)
-    doc #>> '{fields,group_safe_pregnancy_practices,is_client_taking_medication}'::text[] AS is_client_taking_medication,--(yes/no)
-    doc #>> '{fields,group_safe_pregnancy_practices,on_art_treatment}'::text[]            AS on_art_treatment,--(yes/no)
-    doc #>> '{fields,group_safe_pregnancy_practices,referred_to_health_facility_llin}'::text[] AS referred_to_health_facility_llin, --(yes)
-    doc #>> '{fields,group_safe_pregnancy_practices,using_llin}'::text[]                  AS using_llin, --(yes/no)
-    doc #>> '{fields,group_safe_pregnancy_practices,tested_for_hiv_past3months}'::text[]  AS tested_for_hiv_past3months,--(yes/no)
-    doc #>> '{fields,group_safe_pregnancy_practices,received_tt_immunization}'::text[]    AS received_tt_immunization,--(yes/no)
+    /* ===== Danger signs object ===== */
+    doc #>> '{fields,danger_signs,referral_signs}'          AS danger_signs_referral_signs,
+    doc #>> '{fields,danger_signs,vomits_everything}'       AS danger_signs_vomits_everything,
+    doc #>> '{fields,danger_signs,convulsions}'             AS danger_signs_convulsions,
+    doc #>> '{fields,danger_signs,very_sleepy}'             AS danger_signs_very_sleepy,
+    doc #>> '{fields,danger_signs,smaller_than_usual}'      AS danger_signs_smaller_than_usual,
+    doc #>> '{fields,danger_signs,infected_umblical_cord}'  AS danger_signs_infected_umblical_cord,
+    doc #>> '{fields,danger_signs,chest_in_drawing}'        AS danger_signs_chest_in_drawing,
+    doc #>> '{fields,danger_signs,not_able_to_breastfeed}'  AS danger_signs_not_able_to_breastfeed,
+    doc #>> '{fields,danger_signs,many_pustules}'           AS danger_signs_many_pustules,
+    doc #>> '{fields,danger_signs,fever_or_low_temperature}' AS danger_signs_fever_or_low_temperature,
+    doc #>> '{fields,danger_signs,yellow_eyes}'             AS danger_signs_yellow_eyes,
+    doc #>> '{fields,danger_signs,cough}'                   AS danger_signs_cough,
+    doc #>> '{fields,danger_signs,diarrhoea}'               AS danger_signs_diarrhoea,
+    doc #>> '{fields,danger_signs,blood_in_stool}'          AS danger_signs_blood_in_stool,
+    doc #>> '{fields,danger_signs,fever_duration}'          AS danger_signs_fever_duration,
+    doc #>> '{fields,danger_signs,immunization_missed}'     AS danger_signs_immunization_missed,
 
-    /* ===== Group: Nutrition Status ===== */
-    doc #>> '{fields,group_nutrition_status,completed_last_nutrition_follow_up}'::text[]            AS completed_last_nutrition_follow_up, --(yes/no)
-    doc #>> '{fields,group_nutrition_status,micro_nutrient_supplementation_received}'::text[]       AS micro_nutrient_supplementation_received,--(yes/no)
-    doc #>> '{fields,group_nutrition_status,refer_to_health_facility_no_micro_nutrients}'::text[]   AS refer_to_health_facility_no_micro_nutrients, --(yes)
-    doc #>> '{fields,group_nutrition_status,referred_to_health_facility_missed_nutrition_follow_up}'::text[] AS referred_to_health_facility_missed_nutrition_follow_up,--(yes)
-    doc #>> '{fields,group_nutrition_status,taken_muac}'::text[]                                    AS taken_muac,--(yes/no)
-    doc #>> '{fields,group_nutrition_status,muac_measurement}'::text[]                               AS muac_measurement, --(red/yellow/green)
-    doc #>> '{fields,group_nutrition_status,referred_to_health_facility_nutrition}'::text[]        AS referred_to_health_facility_nutrition, --(yes)
-    doc #>> '{fields,group_nutrition_status,on_nutrition_follow_up}'::text[]                        AS on_nutrition_follow_up, --(yes/no)
-      --- reporting hierarchy
+     --- reporting hierarchy
     doc #>> '{contact,_id}'                         AS chw_id,                   
     doc #>> '{contact,parent,_id}'                  AS chw_area_id,  
     doc #>> '{contact,parent,parent,_id}'           AS facility_id,                                    
-    doc #>> '{contact,parent,parent,parent,_id}'    AS parish_id,              
-    doc #>> '{contact,parent,parent,parent,parent,_id}'           AS district,                 
-    doc #>> '{contact,parent,parent,parent,parent,parent,_id}'    AS region,
-    CURRENT_TIMESTAMP as last_refresh_date
+    doc #>> '{contact,parent,parent,parent,_id}'    AS district,              
+    doc #>> '{contact,parent,parent,parent,parent,_id}'           AS region,
+    CURRENT_TIMESTAMP AS last_refresh_date                
 
-FROM dwh.cht_data couchdb
-  WHERE (doc ->> 'form'::text) = 'anc_visit_follow_up'::text 
-  AND is_current = true
+FROM dwh.cht_data
+WHERE (doc ->> 'form') = 'child_health_escalation'
+  AND is_current
 WITH DATA;
 
--- View indexes:
-CREATE INDEX mv_anc_visit_follow_up_contact_id ON report.useview_anc_visit_follow_up USING btree (contact_id);
-CREATE INDEX mv_anc_visit_follow_up_reported ON report.useview_anc_visit_follow_up USING btree (reported);
-CREATE INDEX mv_anc_visit_follow_up_reported_by ON report.useview_anc_visit_follow_up USING btree (reported_by);
-CREATE UNIQUE INDEX mv_anc_visit_follow_up_uuid ON report.useview_anc_visit_follow_up USING btree (uuid);
+-- Indexes
+CREATE INDEX mv_child_health_escalation_reported
+    ON cht.mv_child_health_escalation USING btree (reported);
+CREATE INDEX mv_child_health_escalation_patient
+    ON cht.mv_child_health_escalation USING btree (patient_id);
