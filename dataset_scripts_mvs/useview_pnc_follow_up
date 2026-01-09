@@ -1,0 +1,67 @@
+CREATE MATERIALIZED VIEW report.useview_pnc_follow_up
+TABLESPACE ts_report
+AS
+SELECT
+      doc ->> '_id'                                                AS uuid,
+      doc ->> '_rev'                                               AS rev,
+      doc ->> 'form'                                               AS form,
+      to_timestamp(NULLIF(doc ->> 'reported_date','')::bigint / 1000.0) AS reported,
+      doc ->> 'from'                                               AS submitter,
+      doc ->> 'content_type'                                       AS top_content_type,
+      to_timestamp(NULLIF(doc #>> '{form_version,time}','')::bigint / 1000.0) AS form_version_time,
+      doc #>> '{form_version,sha256}'                              AS form_version_sha256,
+      (doc -> 'hidden_fields')::text                               AS hidden_fields_json,
+    , doc #>> '{fields,inputs,source}'                                    AS source,
+    , doc #>> '{fields,inputs,source_id}'                                 AS source_id,
+    , doc #>> '{fields,inputs,task_name}'                                 AS task_name,
+    , doc #>> '{fields,inputs,contact,_id}'                               AS _id,
+    , doc #>> '{fields,inputs,contact,name}'                              AS name,
+    , doc #>> '{fields,inputs,contact,date_of_birth}'                     AS date_of_birth,
+    , doc #>> '{fields,inputs,contact,sex}'                               AS sex,
+    , doc #>> '{fields,inputs,contact,parent,_id}'                        AS parent__id,
+    , doc #>> '{fields,is_of_child_bearing_age}'                          AS is_of_child_bearing_age,
+    , doc #>> '{fields,patient_age_in_years}'                             AS patient_age_in_years,
+    , doc #>> '{fields,patient_age_in_months}'                            AS patient_age_in_months,
+    , doc #>> '{fields,patient_age_in_days}'                              AS patient_age_in_days,
+    , doc #>> '{fields,patient_age_display}'                              AS patient_age_display,
+    , doc #>> '{fields,patient_id}'                                       AS patient_id,
+    , doc #>> '{fields,patient_name}'                                     AS patient_name,
+    , doc #>> '{fields,patient_gender}'                                   AS patient_gender,
+    , doc #>> '{fields,patient_name_with_s}'                              AS patient_name_with_s,
+    , doc #>> '{fields,nutrition_follow_up_date}'                         AS nutrition_follow_up_date,
+    , doc #>> '{fields,referred_for_nutrition_follow_up}'                 AS referred_for_nutrition_follow_up,
+    , doc #>> '{fields,group_label}'                                      AS group_label,
+    , doc #>> '{fields,group_pnc_referral_follow_up,went_facility_as_referred}'  AS went_facility_as_referred,
+    , doc #>> '{fields,group_missed_referral_details,missed_referral_reason}'  AS missed_referral_reason,
+    , doc #>> '{fields,group_missed_referral_details,specify_other}'      AS specify_other,
+    , doc #>> '{fields,group_missed_referral_details,missed_referral_actions}'  AS missed_referral_actions,
+    , doc #>> '{fields,group_mother_condition,mother_condition}'          AS mother_condition,
+    , doc #>> '{fields,group_mother_condition,date_of_death}'             AS date_of_death,
+    , doc #>> '{fields,group_follow_up,is_available}'                     AS is_available,
+    , doc #>> '{fields,group_follow_up,follow_up_again_date}'             AS follow_up_again_date,
+    , doc #>> '{fields,group_pnc_visit,has_attended_pnc_facility}'        AS has_attended_pnc_facility,
+    , doc #>> '{fields,group_pnc_visit,pnc_visit}'                        AS pnc_visit,
+    , doc #>> '{fields,group_pnc_visit,visit_date}'                       AS visit_date,
+    , doc #>> '{fields,group_missed_pnc_visit,missed_visit_reason}'       AS missed_visit_reason,
+    , doc #>> '{fields,group_missed_pnc_visit,missed_visit_reason_other}'  AS missed_visit_reason_other,
+    , doc #>> '{fields,group_missed_pnc_visit,agreed_to_go_for_pnc_visit}'  AS agreed_to_go_for_pnc_visit,
+    , doc #>> '{fields,group_missed_pnc_visit,agreed_date_for_pnc_visit}'  AS agreed_date_for_pnc_visit,
+    , doc #>> '{fields,group_woman_nutritional_status,on_nutrition_follow_up}'  AS on_nutrition_follow_up,
+    , doc #>> '{fields,group_woman_nutritional_status,taken_muac}'        AS taken_muac,
+    , doc #>> '{fields,group_woman_nutritional_status,muac_measurement}'  AS muac_measurement,
+    , doc #>> '{fields,group_woman_nutritional_status,referred_to_health_facility_nutrition}'  AS referred_to_health_facility_nutrition,
+    , doc #>> '{fields,group_woman_nutritional_status,completed_last_nutrition_follow_up}'  AS completed_last_nutrition_follow_up,
+    , doc #>> '{fields,group_woman_nutritional_status,next_nutrition_follow_up_date}'  AS next_nutrition_follow_up_date,
+    , doc #>> '{fields,group_woman_nutritional_status,referred_to_health_facility_missed_nutrition_follow_up}'  AS referred_to_health_facility_missed_nutrition_follow_up,
+    , doc #>> '{fields,group_summary,woman_condition_choice}'             AS woman_condition_choice,
+    , doc #>> '{fields,group_summary,pnc_visit_choice}'                   AS pnc_visit_choice
+FROM dwh.cht_data AS couchdb
+WHERE (doc ->> 'form') = 'pnc_follow_up'
+  AND is_current
+WITH DATA;
+
+CREATE UNIQUE INDEX pnc_follow_up_uuid_idx
+    ON report.useview_pnc_follow_up USING btree (uuid);
+
+CREATE INDEX pnc_follow_up_reported_idx
+    ON report.useview_pnc_follow_up USING btree (reported);

@@ -1,0 +1,116 @@
+CREATE MATERIALIZED VIEW cht.mv_tb_results_notification
+TABLESPACE ts_report
+AS
+SELECT
+      doc ->> '_id'::text                              AS doc_id,
+      doc ->> '_rev'::text                             AS rev,                                 -- [NEW FIELD]
+        to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
+      (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
+      (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
+      TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS month,
+      doc ->'fields'->'meta'->>'instanceID' AS instanceID,
+      doc ->'fields'->'inputs'->'meta'->>'deprecatedID' AS deprecatedID,
+      doc ->'fields'->'inputs'->'meta'->'location'->>'lat' AS location_lat,
+      doc ->'fields'->'inputs'->'meta'->'location'->>'long' AS location_long,
+      doc ->'fields'->'inputs'->'meta'->'location'->>'error' AS location_error,
+      doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
+      doc ->'geolocation'->>'code' AS geolocation_code,
+      doc ->'geolocation'->>'message' AS geolocation_message,
+      doc ->> 'from'::text                             AS  from,
+      
+      doc #>> '{fields,inputs,source}'                                    AS source,
+      doc #>> '{fields,inputs,source_id}'                                 AS source_id,
+      doc #>> '{fields,t_tb_result}'                 AS t_tb_result,
+      doc #>> '{fields,t_results_phone_number}'      AS t_results_phone_number,
+      doc #>> '{fields,t_cough}'                     AS t_cough,
+      doc #>> '{fields,t_fever}'                     AS t_fever,
+      doc #>> '{fields,t_weight_loss}'               AS t_weight_loss,
+      doc #>> '{fields,t_excessive_night_sweat}'     AS t_excessive_night_sweat,
+      doc #>> '{fields,t_poor_weight_gain}'          AS t_poor_weight_gain,
+      doc #>> '{fields,t_is_on_tb_treatment}'        AS t_is_on_tb_treatment,
+      doc #>> '{fields,t_prev_tb_result}'            AS t_prev_tb_result,
+      doc #>> '{fields,t_returned_result_barcode}'   AS t_returned_result_barcode,
+
+      doc #>> '{fields,inputs,user,contact_id}'                           AS user_contact_id,
+      doc #>> '{fields,inputs,user,facility_id}'                          AS user_facility_id,
+      doc #>> '{fields,inputs,contact,_id}'                               AS contact_id,
+      doc #>> '{fields,inputs,contact,name}'                              AS contact_name,
+      doc #>> '{fields,inputs,contact,date_of_birth}'                     AS contact_date_of_birth,
+      doc #>> '{fields,inputs,contact,sex}'                               AS contact_sex,
+      doc #>> '{fields,inputs,contact,parent,_id}'                        AS parent__id,
+      doc #>> '{fields,inputs,contact,parent,name}'                       AS parent_name,
+      doc #>> '{fields,inputs,contact,parent,parent,supervisor}'          AS supervisor,
+      doc #>> '{fields,inputs,contact,parent,parent,phone}'               AS phone,
+      doc #>> '{fields,patient_age_in_years}'                    AS patient_age_in_years,
+      doc #>> '{fields,patient_age_in_months}'                   AS patient_age_in_months,
+      doc #>> '{fields,patient_age_in_days}'                     AS patient_age_in_days,
+      doc #>> '{fields,patient_age_display}'                     AS patient_age_display,
+      doc #>> '{fields,patient_id}'                              AS patient_id,
+      doc #>> '{fields,patient_name}'                            AS patient_name,
+      doc #>> '{fields,patient_gender}'                          AS patient_gender,
+      doc #>> '{fields,patient_pronoun}'                         AS patient_pronoun,
+      doc #>> '{fields,patient_adjective}'                       AS patient_adjective,
+      doc #>> '{fields,tb_result}'                               AS tb_result,
+      doc #>> '{fields,barcode_scanner_result}'                  AS barcode_scanner_result,
+      doc #>> '{fields,cough}'                                   AS cough,
+      doc #>> '{fields,fever}'                                   AS fever,
+      doc #>> '{fields,weight_loss}'                             AS weight_loss,
+      doc #>> '{fields,excessive_night_sweat}'                   AS excessive_night_sweat,
+      doc #>> '{fields,poor_weight_gain}'                        AS poor_weight_gain,
+      doc #>> '{fields,is_on_tb_treatment}'                      AS is_on_tb_treatment,
+      doc #>> '{fields,patient_referred_to_health_facility}'     AS patient_referred_to_health_facility,
+      doc #>> '{fields,national_identification_number}'          AS national_identification_number,
+      doc #>> '{fields,client_category}'                         AS client_category,
+
+      doc #>> '{fields,results_notification,note_tb_results}'                 AS note_tb_results,
+      doc #>> '{fields,results_notification,note_barcode_id}'                 AS note_barcode_id,
+      doc #>> '{fields,results_notification,note_results}'                    AS note_results,
+      doc #>> '{fields,results_notification,refer_patient_to_health_facility}' AS refer_patient_to_health_facility,
+      doc #>> '{fields,results_notification,confirm_refer_to_health_facility}' AS confirm_refer_to_health_facility,
+      doc #>> '{fields,results_notification,explain_result_invalid}'           AS explain_result_invalid,
+  
+      doc #>> '{fields,missing_results_notification,note_refer_to_health_facility}'  AS note_refer_to_health_facility,
+      doc #>> '{fields,missing_results_notification,note_explain_missing_result}'  AS note_explain_missing_result,
+      
+      doc #>> '{fields,sputum_collection,give_patient_instructions}'        AS give_patient_instructions,
+      doc #>> '{fields,sputum_collection,has_patient_produced_sputum}'      AS has_patient_produced_sputum,
+      doc #>> '{fields,sputum_collection,confirm_container_tightly_closed}' AS confirm_container_tightly_closed,
+      doc #>> '{fields,sputum_collection,confirm_send_sample_for_testing}'  AS confirm_send_sample_for_testing,
+      doc #>> '{fields,sputum_collection,leave_sputum_bottle_with_client}'  AS leave_sputum_bottle_with_client,
+      doc #>> '{fields,sputum_collection,has_left_sputum_bottle_with_client}' AS has_left_sputum_bottle_with_client,
+      
+      doc #>> '{fields,sputum_collection_consent,results_phone_number}'          AS results_phone_number,
+      doc #>> '{fields,group_summary,s_note_tb_results_notification}' AS s_note_tb_results_notification,
+      doc #>> '{fields,group_summary,s_summary_submit}' AS s_summary_submit,
+      doc #>> '{fields,group_summary,s_note_person_details}' AS s_note_person_details,
+      doc #>> '{fields,group_summary,s_note_person_details_values}' AS s_note_person_details_values,
+      doc #>> '{fields,group_summary,s_note_findings}' AS s_note_findings,
+      doc #>> '{fields,group_summary,s_note_tb_results}' AS s_note_tb_results,
+      doc #>> '{fields,group_summary,s_note_tb_positive}' AS s_note_tb_positive,
+      doc #>> '{fields,group_summary,s_note_tb_negative}' AS s_note_tb_negative,
+      doc #>> '{fields,group_summary,s_note_tb_invalid}' AS s_note_tb_invalid,
+      doc #>> '{fields,group_summary,s_note_tb_missing}' AS s_note_tb_missing,
+      doc #>> '{fields,group_summary,s_note_sputum_collection}' AS s_note_sputum_collection,
+      doc #>> '{fields,group_summary,s_note_sputum_collected}' AS s_note_sputum_collected,
+      doc #>> '{fields,group_summary,s_note_sputum_not_available}' AS s_note_sputum_not_available,
+      doc #>> '{fields,group_summary,s_note_referral}' AS s_note_referral,
+      doc #>> '{fields,group_summary,refer_patient_to_facility}' AS refer_patient_to_facility,
+      doc #>> '{fields,group_summary,s_note_instructions}' AS s_note_instructions,
+      doc #>> '{fields,group_summary,s_note_please_sync}' AS s_note_please_sync,
+
+  --- reporting hierarchy
+      doc #>> '{contact,_id}'                         AS chw_id,                   
+      doc #>> '{contact,parent,_id}'                  AS chw_area_id,  
+      doc #>> '{contact,parent,parent,_id}'           AS facility_id,                                    
+      doc #>> '{contact,parent,parent,parent,_id}'    AS parish_id,              
+      doc #>> '{contact,parent,parent,parent,parent,_id}'           AS district,                 
+      doc #>> '{contact,parent,parent,parent,parent,parent,_id}'    AS region,
+      CURRENT_TIMESTAMP                                 AS last_refresh_date 
+
+FROM dwh.cht_data
+WHERE (doc ->> 'form') = 'tb_results_notification'
+  AND is_current
+WITH DATA;
+
+CREATE INDEX tb_results_notification_reported_idx
+    ON cht.mv_tb_results_notification USING btree (reported);

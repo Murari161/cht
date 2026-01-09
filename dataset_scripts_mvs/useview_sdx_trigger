@@ -1,0 +1,66 @@
+CREATE MATERIALIZED VIEW cht.mv_sdx_trigger
+TABLESPACE ts_report
+AS
+SELECT
+    -- Standard fields (appear in all forms)
+    doc ->> '_id'::text AS uuid,
+    doc ->> 'form'::text AS form,
+    doc ->> 'from'::text AS submitter,
+    to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
+    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
+    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
+    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS month,
+    doc ->'fields'->'meta'->>'instanceID' AS instanceID,
+    doc ->'fields'->'inputs'->'meta'->>'deprecatedID' AS deprecatedID,
+    doc ->'fields'->'inputs'->'meta'->'location'->>'lat' AS location_lat,
+    doc ->'fields'->'inputs'->'meta'->'location'->>'long' AS location_long,
+    doc ->'fields'->'inputs'->'meta'->'location'->>'error' AS location_error,
+    doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
+    doc ->'geolocation'->>'code' AS geolocation_code,
+    doc ->'geolocation'->>'message' AS geolocation_message,
+    doc #>> '{contact,_id}'::text[] AS chw_id,
+    doc #>> '{contact,parent,_id}'::text[] AS contact_chw_area_id,
+    doc #>> '{contact,parent,parent,_id}'::text[] AS contact_facility_id,
+    doc #>> '{contact,parent,parent,parent,_id}'::text[] AS parish_id,
+    doc #>> '{contact,parent,parent,parent,parent,_id}'::text[] AS district_id,
+    doc #>> '{contact,parent,parent,parent,parent,parent,_id}'::text[] AS region_id,
+
+    -- Form-specific fields (from the XML)
+    doc #>> '{fields,inputs,source}'::text[] AS inputs_source,
+    doc #>> '{fields,inputs,source_id}'::text[] AS inputs_source_id,
+    doc #>> '{fields,inputs,contact,_id}'::text[] AS inputs_contact_id,
+    doc #>> '{fields,inputs,contact,vht_id}'::text[] AS inputs_contact_vht_id,
+    doc #>> '{fields,inputs,contact,name}'::text[] AS inputs_contact_name,
+    doc #>> '{fields,patient_id}'::text[] AS patient_id,
+    doc #>> '{fields,patient_name}'::text[] AS patient_name,
+    doc #>> '{fields,child_name}'::text[] AS child_name,
+    doc #>> '{fields,hoh_name}'::text[] AS hoh_name,
+    doc #>> '{fields,hoh_phone}'::text[] AS hoh_phone,
+    doc #>> '{fields,child_age}'::text[] AS child_age,
+    doc #>> '{fields,child_dob}'::text[] AS child_dob,
+    doc #>> '{fields,child_sex}'::text[] AS child_sex,
+    doc #>> '{fields,location}'::text[] AS location,
+    doc #>> '{fields,risk_cat}'::text[] AS risk_cat,
+    doc #>> '{fields,num_followups}'::text[] AS num_followups,
+    doc #>> '{fields,discharge_facility}'::text[] AS discharge_facility,
+    doc #>> '{fields,discharge_ts}'::text[] AS discharge_ts,
+    doc #>> '{fields,fu_date_1}'::text[] AS fu_date_1,
+    doc #>> '{fields,fu_date_2}'::text[] AS fu_date_2,
+    doc #>> '{fields,fu_date_3}'::text[] AS fu_date_3,
+    doc #>> '{fields,diagnosis}'::text[] AS diagnosis,
+    doc #>> '{fields,sdx_id}'::text[] AS sdx_id,
+
+    -- Last column for tracking refresh
+    CURRENT_TIMESTAMP AS last_refresh_date
+
+FROM dwh.cht_data couchdb
+WHERE (doc ->> 'form'::text) = 'sdx_trigger'::text
+  AND is_current
+WITH DATA;
+
+-- Indexes
+CREATE INDEX mv_sdx_trigger_reported
+    ON cht.mv_sdx_trigger USING btree (reported);
+
+CREATE INDEX mv_sdx_trigger_chw_id
+    ON cht.mv_sdx_trigger USING btree (chw_id);

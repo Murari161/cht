@@ -1,0 +1,99 @@
+CREATE MATERIALIZED VIEW cht.mv_sputum_collection
+TABLESPACE ts_report
+AS
+SELECT
+    -- Standard fields (appear in all forms)
+    doc ->> '_id'::text AS uuid,
+    doc ->> 'form'::text AS form,
+    doc ->> 'from'::text AS submitter,
+    to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
+    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
+    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
+    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS month,
+    doc ->'fields'->'meta'->>'instanceID' AS instanceID,
+    doc ->'fields'->'inputs'->'meta'->>'deprecatedID' AS deprecatedID,
+    doc ->'fields'->'inputs'->'meta'->'location'->>'lat' AS location_lat,
+    doc ->'fields'->'inputs'->'meta'->'location'->>'long' AS location_long,
+    doc ->'fields'->'inputs'->'meta'->'location'->>'error' AS location_error,
+    doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
+    doc ->'geolocation'->>'code' AS geolocation_code,
+    doc ->'geolocation'->>'message' AS geolocation_message,
+    doc #>> '{contact,_id}'::text[] AS chw_id,
+    doc #>> '{contact,parent,_id}'::text[] AS contact_chw_area_id,
+    doc #>> '{contact,parent,parent,_id}'::text[] AS contact_facility_id,
+    doc #>> '{contact,parent,parent,parent,_id}'::text[] AS parish_id,
+    doc #>> '{contact,parent,parent,parent,parent,_id}'::text[] AS district_id,
+    doc #>> '{contact,parent,parent,parent,parent,parent,_id}'::text[] AS region_id,
+
+    -- Form-specific fields (from the XML)
+    doc #>> '{fields,inputs,source}'::text[] AS n_source,
+    doc #>> '{fields,inputs,source_id}'::text[] AS n_source_id,
+    doc #>> '{fields,inputs,t_barcode_scanner_result}'::text[] AS n_t_barcode_scanner_result,
+    doc #>> '{fields,inputs,t_results_phone_number}'::text[] AS n_t_results_phone_number,
+    doc #>> '{fields,inputs,t_cough}'::text[] AS n_t_cough,
+    doc #>> '{fields,inputs,t_fever}'::text[] AS n_t_fever,
+    doc #>> '{fields,inputs,t_weight_loss}'::text[] AS n_t_weight_loss,
+    doc #>> '{fields,inputs,t_excessive_night_sweat}'::text[] AS n_t_excessive_night_sweat,
+    doc #>> '{fields,inputs,t_poor_weight_gain}'::text[] AS n_t_poor_weight_gain,
+    doc #>> '{fields,inputs,t_is_on_tb_treatment}'::text[] AS n_t_is_on_tb_treatment,
+    doc #>> '{fields,inputs,contact,_id}'::text[] AS n_contact_id,
+    doc #>> '{fields,inputs,contact,name}'::text[] AS n_contact_name,
+    doc #>> '{fields,inputs,contact,date_of_birth}'::text[] AS n_contact_date_of_birth,
+    doc #>> '{fields,inputs,contact,sex}'::text[] AS n_contact_sex,
+    doc #>> '{fields,inputs,contact,national_identification_number}'::text[] AS n_contact_national_identification_number,
+    doc #>> '{fields,inputs,contact,client_category}'::text[] AS n_contact_client_category,
+    doc #>> '{fields,inputs,contact,parent,_id}'::text[] AS n_contact_parent_id,
+    doc #>> '{fields,patient_age_in_years}'::text[] AS patient_age_in_years,
+    doc #>> '{fields,patient_age_in_months}'::text[] AS patient_age_in_months,
+    doc #>> '{fields,patient_age_in_days}'::text[] AS patient_age_in_days,
+    doc #>> '{fields,patient_age_display}'::text[] AS patient_age_display,
+    doc #>> '{fields,patient_id}'::text[] AS patient_id,
+    doc #>> '{fields,patient_name}'::text[] AS patient_name,
+    doc #>> '{fields,patient_gender}'::text[] AS patient_gender,
+    doc #>> '{fields,patient_pronoun}'::text[] AS patient_pronoun,
+    doc #>> '{fields,barcode_scanner_result}'::text[] AS barcode_scanner_result,
+    doc #>> '{fields,cough}'::text[] AS cough,
+    doc #>> '{fields,fever}'::text[] AS fever,
+    doc #>> '{fields,weight_loss}'::text[] AS weight_loss,
+    doc #>> '{fields,excessive_night_sweat}'::text[] AS excessive_night_sweat,
+    doc #>> '{fields,poor_weight_gain}'::text[] AS poor_weight_gain,
+    doc #>> '{fields,is_on_tb_treatment}'::text[] AS is_on_tb_treatment,
+    doc #>> '{fields,national_identification_number}'::text[] AS national_identification_number,
+    doc #>> '{fields,client_category}'::text[] AS client_category,
+    doc #>> '{fields,patient_sputum_collection_date}'::text[] AS p_sputum_collection_date,
+    doc #>> '{fields,sputum_collection,is_patient_available}'::text[] AS is_patient_available,
+    doc #>> '{fields,sputum_collection,patient_availability_date}'::text[] AS patient_availability_date,
+    doc #>> '{fields,sputum_collection,has_produced_sputum}'::text[] AS has_produced_sputum,
+    doc #>> '{fields,sputum_collection,confirm_bottle_is_tightly_closed}'::text[] AS confirm_bottle_is_tightly_closed,
+    doc #>> '{fields,sputum_collection,confirm_send_sample_for_testing}'::text[] AS confirm_send_sample_for_testing,
+    doc #>> '{fields,sputum_collection,inform_on_importance_of_testing}'::text[] AS inform_on_importance_of_testing,
+    doc #>> '{fields,sputum_collection_consent,results_phone_number}'::text[] AS consent_results_phone_number,
+    doc #>> '{fields,group_summary,s_note_sputum_collection}'::text[] AS group_summary_s_note_sputum_collection,
+    doc #>> '{fields,group_summary,s_summary_submit}'::text[] AS group_summary_s_summary_submit,
+    doc #>> '{fields,group_summary,s_note_person_details}'::text[] AS group_summary_s_note_person_details,
+    doc #>> '{fields,group_summary,s_note_person_details_values}'::text[] AS group_summary_s_note_person_details_values,
+    doc #>> '{fields,group_summary,s_note_findings}'::text[] AS group_summary_s_note_findings,
+    doc #>> '{fields,group_summary,s_note_sputum_collected}'::text[] AS group_summary_s_note_sputum_collected,
+    doc #>> '{fields,group_summary,s_note_client_not_available}'::text[] AS group_summary_s_note_client_not_available,
+    doc #>> '{fields,group_summary,s_note_sputum_not_available}'::text[] AS group_summary_s_note_sputum_not_available,
+    doc #>> '{fields,group_summary,s_note_instructions}'::text[] AS group_summary_s_note_instructions,
+    doc #>> '{fields,group_summary,s_note_please_sync}'::text[] AS group_summary_s_note_please_sync,
+    doc #>> '{fields,group_summary,s_note_follow_up_task}'::text[] AS group_summary_s_note_follow_up_task,
+    doc #>> '{fields,group_summary,s_note_availability_date}'::text[] AS group_summary_s_note_availability_date,
+    doc #>> '{fields,group_summary,s_note_referral}'::text[] AS group_summary_s_note_referral,
+    doc #>> '{fields,group_summary,refer_patient_to_facility}'::text[] AS group_summary_refer_patient_to_facility,
+
+    -- Last column for tracking refresh
+    CURRENT_TIMESTAMP AS last_refresh_date
+
+FROM dwh.cht_data couchdb
+WHERE (doc ->> 'form'::text) = 'sputum_collection'::text
+  AND is_current
+WITH DATA;
+
+-- Indexes
+CREATE INDEX mv_sputum_collection_reported
+    ON cht.mv_sputum_collection USING btree (reported);
+
+CREATE INDEX mv_sputum_collection_chw_id
+    ON cht.mv_sputum_collection USING btree (chw_id);

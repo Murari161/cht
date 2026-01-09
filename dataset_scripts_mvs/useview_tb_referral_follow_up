@@ -1,0 +1,57 @@
+CREATE MATERIALIZED VIEW report.useview_tb_referral_follow_up
+TABLESPACE ts_report
+AS
+SELECT
+      doc ->> '_id'                                                AS uuid,
+      doc ->> '_rev'                                               AS rev,
+      doc ->> 'form'                                               AS form,
+      to_timestamp(NULLIF(doc ->> 'reported_date','')::bigint / 1000.0) AS reported,
+      doc ->> 'from'                                               AS submitter,
+      doc ->> 'content_type'                                       AS top_content_type,
+      to_timestamp(NULLIF(doc #>> '{form_version,time}','')::bigint / 1000.0) AS form_version_time,
+      doc #>> '{form_version,sha256}'                              AS form_version_sha256,
+      (doc -> 'hidden_fields')::text                               AS hidden_fields_json,
+    , doc #>> '{fields,inputs,source}'                                    AS source,
+    , doc #>> '{fields,inputs,source_id}'                                 AS source_id,
+    , doc #>> '{fields,inputs,t_tb_result}'                               AS t_tb_result,
+    , doc #>> '{fields,inputs,user,contact_id}'                           AS contact_id,
+    , doc #>> '{fields,inputs,user,facility_id}'                          AS facility_id,
+    , doc #>> '{fields,inputs,contact,_id}'                               AS _id,
+    , doc #>> '{fields,inputs,contact,name}'                              AS name,
+    , doc #>> '{fields,inputs,contact,date_of_birth}'                     AS date_of_birth,
+    , doc #>> '{fields,inputs,contact,sex}'                               AS sex,
+    , doc #>> '{fields,inputs,contact,parent,_id}'                        AS parent__id,
+    , doc #>> '{fields,inputs,contact,parent,name}'                       AS parent_name,
+    , doc #>> '{fields,inputs,contact,parent,parent,_id}'                 AS parent_parent__id,
+    , doc #>> '{fields,inputs,contact,parent,parent,name}'                AS parent_parent_name,
+    , doc #>> '{fields,inputs,contact,parent,parent,supervisor}'          AS supervisor,
+    , doc #>> '{fields,inputs,contact,parent,parent,phone}'               AS phone,
+    , doc #>> '{fields,inputs,contact,parent,parent,village}'             AS village,
+    , doc #>> '{fields,inputs,contact,parent,parent,contact,_id}'         AS contact__id,
+    , doc #>> '{fields,inputs,contact,parent,parent,contact,phone}'       AS contact_phone,
+    , doc #>> '{fields,inputs,contact,parent,parent,contact,name}'        AS contact_name,
+    , doc #>> '{fields,inputs,contact,parent,parent,parent,_id}'          AS parent_parent_parent__id,
+    , doc #>> '{fields,patient_age_in_years}'                             AS patient_age_in_years,
+    , doc #>> '{fields,patient_age_in_months}'                            AS patient_age_in_months,
+    , doc #>> '{fields,patient_age_in_days}'                              AS patient_age_in_days,
+    , doc #>> '{fields,patient_age_display}'                              AS patient_age_display,
+    , doc #>> '{fields,patient_id}'                                       AS patient_id,
+    , doc #>> '{fields,patient_name}'                                     AS patient_name,
+    , doc #>> '{fields,patient_gender}'                                   AS patient_gender,
+    , doc #>> '{fields,patient_pronoun}'                                  AS patient_pronoun,
+    , doc #>> '{fields,place_name}'                                       AS place_name,
+    , doc #>> '{fields,needs_signoff}'                                    AS needs_signoff,
+    , doc #>> '{fields,referral_notification,went_to_facility_as_referred}'  AS went_to_facility_as_referred,
+    , doc #>> '{fields,referral_notification,referred_to_health_facility}'  AS referred_to_health_facility,
+    , doc #>> '{fields,treatment_information,patient_started_treatment}'  AS patient_started_treatment,
+    , doc #>> '{fields,treatment_information,treatment_date}'             AS treatment_date
+FROM dwh.cht_data AS couchdb
+WHERE (doc ->> 'form') = 'tb_referral_follow_up'
+  AND is_current
+WITH DATA;
+
+CREATE UNIQUE INDEX tb_referral_follow_up_uuid_idx
+    ON report.useview_tb_referral_follow_up USING btree (uuid);
+
+CREATE INDEX tb_referral_follow_up_reported_idx
+    ON report.useview_tb_referral_follow_up USING btree (reported);

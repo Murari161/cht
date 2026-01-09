@@ -1,0 +1,82 @@
+CREATE MATERIALIZED VIEW report.useview_tb_results_notification
+TABLESPACE ts_report
+AS
+SELECT
+      doc ->> '_id'                                                AS uuid,
+      doc ->> '_rev'                                               AS rev,
+      doc ->> 'form'                                               AS form,
+      to_timestamp(NULLIF(doc ->> 'reported_date','')::bigint / 1000.0) AS reported,
+      doc ->> 'from'                                               AS submitter,
+      doc ->> 'content_type'                                       AS top_content_type,
+      to_timestamp(NULLIF(doc #>> '{form_version,time}','')::bigint / 1000.0) AS form_version_time,
+      doc #>> '{form_version,sha256}'                              AS form_version_sha256,
+      (doc -> 'hidden_fields')::text                               AS hidden_fields_json,
+    , doc #>> '{fields,inputs,source}'                                    AS source,
+    , doc #>> '{fields,inputs,source_id}'                                 AS source_id,
+    , doc #>> '{fields,inputs,t_tb_result}'                               AS t_tb_result,
+    , doc #>> '{fields,inputs,t_results_phone_number}'                    AS t_results_phone_number,
+    , doc #>> '{fields,inputs,t_cough}'                                   AS t_cough,
+    , doc #>> '{fields,inputs,t_fever}'                                   AS t_fever,
+    , doc #>> '{fields,inputs,t_weight_loss}'                             AS t_weight_loss,
+    , doc #>> '{fields,inputs,t_excessive_night_sweat}'                   AS t_excessive_night_sweat,
+    , doc #>> '{fields,inputs,t_poor_weight_gain}'                        AS t_poor_weight_gain,
+    , doc #>> '{fields,inputs,t_is_on_tb_treatment}'                      AS t_is_on_tb_treatment,
+    , doc #>> '{fields,inputs,t_prev_tb_result}'                          AS t_prev_tb_result,
+    , doc #>> '{fields,inputs,t_returned_result_barcode}'                 AS t_returned_result_barcode,
+    , doc #>> '{fields,inputs,user,contact_id}'                           AS contact_id,
+    , doc #>> '{fields,inputs,user,facility_id}'                          AS facility_id,
+    , doc #>> '{fields,inputs,contact,_id}'                               AS _id,
+    , doc #>> '{fields,inputs,contact,name}'                              AS name,
+    , doc #>> '{fields,inputs,contact,date_of_birth}'                     AS date_of_birth,
+    , doc #>> '{fields,inputs,contact,sex}'                               AS sex,
+    , doc #>> '{fields,inputs,contact,client_category}'                   AS client_category,
+    , doc #>> '{fields,inputs,contact,national_identification_number}'    AS national_identification_number,
+    , doc #>> '{fields,inputs,contact,parent,_id}'                        AS parent__id,
+    , doc #>> '{fields,inputs,contact,parent,name}'                       AS parent_name,
+    , doc #>> '{fields,inputs,contact,parent,parent,_id}'                 AS parent_parent__id,
+    , doc #>> '{fields,inputs,contact,parent,parent,name}'                AS parent_parent_name,
+    , doc #>> '{fields,inputs,contact,parent,parent,supervisor}'          AS supervisor,
+    , doc #>> '{fields,inputs,contact,parent,parent,phone}'               AS phone,
+    , doc #>> '{fields,inputs,contact,parent,parent,contact,_id}'         AS contact__id,
+    , doc #>> '{fields,inputs,contact,parent,parent,contact,phone}'       AS contact_phone,
+    , doc #>> '{fields,inputs,contact,parent,parent,contact,name}'        AS contact_name,
+    , doc #>> '{fields,inputs,contact,parent,parent,parent,_id}'          AS parent_parent_parent__id,
+    , doc #>> '{fields,patient_age_in_years}'                             AS patient_age_in_years,
+    , doc #>> '{fields,patient_age_in_months}'                            AS patient_age_in_months,
+    , doc #>> '{fields,patient_age_in_days}'                              AS patient_age_in_days,
+    , doc #>> '{fields,patient_age_display}'                              AS patient_age_display,
+    , doc #>> '{fields,patient_id}'                                       AS patient_id,
+    , doc #>> '{fields,patient_name}'                                     AS patient_name,
+    , doc #>> '{fields,patient_gender}'                                   AS patient_gender,
+    , doc #>> '{fields,patient_pronoun}'                                  AS patient_pronoun,
+    , doc #>> '{fields,patient_adjective}'                                AS patient_adjective,
+    , doc #>> '{fields,tb_result}'                                        AS tb_result,
+    , doc #>> '{fields,barcode_scanner_result}'                           AS barcode_scanner_result,
+    , doc #>> '{fields,cough}'                                            AS cough,
+    , doc #>> '{fields,fever}'                                            AS fever,
+    , doc #>> '{fields,weight_loss}'                                      AS weight_loss,
+    , doc #>> '{fields,excessive_night_sweat}'                            AS excessive_night_sweat,
+    , doc #>> '{fields,poor_weight_gain}'                                 AS poor_weight_gain,
+    , doc #>> '{fields,is_on_tb_treatment}'                               AS is_on_tb_treatment,
+    , doc #>> '{fields,patient_referred_to_health_facility}'              AS patient_referred_to_health_facility,
+    , doc #>> '{fields,national_identification_number}'                   AS fields_national_identification_number,
+    , doc #>> '{fields,client_category}'                                  AS fields_client_category,
+    , doc #>> '{fields,results_notification,confirm_refer_to_health_facility}'  AS confirm_refer_to_health_facility,
+    , doc #>> '{fields,missing_results_notification,note_refer_to_health_facility}'  AS note_refer_to_health_facility,
+    , doc #>> '{fields,group_barcode}'                                    AS group_barcode,
+    , doc #>> '{fields,action}'                                           AS action,
+    , doc #>> '{fields,outputs,CHT_BARCODE}'                              AS cht_barcode,
+    , doc #>> '{sputum_collection,has_patient_produced_sputum}'           AS has_patient_produced_sputum,
+    , doc #>> '{sputum_collection,confirm_send_sample_for_testing}'       AS confirm_send_sample_for_testing,
+    , doc #>> '{sputum_collection,has_left_sputum_bottle_with_client}'    AS has_left_sputum_bottle_with_client,
+    , doc #>> '{sputum_collection_consent,results_phone_number}'          AS results_phone_number
+FROM dwh.cht_data AS couchdb
+WHERE (doc ->> 'form') = 'tb_results_notification'
+  AND is_current
+WITH DATA;
+
+CREATE UNIQUE INDEX tb_results_notification_uuid_idx
+    ON report.useview_tb_results_notification USING btree (uuid);
+
+CREATE INDEX tb_results_notification_reported_idx
+    ON report.useview_tb_results_notification USING btree (reported);

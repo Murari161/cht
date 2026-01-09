@@ -1,0 +1,57 @@
+CREATE MATERIALIZED VIEW report.useview_pnc_danger_sign
+TABLESPACE ts_report
+AS
+SELECT
+      doc ->> '_id'                                                AS uuid,
+      doc ->> '_rev'                                               AS rev,
+      doc ->> 'form'                                               AS form,
+      to_timestamp(NULLIF(doc ->> 'reported_date','')::bigint / 1000.0) AS reported,
+      doc ->> 'from'                                               AS submitter,
+      doc ->> 'content_type'                                       AS top_content_type,
+      to_timestamp(NULLIF(doc #>> '{form_version,time}','')::bigint / 1000.0) AS form_version_time,
+      doc #>> '{form_version,sha256}'                              AS form_version_sha256,
+      (doc -> 'hidden_fields')::text                               AS hidden_fields_json,
+    , doc #>> '{fields,inputs,source}'                                    AS source,
+    , doc #>> '{fields,inputs,source_id}'                                 AS source_id,
+    , doc #>> '{fields,inputs,is_follow_up}'                              AS is_follow_up,
+    , doc #>> '{fields,inputs,contact,_id}'                               AS _id,
+    , doc #>> '{fields,inputs,contact,name}'                              AS name,
+    , doc #>> '{fields,inputs,contact,date_of_birth}'                     AS date_of_birth,
+    , doc #>> '{fields,inputs,contact,sex}'                               AS sex,
+    , doc #>> '{fields,inputs,contact,parent,_id}'                        AS parent__id,
+    , doc #>> '{fields,is_of_child_bearing_age}'                          AS is_of_child_bearing_age,
+    , doc #>> '{fields,visited_contact_uuid}'                             AS visited_contact_uuid,
+    , doc #>> '{fields,patient_age_in_years}'                             AS patient_age_in_years,
+    , doc #>> '{fields,patient_age_in_months}'                            AS patient_age_in_months,
+    , doc #>> '{fields,patient_age_in_days}'                              AS patient_age_in_days,
+    , doc #>> '{fields,patient_age_display}'                              AS patient_age_display,
+    , doc #>> '{fields,patient_id}'                                       AS patient_id,
+    , doc #>> '{fields,patient_name}'                                     AS patient_name,
+    , doc #>> '{fields,patient_name_with_s}'                              AS patient_name_with_s,
+    , doc #>> '{fields,patient_gender}'                                   AS patient_gender,
+    , doc #>> '{fields,group_danger_sign_label}'                          AS group_danger_sign_label,
+    , doc #>> '{fields,woman_has_danger_signs}'                           AS woman_has_danger_signs,
+    , doc #>> '{fields,group_danger_sign,visited_health_facility}'        AS visited_health_facility,
+    , doc #>> '{fields,group_danger_sign,still_experiencing_danger_signs}'  AS still_experiencing_danger_signs,
+    , doc #>> '{fields,group_danger_sign,excessive_bleeding}'             AS excessive_bleeding,
+    , doc #>> '{fields,group_danger_sign,vaginal_discharge}'              AS vaginal_discharge,
+    , doc #>> '{fields,group_danger_sign,severe_abdominal_pain }'         AS severe_abdominal_pain,
+    , doc #>> '{fields,group_danger_sign,swelling}'                       AS swelling,
+    , doc #>> '{fields,group_danger_sign,blurred_vision}'                 AS blurred_vision,
+    , doc #>> '{fields,group_danger_sign,fever}'                          AS fever,
+    , doc #>> '{fields,group_danger_sign,excessive_tiredness}'            AS excessive_tiredness,
+    , doc #>> '{fields,group_danger_sign,breathlessness}'                 AS breathlessness,
+    , doc #>> '{fields,group_danger_sign,has_danger_signs}'               AS has_danger_signs,
+    , doc #>> '{fields,group_danger_sign,has_no_danger_signs}'            AS has_no_danger_signs,
+    , doc #>> '{fields,group_danger_sign,referred_to_facility}'           AS referred_to_facility,
+    , doc #>> '{fields,group_summary,summary_title_label}'                AS summary_title_label
+FROM dwh.cht_data AS couchdb
+WHERE (doc ->> 'form') = 'pnc_danger_sign'
+  AND is_current
+WITH DATA;
+
+CREATE UNIQUE INDEX pnc_danger_sign_uuid_idx
+    ON report.useview_pnc_danger_sign USING btree (uuid);
+
+CREATE INDEX pnc_danger_sign_reported_idx
+    ON report.useview_pnc_danger_sign USING btree (reported);
