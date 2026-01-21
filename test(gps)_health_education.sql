@@ -66,28 +66,27 @@ breast_cancer_symptoms/breast_cancer_prevention/kaposi_sarcoma_definition/kaposi
 prostate_cancer_management/mental_health_definition/mental_health_signs/mental_health_causes/mental_health_care/mental_health_prevention/substance_disorder_definition/substance_disorder_causes/
 common_abused_substances/substance_abuse_prevention/substance_abuse_prevention_parents/oral_health_definition/oral_problem_signs/dental_problem_solution/
 road_injuries_definition/road_injury_prevention/snake_bite_symptoms/snake_bite_prevention/snake_bite_first_aid/dog_bite_prevention/dog_bite_aid/drowning_definition/drowning_prevention*/
-    doc #>> '{fields,g_non_communicable_diseases_topic,nb_attendee_commun_diseases}'::text[] AS g_non_communicable_diseases_topic_nb_attendee_commun_diseases,
-    doc #>> '{fields,g_non_communicable_diseases_topic,additional_notes_commun_diseases}'::text[] AS g_non_communicable_diseases_topic_additional_notes_commun_diseases,
-    doc #>> '{fields,g_leprosy_topic,leprosy_facts}'::text[] AS g_leprosy_topic_leprosy_facts,
-    doc #>> '{fields,g_leprosy_topic,nb_attendee_leprosy}'::text[] AS g_leprosy_topic_nb_attendee_leprosy,
-    doc #>> '{fields,g_leprosy_topic,additional_notes_leprosy}'::text[] AS g_leprosy_topic_additional_notes_leprosy,
-    doc #>> '{fields,g_malaria_topic,malaria_facts}'::text[] AS g_malaria_topic_malaria_facts,
-    doc #>> '{fields,g_malaria_topic,nb_attendee_malaria}'::text[] AS g_malaria_topic_nb_attendee_malaria,
-    doc #>> '{fields,g_malaria_topic,additional_notes_malaria}'::text[] AS g_malaria_topic_additional_notes_malaria,
-    doc #>> '{fields,g_hiv_aids_topic,hiv_aids_facts}'::text[] AS g_hiv_aids_topic_hiv_aids_facts,
-    doc #>> '{fields,g_hiv_aids_topic,nb_attendee_hiv}'::text[] AS g_hiv_aids_topic_nb_attendee_hiv,
-    doc #>> '{fields,g_hiv_aids_topic,additional_notes_hiv}'::text[] AS g_hiv_aids_topic_additional_notes_hiv,
-    doc #>> '{fields,g_tb_topic,tb_facts}'::text[] AS g_tb_topic_tb_facts,
-    doc #>> '{fields,g_tb_topic,nb_attendee_tb}'::text[] AS g_tb_topic_nb_attendee_tb,
-    doc #>> '{fields,g_tb_topic,additional_notes_tb}'::text[] AS g_tb_topic_additional_notes_tb,
-    doc #>> '{fields,g_maternal_health_topic,maternal_health_facts}'::text[] AS g_maternal_health_topic_maternal_health_facts,
-    doc #>> '{fields,g_maternal_health_topic,nb_attendee_maternal_health}'::text[] AS g_maternal_health_topic_nb_attendee_maternal_health,
-    doc #>> '{fields,g_maternal_health_topic,additional_notes_maternal_health}'::text[] AS g_maternal_health_topic_additional_notes_maternal_health,
-    doc #>> '{fields,g_child_health_topic,child_health_facts}'::text[] AS g_child_health_topic_child_health_facts,
-    doc #>> '{fields,g_child_health_topic,nb_attendee_child_health}'::text[] AS g_child_health_topic_nb_attendee_child_health,
-    doc #>> '{fields,g_child_health_topic,additional_notes_child_health}'::text[] AS g_child_health_topic_additional_notes_child_health,
-    doc #>> '{fields,g_other_topic,nb_attendee_other_topic}'::text[] AS g_other_topic_nb_attendee_other_topic,
-    doc #>> '{fields,g_other_topic,additional_notes_other_topic}'::text[] AS g_other_topic_additional_notes_other_topic,
+    doc #>> '{fields,g_non_communicable_diseases_topic,nb_attendee_commun_diseases}'::text[] AS g_non_communicable_diseases_topic_nb_attendee_commun_diseases, --(int)
+    doc #>> '{fields,g_leprosy_topic,leprosy_facts}'::text[] AS g_leprosy_topic_leprosy_facts, --(leprosy_definition/leprosy_symptoms/leprosy_transmission/leprosy_diagnosis/adherence_to_leprosy_treatment/leprosy_elimination)
+    doc #>> '{fields,g_leprosy_topic,nb_attendee_leprosy}'::text[] AS g_leprosy_topic_nb_attendee_leprosy, --(int)
+    doc #>> '{fields,g_malaria_topic,malaria_facts}'::text[] AS g_malaria_topic_malaria_facts, --(malaria_definition/malaria_risk_transmission/malaria_symptoms/malaria_prevention/malaria_action_fever/myths_and_misconceptions/malaria_prevention_actions)
+    doc #>> '{fields,g_malaria_topic,nb_attendee_malaria}'::text[] AS g_malaria_topic_nb_attendee_malaria, --(int)
+    doc #>> '{fields,g_hiv_aids_topic,hiv_aids_facts}'::text[] AS g_hiv_aids_topic_hiv_aids_facts, --(hiv_aids_definition/hiv_infection_prevention/hiv_vertical_transmission/hiv_symptoms/hiv_management/myths_and_misconceptions_hiv/)
+    doc #>> '{fields,g_hiv_aids_topic,nb_attendee_hiv}'::text[] AS g_hiv_aids_topic_nb_attendee_hiv, --(int)
+    doc #>> '{fields,g_tb_topic,tb_facts}'::text[] AS g_tb_topic_tb_facts, --(tb_definition/tb_transmission/tb_symptoms/tb_treatment/tb_prevention)
+    doc #>> '{fields,g_tb_topic,nb_attendee_tb}'::text[] AS g_tb_topic_nb_attendee_tb, --(int)
+    doc #>> '{fields,g_maternal_health_topic,maternal_health_facts}'::text[] AS g_maternal_health_topic_maternal_health_facts, /*pregnancy_signs
+pregnancy_care/antenatal_visits/pregnancy_nutrition/high_risk_factors/
+pregnancy_common_problems/pregnancy_danger_signs/
+hiv_protection_for_babies/myths_and_misconceptions_pregnancy/
+birth_plan/labor_guidance/postpartum_care/postpartum_nutrition/
+breastfeeding_timing/postpartum_danger_signs/family_planning */
+    doc #>> '{fields,g_maternal_health_topic,nb_attendee_maternal_health}'::text[] AS g_maternal_health_topic_nb_attendee_maternal_health, --(int)
+    doc #>> '{fields,g_child_health_topic,child_health_facts}'::text[] AS g_child_health_topic_child_health_facts, /*newborn_care
+birth_cleanliness/newborn_warmth/newborn_eye_care/newborn_danger_signs/
+breastfeeding_importance/immunization_def/immunization_schedule/myths_and_misconceptions_child_health*/
+    doc #>> '{fields,g_child_health_topic,nb_attendee_child_health}'::text[] AS g_child_health_topic_nb_attendee_child_health, --(int)
+    doc #>> '{fields,g_other_topic,nb_attendee_other_topic}'::text[] AS g_other_topic_nb_attendee_other_topic, --(int)
 
     -- Last column for tracking refresh
     CURRENT_TIMESTAMP AS last_refresh_date
