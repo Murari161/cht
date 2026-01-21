@@ -60,11 +60,6 @@ FROM (
         LOWER(TRIM(g_tb_topic_tb_facts)) AS g_tb_topic_tb_facts,
         LOWER(TRIM(g_maternal_health_topic_maternal_health_facts)) AS g_maternal_health_topic_maternal_health_facts,
         LOWER(TRIM(g_child_health_topic_child_health_facts)) AS g_child_health_topic_child_health_facts,
-        fields_geolocation_gps,
-        fields_geolocation_latitude,
-        fields_geolocation_longitude,
-        fields_geolocation_altitude,
-        fields_geolocation_accuracy,
         g_wash_topic_nb_attendee_wash,
         g_nutrition_promotion_topic_nb_attendee_food_promotion,
         g_non_communicable_diseases_topic_nb_attendee_commun_diseases,
@@ -251,21 +246,6 @@ CROSS JOIN LATERAL (
         ('g_child_health_topic_child_health_facts - Immunization_def', CASE WHEN src.g_child_health_topic_child_health_facts LIKE '%immunization_def%' THEN 1 ELSE 0 END),
         ('g_child_health_topic_child_health_facts - Immunization_schedule', CASE WHEN src.g_child_health_topic_child_health_facts LIKE '%immunization_schedule%' THEN 1 ELSE 0 END),
         ('g_child_health_topic_child_health_facts - Myths_and_misconceptions_child_health', CASE WHEN src.g_child_health_topic_child_health_facts LIKE '%myths_and_misconceptions_child_health%' THEN 1 ELSE 0 END),
-
-        -- fields_geolocation_gps (int of gps coordinates) - numeric, null to 0
-        ('fields_geolocation_gps', COALESCE(src.fields_geolocation_gps, 0)),
-
-        -- fields_geolocation_latitude (int of lat) - numeric, null to 0
-        ('fields_geolocation_latitude', COALESCE(src.fields_geolocation_latitude, 0)),
-
-        -- fields_geolocation_longitude (int of long) - numeric, null to 0
-        ('fields_geolocation_longitude', COALESCE(src.fields_geolocation_longitude, 0)),
-
-        -- fields_geolocation_altitude (int of alt) - numeric, null to 0
-        ('fields_geolocation_altitude', COALESCE(src.fields_geolocation_altitude, 0)),
-
-        -- fields_geolocation_accuracy (int of accuracy) - numeric, null to 0
-        ('fields_geolocation_accuracy', COALESCE(src.fields_geolocation_accuracy, 0)),
 
         -- g_wash_topic_nb_attendee_wash (int) - numeric, null to 0
         ('g_wash_topic_nb_attendee_wash', COALESCE(src.g_wash_topic_nb_attendee_wash, 0)),
