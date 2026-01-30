@@ -1,10 +1,10 @@
-GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_anc_visit_follow_up TO baker;
-GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_anc_visit_follow_up TO bkronnie;
-GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_anc_visit_follow_up TO etl_user;
-GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_anc_visit_follow_up TO jasper_user;
-GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_anc_visit_follow_up TO mkizito;
-GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_anc_visit_follow_up TO mpaul;
-GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_anc_visit_follow_up TO nmadrine;
-GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_anc_visit_follow_up TO rutayisire;
-GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_anc_visit_follow_up TO senos;
---cht.mv_anc_visit_follow_up
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_community_death_notification_revised TO baker;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_community_death_notification_revised TO bkronnie;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_community_death_notification_revised TO etl_user;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_community_death_notification_revised TO jasper_user;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_community_death_notification_revised TO mkizito;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_community_death_notification_revised TO mpaul;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_community_death_notification_revised TO nmadrine;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_community_death_notification_revised TO rutayisire;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_community_death_notification_revised TO senos;
+--cht.mv_community_death_notification_revised

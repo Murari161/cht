@@ -97,5 +97,5 @@ WHERE (doc ->> 'form'::text) = 'community_death_notification'::text
   AND is_current
 WITH DATA;
 
-CREATE INDEX mv_community_death_notification_chw_is ON cht.mv_community_death_notification_revised USING btree (chw_id);
+CREATE INDEX mv_community_death_notification_chw_is_revised ON cht.mv_community_death_notification_revised USING btree (chw_id);
 CREATE INDEX mv_community_death_notification_eported_revised ON cht.mv_community_death_notification_revised USING btree (reported);
