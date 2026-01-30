@@ -2,7 +2,7 @@ CREATE MATERIALIZED VIEW cht.mv_anc_danger_sign
 TABLESPACE ts_report
 AS
 SELECT
-    doc ->> '_id'::text AS uuid,
+    doc ->> '_id'::text AS uuid, 
     doc ->> 'form'::text AS form,
 
     to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,

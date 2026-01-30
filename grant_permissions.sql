@@ -1,0 +1,10 @@
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_cebs_signal_verification TO baker;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_cebs_signal_verification TO bkronnie;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_cebs_signal_verification TO etl_user;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_cebs_signal_verification TO jasper_user;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_cebs_signal_verification TO mkizito;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_cebs_signal_verification TO mpaul;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_cebs_signal_verification TO nmadrine;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_cebs_signal_verification TO rutayisire;
+GRANT DELETE, TRIGGER, REFERENCES, TRUNCATE, UPDATE, INSERT, SELECT ON TABLE cht.mv_cebs_signal_verification TO senos;
+--cht.mv_cebs_signal_verification
