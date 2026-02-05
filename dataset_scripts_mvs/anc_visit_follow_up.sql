@@ -46,6 +46,7 @@ SELECT
         doc -> 'fields' ->> 'edd_local'                         AS edd_local,
         doc -> 'fields' ->> 'pregnancy_ended'                  AS pregnancy_ended,
         doc -> 'fields' ->> 'pregnancy_ended_label'            AS pregnancy_ended_label,
+        doc -> 'fields' ->> 'referred_for_nutrition_follow_up'            AS referred_for_nutrition_follow_up,
         doc -> 'fields' -> 'group_follow_up' ->> 'assess_this_pregnancy'     AS assess_this_pregnancy,
         doc -> 'fields' -> 'group_follow_up' ->> 'start_this_pregnancy'      AS start_this_pregnancy,
         doc -> 'fields' -> 'group_follow_up' ->> 'possible_death_cause'      AS possible_death_cause,
