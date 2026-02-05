@@ -18,36 +18,36 @@ INSERT INTO cht.fact_cht_numeric_values (
     source_form
 )
 SELECT
-    doc_id AS uuid,
+    uuid,
     'Tuberclosis' AS theme,
     'sputum_collection_refusal' AS dataset,
     unpivot.data_element,
     unpivot.value,
     date,
     chw_id,
-    facility_id,
-    district AS district_id,
-    region,
+    contact_facility_id as facility_id,
+    district_id AS district_id,
+    region_id as region,
     patient_age_in_years,
     patient_age_in_months,
     patient_age_in_days,
     patient_gender AS patient_sex,
-    contact_date_of_birth AS patient_dob,
+    patient_dob,
     'cht' AS source_system,
     'sputum_collection_refusal' AS source_form
 FROM (
     SELECT
-        doc_id,
+        uuid,
         date,
         chw_id,
-        facility_id,
-        district,
-        region,
+        contact_facility_id,
+        district_id,
+        region_id,
         patient_age_in_years,
         patient_age_in_months,
         patient_age_in_days,
         patient_gender,
-        contact_date_of_birth,
+        null as patient_dob,
 
         -- indicator columns
         LOWER(TRIM(consented_sputum_sample)) AS consented_sputum_sample,
@@ -55,7 +55,7 @@ FROM (
         LOWER(TRIM(has_patient_produced_sputum)) AS has_patient_produced_sputum,
         LOWER(TRIM(confirm_send_sample_for_testing)) AS confirm_send_sample_for_testing,
         LOWER(TRIM(has_left_sputum_bottle_with_client)) AS has_left_sputum_bottle_with_client
-    FROM report.mv_sputum_collection_refusal
+    FROM cht.mv_sputum_collection_refusal
 ) src
 CROSS JOIN LATERAL (
     VALUES
