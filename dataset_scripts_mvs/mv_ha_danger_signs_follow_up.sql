@@ -58,6 +58,7 @@ SELECT
     doc #>> '{fields,additional_doc,follow_up_date}'::text[]           AS follow_up_date,
 
     doc #>> '{fields,group_danger,danger_signs_note}'::text[]                     AS danger_signs_note,
+    doc #>> '{fields,group_danger,danger_signs}'::text[] AS danger_signs,
     doc #>> '{fields,group_danger,vaginal_bleeding}'::text[]                       AS vaginal_bleeding,
     doc #>> '{fields,group_danger,lower_abdomen_pain}'::text[]                     AS lower_abdomen_pain,
     doc #>> '{fields,group_danger,severe_headache}'::text[]                        AS severe_headache,
