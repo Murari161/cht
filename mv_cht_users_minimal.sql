@@ -97,5 +97,4 @@ AS WITH base AS (
      JOIN base f ON a.grandparent_id = f.uuid AND f.contact_type = 'c30-district_hospital'::text
      JOIN base d ON f.parent_id = d.uuid AND d.contact_type = 'c20-district'::text
      LEFT JOIN user_settings us ON us.contact_id = p.uuid
-  WHERE a.contact_type = 'c50-health_center'::text
-WITH DATA;
+  WITH DATA;
