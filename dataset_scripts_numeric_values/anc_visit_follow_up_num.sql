@@ -15,7 +15,7 @@ INSERT INTO cht.fact_cht_numeric_values (
     patient_sex,
     patient_dob,
     source_system,
-    source_form
+    source_form 
 )
 SELECT
     doc_id AS uuid,

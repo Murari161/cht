@@ -59,6 +59,8 @@ SELECT
         doc -> 'fields' -> 'update_pregnancy' ->> 'date_of_miscarriage'              AS date_of_miscarriage,
         doc -> 'fields' -> 'update_pregnancy' ->> 'note_reported_abortion'           AS note_reported_abortion,
         doc -> 'fields' -> 'update_pregnancy' ->> 'note_reported_refused_care'       AS note_reported_refused_care,
+        doc -> 'fields' -> 'update_pregnancy' ->> 'refused_care_action'       AS refused_care_action,
+        doc -> 'fields' -> 'update_pregnancy' ->> 'migrated_action'       AS migrated_action,
         doc -> 'fields' -> 'update_pregnancy' ->> 'note_reported_migrated'            AS note_reported_migrated,
         doc -> 'fields' -> 'update_pregnancy' ->> 'note_submit_delivery_report'      AS note_submit_delivery_report,
         doc -> 'fields' -> 'group_past_anc_visits' ->> 'completed_scheduled_anc_visit'  AS completed_scheduled_anc_visit,
