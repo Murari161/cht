@@ -1,5 +1,4 @@
 
-
 CREATE MATERIALIZED VIEW cht.mv_fp_registration
 TABLESPACE ts_report
 AS
@@ -26,7 +25,6 @@ SELECT
      doc #>> '{contact,parent,parent,parent,_id}'::text[] AS parish_id,
      doc #>> '{contact,parent,parent,parent,parent,_id}'::text[] AS district_id,
      doc #>> '{contact,parent,parent,parent,parent,parent,_id}'::text[] AS region_id,
-     CURRENT_TIMESTAMP AS last_refresh_date
     -- Geolocation fields (from doc root, assumed relevant)
 
     doc #>> '{geolocation,latitude}'::text[] AS latitude,
@@ -82,11 +80,11 @@ SELECT
     doc #>> '{fields,supervisor_id}'::text[] AS supervisor_id,
     doc #>> '{fields,branch_id}'::text[] AS branch_id,
     doc #>> '{fields,fp_next_appt_date}'::text[] AS fp_next_appt_date,
-    doc #>> '{fields,coc_given}'::text[] AS coc_given,
-    doc #>> '{fields,condoms_given}'::text[] AS condoms_given,
-    doc #>> '{fields,pop_given}'::text[] AS pop_given,
-    doc #>> '{fields,dmpa_given}'::text[] AS dmpa_given,
-    doc #>> '{fields,contraceptives_given}'::text[] AS contraceptives_given,
+    (doc #>> '{fields,coc_given}')::int AS coc_given,
+    (doc #>> '{fields,condoms_given}')::int AS condoms_given,
+    (doc #>> '{fields,pop_given}')::int  AS pop_given,
+    (doc #>> '{fields,dmpa_given}')::int  AS dmpa_given,
+    (doc #>> '{fields,contraceptives_given}')::int AS contraceptives_given,
     doc #>> '{fields,needs_method_change}'::text[] AS needs_method_change,
     doc #>> '{fields,has_been_referred}'::text[] AS has_been_referred,
 
@@ -94,7 +92,7 @@ SELECT
     doc #>> '{fields,fp_registration,fp_method}'::text[] AS fp_method,
     doc #>> '{fields,fp_registration,fp_start_date}'::text[] AS fp_start_date,
     doc #>> '{fields,fp_registration,who_administered_dmpa}'::text[] AS who_administered_dmpa,
-    doc #>> '{fields,fp_registration,condoms_received}'::text[] AS condoms_received,
+    (doc #>> '{fields,fp_registration,condoms_received}')::int  AS condoms_received,
     doc #>> '{fields,fp_registration,enrol_on_fp_method}'::text[] AS enrol_on_fp_method,
     doc #>> '{fields,fp_registration,continue_current_fp_method}'::text[] AS continue_current_fp_method,
     doc #>> '{fields,fp_registration,n_fp_referral_note}'::text[] AS n_fp_referral_note,
@@ -103,8 +101,8 @@ SELECT
     doc #>> '{fields,fp_registration,can_supply_fp_commodities}'::text[] AS can_supply_fp_commodities,
     doc #>> '{fields,fp_registration,supply_item_name}'::text[] AS supply_item_name,
     doc #>> '{fields,fp_registration,supply_item_units}'::text[] AS supply_item_units,
-    doc #>> '{fields,fp_registration,supply_limit}'::text[] AS supply_limit,
-    doc #>> '{fields,fp_registration,commodities_supplied_qty}'::text[] AS commodities_supplied_qty,
+    (doc #>> '{fields,fp_registration,supply_limit}')::int  AS supply_limit,
+    (doc #>> '{fields,fp_registration,commodities_supplied_qty}')::int  AS commodities_supplied_qty,
     doc #>> '{fields,fp_registration,next_appt_date}'::text[] AS next_appt_date,
     doc #>> '{fields,fp_registration,format_next_appt_date}'::text[] AS format_next_appt_date,
 
