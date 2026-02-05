@@ -15,10 +15,10 @@ INSERT INTO cht.fact_cht_numeric_values (
     patient_sex,
     patient_dob,
     source_system,
-    source_form 
+    source_form
 )
 SELECT
-    doc_id AS uuid,
+    uuid,
     'ANC' AS theme,
     'anc_visit_follow_up' AS dataset,
     unpivot.data_element,
@@ -32,12 +32,12 @@ SELECT
     patient_age_in_months,
     patient_age_in_days,
     patient_gender AS patient_sex,
-    contact_date_of_birth AS patient_dob,
+    date_of_birth AS patient_dob,
     'cht' AS source_system,
     'anc_visit_follow_up' AS source_form
 FROM (
     SELECT
-        doc_id,
+        uuid,
         date,
         chw_id,
         facility_id,
@@ -47,7 +47,7 @@ FROM (
         patient_age_in_months,
         patient_age_in_days,
         patient_gender,
-        contact_date_of_birth,
+        date_of_birth,
 
         -- indicator columns
         LOWER(TRIM(pregnancy_ended)) AS pregnancy_ended,
