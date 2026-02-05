@@ -1,31 +1,28 @@
+-- cht.mv_fp_follow_up source
+
 CREATE MATERIALIZED VIEW cht.mv_fp_follow_up
 TABLESPACE ts_report
-AS
-SELECT
-    -- Standard fields (appear in all forms)
-    doc ->> '_id'::text AS uuid,
+AS SELECT doc ->> '_id'::text AS uuid,
     doc ->> 'form'::text AS form,
     doc ->> 'from'::text AS submitter,
     to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
-    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
-    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
-    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS month,
-    doc ->'fields'->'meta'->>'instanceID' AS instanceID,
-    doc ->'fields'->'inputs'->'meta'->>'deprecatedID' AS deprecatedID,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'lat' AS location_lat,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'long' AS location_long,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'error' AS location_error,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
-    doc ->'geolocation'->>'code' AS geolocation_code,
-    doc ->'geolocation'->>'message' AS geolocation_message,
+    to_char(to_timestamp((((doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY-MM-DD'::text)::date AS date,
+    to_char(to_timestamp((((doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY'::text)::integer AS year,
+    to_char(to_timestamp((((doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'FMMonth'::text) AS month,
+    ((doc -> 'fields'::text) -> 'meta'::text) ->> 'instanceID'::text AS instanceid,
+    (((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) ->> 'deprecatedID'::text AS deprecatedid,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'lat'::text AS location_lat,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'long'::text AS location_long,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'error'::text AS location_error,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
+    (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
+    (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
     doc #>> '{contact,_id}'::text[] AS chw_id,
     doc #>> '{contact,parent,_id}'::text[] AS contact_chw_area_id,
     doc #>> '{contact,parent,parent,_id}'::text[] AS contact_facility_id,
     doc #>> '{contact,parent,parent,parent,_id}'::text[] AS parish_id,
     doc #>> '{contact,parent,parent,parent,parent,_id}'::text[] AS district_id,
     doc #>> '{contact,parent,parent,parent,parent,parent,_id}'::text[] AS region_id,
-
-    -- Form-specific fields (from the XML)
     doc #>> '{fields,inputs,source}'::text[] AS inputs_source,
     doc #>> '{fields,inputs,source_id}'::text[] AS inputs_source_id,
     doc #>> '{fields,inputs,contact,_id}'::text[] AS inputs_contact_id,
@@ -58,11 +55,11 @@ SELECT
     doc #>> '{fields,has_been_referred}'::text[] AS has_been_referred,
     doc #>> '{fields,chw_area_id}'::text[] AS chw_area_id,
     doc #>> '{fields,branch_id}'::text[] AS branch_id,
-    doc #>> '{fields,coc_given}'::int AS coc_given,
-    doc #>> '{fields,condoms_given}'::int AS condoms_given,
-    doc #>> '{fields,pop_given}'::int AS pop_given,
-    doc #>> '{fields,dmpa_given}'::int AS dmpa_given,
-    doc #>> '{fields,contraceptives_given}'::int AS contraceptives_given,
+    (doc #>> '{fields,coc_given}'::text[])::integer AS coc_given,
+    (doc #>> '{fields,condoms_given}'::text[])::integer AS condoms_given,
+    (doc #>> '{fields,pop_given}'::text[])::integer AS pop_given,
+    (doc #>> '{fields,dmpa_given}'::text[])::integer AS dmpa_given,
+    (doc #>> '{fields,contraceptives_given}'::text[])::integer AS contraceptives_given,
     doc #>> '{fields,fp_follow_up,on_fp}'::text[] AS on_fp,
     doc #>> '{fields,fp_follow_up,not_on_fp_reason}'::text[] AS not_on_fp_reason,
     doc #>> '{fields,fp_follow_up,not_on_fp_reason_other}'::text[] AS not_on_fp_reason_other,
@@ -77,7 +74,7 @@ SELECT
     doc #>> '{fields,fp_follow_up,can_supply_fp_commodities}'::text[] AS can_supply_fp_commodities,
     doc #>> '{fields,fp_follow_up,supply_item_units}'::text[] AS supply_item_units,
     doc #>> '{fields,fp_follow_up,supply_limit}'::text[] AS supply_limit,
-    doc #>> '{fields,fp_follow_up,commodities_supplied_qty}'::int AS commodities_supplied_qty,
+    (doc #>> '{fields,fp_follow_up,commodities_supplied_qty}'::text[])::integer AS commodities_supplied_qty,
     doc #>> '{fields,fp_follow_up,referred_patient_change_fp}'::text[] AS referred_patient_change_fp,
     doc #>> '{fields,fp_follow_up,next_appt_date}'::text[] AS next_appt_date,
     doc #>> '{fields,group_review,n_summary_title}'::text[] AS group_review_n_summary_title,
@@ -91,13 +88,9 @@ SELECT
     doc #>> '{fields,group_review,n_referral_follow_up}'::text[] AS group_review_n_referral_follow_up,
     doc #>> '{fields,group_review,n_follow_up_title}'::text[] AS group_review_n_follow_up_title,
     doc #>> '{fields,group_review,n_follow_up_on}'::text[] AS group_review_n_follow_up_on,
-
-    -- Last column for tracking refresh
     CURRENT_TIMESTAMP AS last_refresh_date
-
-FROM dwh.cht_data couchdb
-WHERE (doc ->> 'form'::text) = 'fp_follow_up'::text
-  AND is_current
+   FROM dwh.cht_data couchdb
+  WHERE (doc ->> 'form'::text) = 'fp_follow_up'::text AND is_current
 WITH DATA;
 
 -- Index on reported and chw_id
