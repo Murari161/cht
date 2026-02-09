@@ -1,4 +1,4 @@
-CREATE MATERIALIZED VIEW cht.mv_uncompleted_referral
+CREATE MATERIALIZED VIEW cht.mv_tb_uncompleted_referral
 TABLESPACE ts_report
 AS
 SELECT

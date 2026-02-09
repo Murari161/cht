@@ -1,4 +1,4 @@
-CREATE MATERIALIZED VIEW report.useview_uncompleted_referral
+CREATE MATERIALIZED VIEW cht.mv_uncompleted_referral
 TABLESPACE ts_report
 AS
 SELECT
@@ -45,7 +45,7 @@ WHERE (doc ->> 'form') = 'uncompleted_referral'
 WITH DATA;
 
 CREATE UNIQUE INDEX uncompleted_referral_uuid_idx
-    ON report.useview_uncompleted_referral USING btree (uuid);
+    ON cht.mv_uncompleted_referral_1 USING btree (uuid);
 
 CREATE INDEX uncompleted_referral_reported_idx
-    ON report.useview_uncompleted_referral USING btree (reported);
+    ON cht.mv_uncompleted_referral_1 USING btree (reported);
