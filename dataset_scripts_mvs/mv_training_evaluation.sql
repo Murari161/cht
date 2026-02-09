@@ -58,7 +58,8 @@ SELECT
       doc #>> '{contact,parent,parent,_id}'           AS facility_id,                                    
       doc #>> '{contact,parent,parent,parent,_id}'    AS parish_id,              
       doc #>> '{contact,parent,parent,parent,parent,_id}'           AS disrict, 
-      doc #>> '{contact,parent,parent,parent,parent,parent,_id}'           AS region                 
+      doc #>> '{contact,parent,parent,parent,parent,parent,_id}'           AS region,
+      CURRENT_TIMESTAMP as last_refresh_date;              
 
 
 FROM dwh.cht_data
