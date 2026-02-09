@@ -115,7 +115,7 @@ SELECT
       doc #>> '{fields,referral,actions,responsible_person}'::text[]    AS referral_responsible_person,
 
       doc #>> '{fields,reporting,bundles}'::text[]                     AS bundles,
-      doc #>> '{fields,reporting,bundles_received}'::text[]            AS bundles_received,
+      (doc #>> '{fields,reporting,bundles_received}')::int            AS bundles_received,
       doc #>> '{fields,reporting,last_sync}'::text[]                   AS last_sync,
       doc #>> '{fields,reporting,facilitation}'::text[]                AS facilitation,
       doc #>> '{fields,reporting,actions,action_taken}'::text[]        AS reporting_action_taken,
