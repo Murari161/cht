@@ -64,6 +64,7 @@ SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,group_woman_danger_sign_check,note_encourage_kangaroo_fathers}'::text[]  AS note_encourage_kangaroo_fathers,
     
 doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,name}' AS name,
+doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,sex}' AS sex,
 doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,type}' AS type,
 doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,parent,_id}' AS house_hold_id,
 doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,baby_name}' AS baby_name,
