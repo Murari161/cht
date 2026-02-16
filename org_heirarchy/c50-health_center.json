@@ -1,0 +1,44 @@
+{
+    "_id": "1a19924e60d3737c3e1cf20ecbc53247",
+    "_rev": "4-8201b4c6c95d7cf94b38b40192a0af3e",
+    "name": "Tushabomwe Mercy Area (Kyamugashe 1)",
+    "type": "contact",
+    "county": "Ruhaama",
+    "parent": {
+        "_id": "f8c61b68-1e7e-562d-bb16-20e4d867840c",
+        "parent": {
+            "_id": "23329e86-3c84-4cad-b415-2589f67f0bdb",
+            "parent": {
+                "_id": "ntungamo",
+                "parent": {
+                    "_id": "ankole"
+                }
+            }
+        }
+    },
+    "parish": "Kabungo",
+    "contact": {
+        "_id": "1a19924e60d3737c3e1cf20ecbc541d2",
+        "parent": {
+            "_id": "1a19924e60d3737c3e1cf20ecbc53247",
+            "parent": {
+                "_id": "f8c61b68-1e7e-562d-bb16-20e4d867840c",
+                "parent": {
+                    "_id": "23329e86-3c84-4cad-b415-2589f67f0bdb",
+                    "parent": {
+                        "_id": "ntungamo",
+                        "parent": {
+                            "_id": "ankole"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "village": "Kyamugashe 1",
+    "district": "NTUNGAMO",
+    "sub_county": "Rweikiniro",
+    "contact_type": "c50-health_center",
+    "imported_date": "2025-03-01T19:38:14.347Z",
+    "reported_date": 1685277188767
+}

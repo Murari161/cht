@@ -1,0 +1,12 @@
+{
+    "_id": "masaka",
+    "_rev": "2-d758912945cedaad1d4b23b211ed31e4",
+    "name": "Masaka District",
+    "type": "contact",
+    "parent": {
+        "_id": "south_central"
+    },
+    "contact_type": "c20-district",
+    "imported_date": "2025-02-26T08:34:41.973Z",
+    "reported_date": 1686040988879
+}

@@ -1,0 +1,27 @@
+{
+    "_id": "0032991b-82c6-47bf-b176-d22b345174f5",
+    "_rev": "1-fc34af4f811ce4a964222c08411e5ce6",
+    "meta": {
+        "created_by": "mkizito",
+        "created_by_place_uuid": "acholi",
+        "created_by_person_uuid": ""
+    },
+    "name": "Nambula",
+    "type": "contact",
+    "notes": "",
+    "parent": {
+        "_id": "b758f148-0625-53de-8e8a-47dc485d7509",
+        "parent": {
+            "_id": "namutumba",
+            "parent": {
+                "_id": "busoga"
+            }
+        }
+    },
+    "contact_type": "c40-parish",
+    "form_version": {
+        "time": 1750250886579,
+        "sha256": "44a06eed67112b339a0e1a74701f063befcd8d42ef21f0ecb94cc7a8887bd3bf"
+    },
+    "reported_date": 1750337997158
+}

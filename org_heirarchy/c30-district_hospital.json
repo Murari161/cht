@@ -1,0 +1,15 @@
+{
+    "_id": "0075ae42-2387-5f4f-bb4b-d2523975c641",
+    "_rev": "2-17de237104375e977375efacc431eae6",
+    "name": "Paco Medical Centre - Oyam",
+    "type": "contact",
+    "parent": {
+        "_id": "oyam",
+        "parent": {
+            "_id": "lango"
+        }
+    },
+    "external_id": "onNJWfJUJKc",
+    "contact_type": "c30-district_hospital",
+    "imported_date": "2025-02-26T08:37:14.829Z"
+}

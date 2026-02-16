@@ -1,0 +1,15 @@
+{
+    "_id": "south_central",
+    "_rev": "2-c6b7f989c29050d2c407dd5f43538183",
+    "meta": {
+        "created_by": "medic",
+        "created_by_place_uuid": "",
+        "created_by_person_uuid": ""
+    },
+    "name": "South Central",
+    "type": "contact",
+    "parent": "",
+    "contact_type": "c10-region",
+    "imported_date": "2025-02-26T08:32:39.765Z",
+    "reported_date": 1678944062068
+}

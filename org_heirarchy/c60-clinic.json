@@ -1,0 +1,43 @@
+{
+    "_id": "00055338-2c70-4be3-b259-9e9b81296b0b",
+    "_rev": "5-9e175f5277056d2403c79b487896abea",
+    "name": "ARYEMO SUNDAY Household",
+    "type": "contact",
+    "muted": "2023-06-06T14:51:55.655Z",
+    "parent": {
+        "_id": "ea83c3e7-041f-5255-8300-57a60c1f20bb",
+        "parent": {
+            "_id": "1840d641-0497-5f6d-a6d9-6d7560fbff51",
+            "parent": {
+                "_id": "41c8b79c-d8e8-466c-9597-5d4baa582e7f",
+                "parent": {
+                    "_id": "lamwo",
+                    "parent": {
+                        "_id": "acholi"
+                    }
+                }
+            }
+        }
+    },
+    "contact": {
+        "_id": "eb05d5ec-2bde-462c-8d1b-ad3e126c3826"
+    },
+    "group_wash": {
+        "hh_is_odf": "no",
+        "hh_have_latrine": "yes",
+        "hh_have_drying_rack": "yes",
+        "hh_have_rubbish_pit": "yes",
+        "hh_have_bath_shelter": "yes",
+        "hh_have_backyard_garden": "yes",
+        "hh_have_improved_latrine": "no",
+        "hh_have_sanitary_kitchen": "no",
+        "hh_access_safe_water_source": "yes",
+        "hh_have_safe_drinking_water": "no",
+        "hh_in_sanitary_dwelling_house": "yes",
+        "hh_functional_handwashing_facility": "yes"
+    },
+    "geolocation": "",
+    "contact_type": "c60-clinic",
+    "imported_date": "2025-03-01T21:18:26.839Z",
+    "reported_date": 1656414167265
+}
