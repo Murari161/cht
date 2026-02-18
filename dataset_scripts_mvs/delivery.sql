@@ -40,6 +40,7 @@ SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,days_since_delivery_date}'::text[]                     AS days_since_delivery_date,
     doc #>> '{fields,referred_for_nutrition_follow_up}'::text[]             AS referred_for_nutrition_follow_up,
     doc #>> '{fields,delivery_place_label}'::text[]                          AS delivery_place_label,
+    doc #>> '{fields,pregnancy_hiv_test_result}'::text[]                          AS pregnancy_hiv_test_result,
   
     doc #>> '{fields,group_woman_condition,woman_outcome}'::text[]      AS woman_outcome,
     doc #>> '{fields,group_delivery_outcomes,number_of_babies_delivered}'::text[]      AS number_of_babies_delivered,
@@ -73,6 +74,7 @@ doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,date_of_birth
 doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,baby_condition}' AS baby_condition,
 doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,created_by_doc}' AS created_by_doc,
 doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,has_danger_signs_baby}' AS has_danger_signs_baby,
+doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,baby_danger_sign_body}' AS baby_danger_sign_body,
 doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,baby_danger_sign_fever}' AS baby_danger_sign_fever,
 doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,baby_danger_sign_drowsy}' AS baby_danger_sign_drowsy,
 doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,breastfed_within_one_hour}' AS breastfed_within_one_hour,
@@ -161,6 +163,9 @@ doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,baby_danger_s
     doc #>> '{contact,parent,parent,parent,_id}'    AS parish_id,              
     doc #>> '{contact,parent,parent,parent,parent,_id}'           AS district,                 
     doc #>> '{contact,parent,parent,parent,parent,parent,_id}'    AS region,
+    delivery.is_current,
+
+
     CURRENT_TIMESTAMP AS last_refresh_date   
 
    FROM dwh.cht_data
