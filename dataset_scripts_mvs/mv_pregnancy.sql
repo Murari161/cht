@@ -4,10 +4,11 @@ AS
 SELECT
     doc ->> '_id'::text                              AS doc_id,
     doc ->> '_rev'::text                             AS rev,                                 -- [NEW FIELD]
-    to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
-    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
-    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
-    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS month,
+    to_timestamp((NULLIF(d.doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
+    to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY-MM-DD'::text)::date AS date,
+    to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY'::text)::integer AS year,
+    to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'MM'::text)::integer AS month,
+    to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'FMMonth'::text) AS monthname,
     doc ->'fields'->'meta'->>'instanceID' AS instanceID,
     doc ->'fields'->'inputs'->'meta'->>'deprecatedID' AS deprecatedID,
     doc ->'fields'->'inputs'->'meta'->'location'->>'lat' AS location_lat,
@@ -151,42 +152,18 @@ SELECT
     doc #>> '{fields,danger_signs,_swelling}'::text[]                       AS swelling,
     doc #>> '{fields,danger_signs,_breathlessness}'::text[]                 AS breathlessness,
 
-    doc #>> '{fields,group_summary,s_note_pregnancy_registration}'::text[]                AS s_note_pregnancy_registration,
-    doc #>> '{fields,group_summary,s_note_summary_pregnancy_registration}'::text[]       AS s_note_summary_pregnancy_registration,
-    doc #>> '{fields,group_summary,s_note_person_details}'::text[]                        AS s_note_person_details,
-    doc #>> '{fields,group_summary,s_note_person_details_values}'::text[]                 AS s_note_person_details_values,
-    doc #>> '{fields,group_summary,s_note_summary}'::text[]                                AS s_note_summary,
-    doc #>> '{fields,group_summary,s_note_pregnancy_age}'::text[]                          AS s_note_pregnancy_age,
-    doc #>> '{fields,group_summary,s_note_edd}'::text[]                                    AS s_note_edd,
-    doc #>> '{fields,group_summary,s_note_nutrition_status}'::text[]                       AS s_note_nutrition_status,
-    doc #>> '{fields,group_summary,s_note_nutrition_status_healthy}'::text[]               AS s_note_nutrition_status_healthy,
-    doc #>> '{fields,group_summary,s_note_nutrition_status_malnourished}'::text[]         AS s_note_nutrition_status_malnourished,
-    doc #>> '{fields,group_summary,s_note_danger_signs}'::text[]                            AS s_note_danger_signs,
-    doc #>> '{fields,group_summary,s_note_vaginal_bleeding}'::text[]                        AS s_note_vaginal_bleeding,
-    doc #>> '{fields,group_summary,s_note_lower_abdomen_pain}'::text[]                      AS s_note_lower_abdomen_pain,
-    doc #>> '{fields,group_summary,s_note_severe_headache}'::text[]                          AS s_note_severe_headache,
-    doc #>> '{fields,group_summary,s_note_very_pale}'::text[]                                AS s_note_very_pale,
-    doc #>> '{fields,group_summary,s_note_fever}'::text[]                                    AS s_note_fever,
-    doc #>> '{fields,group_summary,s_note_reduced_or_no_feotal_movements}'::text[]          AS s_note_reduced_or_no_feotal_movements,
-    doc #>> '{fields,group_summary,s_note_blurred_vision}'::text[]                            AS s_note_blurred_vision,
-    doc #>> '{fields,group_summary,s_note_swelling}'::text[]                                  AS s_note_swelling,
-    doc #>> '{fields,group_summary,s_note_breathlessness}'::text[]                            AS s_note_breathlessness,
-    doc #>> '{fields,group_summary,s_note_findings}'::text[]                                  AS s_note_findings,
-    doc #>> '{fields,group_summary,s_note_follow_up_in_3_days}'::text[]                       AS s_note_follow_up_in_3_days,
-    doc #>> '{fields,group_summary,s_note_nutrition_follow_up_task_when_due}'::text[]        AS s_note_nutrition_follow_up_task_when_due,
-
     --- reporting hierarchy
-    doc #>> '{contact,_id}'                         AS chw_id,                   
-    doc #>> '{contact,parent,_id}'                  AS chw_area_id,  
-    doc #>> '{contact,parent,parent,_id}'           AS facility_id,                                    
-    doc #>> '{contact,parent,parent,parent,_id}'    AS parish_id,              
-    doc #>> '{contact,parent,parent,parent,parent,_id}'           AS district,                 
-    doc #>> '{contact,parent,parent,parent,parent,parent,_id}'    AS region,
+    doc #>> '{contact,_id}'                         AS chw_id,
+    h.facility_name,
+    h.village,
+    h.district,
+    h.region,
     CURRENT_TIMESTAMP                                 AS last_refresh_date   
 
-
-FROM dwh.cht_data
-WHERE (doc ->> 'form') = 'pregnancy'
+FROM dwh.cht_data d
+LEFT JOIN cht.mv_chew_hierarchy_2 h
+       ON (d.doc #>> '{contact,_id}') = h.chw_id
+WHERE (d.doc ->> 'form') = 'pregnancy'
   AND is_current
 WITH DATA;
 

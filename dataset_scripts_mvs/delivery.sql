@@ -3,10 +3,11 @@ TABLESPACE ts_report
 AS 
 SELECT doc ->> '_id'::text AS uuid,
       doc ->> '_rev'::text                             AS rev,                                 -- [NEW FIELD]
-      to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
-     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
-     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
-     TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS month,
+      to_timestamp((NULLIF(d.doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
+    to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY-MM-DD'::text)::date AS date,
+    to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY'::text)::integer AS year,
+    to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'MM'::text)::integer AS month,
+    to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'FMMonth'::text) AS monthname,
      doc ->'fields'->'meta'->>'instanceID' AS instanceID,
      doc ->'fields'->'inputs'->'meta'->>'deprecatedID' AS deprecatedID,
      doc ->'fields'->'inputs'->'meta'->'location'->>'lat' AS location_lat,
@@ -135,40 +136,21 @@ doc #>> '{fields,group_baby_condition,child_repeat,0,child_profile,baby_danger_s
     
     doc #>> '{fields,group_pnc_visits,who_recommendation}'::text[]             AS who_recommendation,
     doc #>> '{fields,group_pnc_visits,pnc_visits}'::text[]            AS pnc_visits,
-    
-    doc #>> '{fields,group_summary,s_note_delivery_report}'::text[]                       AS s_note_delivery_report,
-    doc #>> '{fields,group_summary,s_note_submit}'::text[]                                AS s_note_submit,
-    doc #>> '{fields,group_summary,s_note_person_details}'::text[]                        AS s_note_person_details,
-    doc #>> '{fields,group_summary,s_note_person_details_values}'::text[]                 AS s_note_person_details_values,
-    doc #>> '{fields,group_summary,s_note_delivery_date}'::text[]                          AS s_note_delivery_date,
-    doc #>> '{fields,group_summary,s_note_summary}'::text[]                                AS s_note_summary,
-    doc #>> '{fields,group_summary,s_note_findings_mother_alive}'::text[]                  AS s_note_findings_mother_alive,
-    doc #>> '{fields,group_summary,s_note_findings_mother_dead}'::text[]                   AS s_note_findings_mother_dead,
-    doc #>> '{fields,group_summary,s_note_danger_signs}'::text[]                            AS s_note_danger_signs,
-    doc #>> '{fields,group_summary,s_note_no_danger_signs}'::text[]                         AS s_note_no_danger_signs,
-    doc #>> '{fields,group_summary,s_note_woman_danger_sign_fever}'::text[]                AS s_note_woman_danger_sign_fever,
-    doc #>> '{fields,group_summary,s_note_woman_danger_sign_severe_headache}'::text[]      AS s_note_woman_danger_sign_severe_headache,
-    doc #>> '{fields,group_summary,s_note_woman_danger_sign_vaginal_bleeding}'::text[]     AS s_note_woman_danger_sign_vaginal_bleeding,
-    doc #>> '{fields,group_summary,s_note_woman_danger_sign_foul_vaginal_discharge}'::text[] AS s_note_woman_danger_sign_foul_vaginal_discharge,
-    doc #>> '{fields,group_summary,s_note_woman_danger_sign_convulsions}'::text[]         AS s_note_woman_danger_sign_convulsions,
-    doc #>> '{fields,group_summary,s_note_refer_to_health_facility}'::text[]              AS s_note_refer_to_health_facility,
-    doc #>> '{fields,group_summary,s_note_refer_to_health_facility_immediately}'::text[]  AS s_note_refer_to_health_facility_immediately,
-    doc #>> '{fields,group_summary,s_note_follow_up}'::text[]                               AS s_note_follow_up,
-    doc #>> '{fields,group_summary,s_note_task_will_appear}'::text[]                        AS s_note_task_will_appear,
 
   --- reporting hierarchy
-    doc #>> '{contact,_id}'                         AS chw_id,                   
-    doc #>> '{contact,parent,_id}'                  AS chw_area_id,  
-    doc #>> '{contact,parent,parent,_id}'           AS contact_facility_id,                                    
-    doc #>> '{contact,parent,parent,parent,_id}'    AS parish_id,              
-    doc #>> '{contact,parent,parent,parent,parent,_id}'           AS district,                 
-    doc #>> '{contact,parent,parent,parent,parent,parent,_id}'    AS region,
-    delivery.is_current,
+    doc #>> '{contact,_id}'                         AS chw_id,
+    h.facility_name,
+    h.village,
+    h.district,
+    h.region,
+    --delivery.is_current,
 
 
     CURRENT_TIMESTAMP AS last_refresh_date   
 
-   FROM dwh.cht_data
+  FROM dwh.cht_data d
+  LEFT JOIN cht.mv_chew_hierarchy_2 h
+       ON (d.doc #>> '{contact,_id}') = h.chw_id
   WHERE (doc ->> 'form'::text) = 'delivery'::text 
   AND is_current = true
 WITH DATA;
