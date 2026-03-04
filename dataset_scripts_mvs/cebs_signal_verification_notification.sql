@@ -1,3 +1,4 @@
+drop MATERIALIZED VIEW cht.mv_cebs_signal_verification_notification;
 CREATE MATERIALIZED VIEW cht.mv_cebs_signal_verification_notification
 TABLESPACE ts_report
 AS
@@ -5,11 +6,11 @@ SELECT
         doc ->> '_id'::text AS uuid,
         doc ->> 'form'::text AS form,
 
-        to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
-        (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
-        (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
-        TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS month,
-        doc ->'fields'->'meta'->>'instanceID' AS instanceID,
+        to_timestamp((NULLIF(d.doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
+        to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY-MM-DD'::text)::date AS date,
+        to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY'::text)::integer AS year,
+        to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'MM'::text)::integer AS month,
+        to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'FMMonth'::text) AS monthname,
         doc ->'fields'->'inputs'->'meta'->>'deprecatedID' AS deprecatedID,
         doc ->'fields'->'inputs'->'meta'->'location'->>'lat' AS location_lat,
         doc ->'fields'->'inputs'->'meta'->'location'->>'long' AS location_long,
@@ -17,10 +18,6 @@ SELECT
         doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
         doc ->'geolocation'->>'code' AS geolocation_code,
         doc ->'geolocation'->>'message' AS geolocation_message,
-        doc -> 'contact' ->> '_id'                                           AS chw_id,
-        doc -> 'contact' -> 'parent' ->> '_id'                              AS facility_id,
-        doc -> 'contact' -> 'parent' -> 'parent' ->> '_id'                  AS district,
-        doc -> 'contact' -> 'parent' -> 'parent' -> 'parent' ->> '_id'      AS region,
         doc -> 'fields' -> 'inputs' ->> 'source'                             AS source,
         doc -> 'fields' -> 'inputs' ->> 'source_id'                          AS source_id,
         doc -> 'fields' -> 'inputs' ->> 't_place_name'              AS t_place_name,
@@ -55,11 +52,31 @@ SELECT
         doc -> 'fields' -> 'notification' ->> 'duplicate_signal'    AS notification_duplicate_signal,
         doc -> 'fields' -> 'notification' ->> 'threat_still_exists'    AS threat_still_exists,
         doc -> 'fields' -> 'notification' ->> 'threat_no_longer_exists'    AS threat_no_longer_exists,
-        CURRENT_TIMESTAMP as last_refresh_date
-   
-FROM dwh.cht_data 
+        
+        doc #>> '{contact,_id}'                         AS chw_id,
+        h.facility_name,
+        h.village,
+        h.district,
+        h.region,
+    --delivery.is_current,
+
+
+    CURRENT_TIMESTAMP AS last_refresh_date   
+
+  FROM dwh.cht_data d
+  LEFT JOIN cht.mv_chew_hierarchy_2 h
+       ON (d.doc #>> '{contact,_id}') = h.chw_id
 WHERE (doc ->> 'form'::text) = 'cebs_signal_verification_notification'::text
   AND is_current
 WITH DATA;
-CREATE INDEX mv_cebs_signal_verification_notificationchw_is ON cht.mv_cebs_signal_verification_notification USING btree (chw_id);
-CREATE INDEX mv_cebs_signal_verification_notification_eported ON cht.mv_cebs_signal_verification_notification USING btree (reported);
+CREATE INDEX mv_cebs_signal_verification_notificationchw_is ON cht.mv_cebs_signal_verification_notification USING btree (chw_id) tablespace ts_indexes;
+CREATE INDEX mv_cebs_signal_verification_notification_eported ON cht.mv_cebs_signal_verification_notification USING btree (reported) tablespace ts_indexes;
+--permissions
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_cebs_signal_report_vht TO albert_fellow;
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_cebs_signal_report_vht TO tom_fellow;
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_cebs_signal_report_vht TO baker;
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_cebs_signal_report_vht TO mkizito;
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_cebs_signal_report_vht TO mpaul;
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_cebs_signal_report_vht TO nmadrine;
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_cebs_signal_report_vht TO rutayisire;
+
