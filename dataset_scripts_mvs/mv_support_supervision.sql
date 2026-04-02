@@ -1,13 +1,15 @@
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_support_supervision;
 CREATE MATERIALIZED VIEW cht.mv_support_supervision
 TABLESPACE ts_report
 AS
 SELECT
      doc ->> '_id'::text                              AS doc_id,
       doc ->> '_rev'::text                             AS rev,                                 -- [NEW FIELD]
-      to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
-     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
-     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
-     TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS month,
+    to_timestamp((NULLIF(d.doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
+        to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY-MM-DD'::text)::date AS date,
+        to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY'::text)::integer AS year,
+        to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'MM'::text)::integer AS month,
+        to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'FMMonth'::text) AS monthname,
      doc ->'fields'->'meta'->>'instanceID' AS instanceID,
      doc ->'fields'->'inputs'->'meta'->>'deprecatedID' AS deprecatedID,
      doc ->'fields'->'inputs'->'meta'->'location'->>'lat' AS location_lat,
@@ -197,13 +199,16 @@ SELECT
       doc #>> '{fields,group_patient_summary,s_remarks_details}'::text[]               AS s_remarks_details,
 
      --- reporting hierarchy
-      doc #>> '{contact,_id}'                         AS chw_id,                   
-      doc #>> '{contact,parent,_id}'                  AS facility_id,  
-      doc #>> '{contact,parent,parent,_id}'           AS district,                                    
-      doc #>> '{contact,parent,parent,parent,_id}'    AS region,
+      doc #>> '{contact,_id}'                         AS chw_id,
+      h.facility_name,
+      h.village,
+      h.district,
+      h.region,
       CURRENT_TIMESTAMP                                 AS last_refresh_date         
 
-FROM dwh.cht_data
+FROM dwh.cht_data d
+LEFT JOIN cht.mv_chew_hierarchy_2 h
+  ON (d.doc #>> '{contact,_id}') = h.chw_id       
 WHERE (doc ->> 'form') = 'support_supervision'
   AND is_current
 WITH DATA;

@@ -19,7 +19,7 @@ SELECT
     doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
     doc ->'geolocation'->>'code' AS geolocation_code,
     doc ->'geolocation'->>'message' AS geolocation_message,
-    doc #>> '{contact,_id}'::text[] AS chw_id,
+    doc #>> '{contact,_id}'::text[] AS contact_chw_id,
     doc #>> '{contact,parent,_id}'::text[] AS contact_chw_area_id,
     doc #>> '{contact,parent,parent,_id}'::text[] AS contact_facility_id,
     doc #>> '{contact,parent,parent,parent,_id}'::text[] AS parish_id,
@@ -191,24 +191,18 @@ SELECT
     doc #>> '{fields,group_routine_care,start_breastfeeding_immediately}'::text[] AS g_start_breastfeeding_immediately,
     doc #>> '{fields,group_routine_care,feed_the_baby}'::text[] AS g_feed_the_baby,
     doc #>> '{fields,group_routine_care,ensure_baby_well_positioned}'::text[] AS g_ensure_baby_well_positioned,
-    doc #>> '{fields,group_patient_summary,cough_prereferral_treatment_given}'::text[] AS g_cough_prereferral_treatment_given,
-    doc #>> '{fields,group_patient_summary,diarrhoea_prerefferal_treatment-header}'::text[] AS g_diarrhoea_prerefferal_treatment_header,
-    doc #>> '{fields,group_patient_summary,diarrhoea_prereferral_treatment_given}'::text[] AS g_diarrhoea_prereferral_treatment_given,
-    doc #>> '{fields,group_patient_summary,fever_prereferral_treatment_given}'::text[] AS g_fever_prereferral_treatment_given,
-    doc #>> '{fields,group_patient_summary,general_signs_header}'::text[] AS g_general_signs_header,
-    doc #>> '{fields,group_patient_summary,danger_sign_prereferral_treatment_given}'::text[] AS g_danger_sign_prereferral_treatment_given,
-    doc #>> '{fields,group_patient_summary,cough_treatment_given}'::text[] AS g_cough_treatment_given,
-    doc #>> '{fields,group_patient_summary,diarrhoea_treatment_given}'::text[] AS g_diarrhoea_treatment_given,
-    doc #>> '{fields,group_patient_summary,fever_treatment_given}'::text[] AS g_fever_treatment_given,
-    doc #>> '{fields,group_patient_summary,have_you_referred}'::text[] AS g_have_you_referred,
-    (doc #>> '{fields,group_patient_summary,gloves_used_mrdt}'):: int AS g_gloves_used_mrdt,
-    (doc #>> '{fields,group_patient_summary,test_kits_used_mrdt}'):: int AS g_test_kits_used_mrdt,
-    (doc #>> '{fields,group_patient_summary,gloves_used_rectal}'):: int AS g_gloves_used_rectal,
-
     -- Last column for tracking refresh
-    CURRENT_TIMESTAMP AS last_refresh_date
+         doc #>> '{contact,_id}'                         AS chw_id,
+      h.facility_name,
+      h.village,
+      h.district,
+      h.region,
+      CURRENT_TIMESTAMP                                 AS last_refresh_date     
 
-FROM dwh.cht_data
+FROM dwh.cht_data d
+LEFT JOIN cht.mv_chew_hierarchy_2 h
+  ON (d.doc #>> '{contact,_id}') = h.chw_id 
+
 WHERE (doc ->> 'form'::text) = 'assessment'::text
   AND is_current
 WITH NO DATA;
