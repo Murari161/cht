@@ -8,7 +8,6 @@ DECLARE
     'mv_community_death_notification_revised', 
     'mv_delivery', 
     'mv_health_education_new',
-    'mv_integrated_echis_performance',
     'mv_pregnancy_new',
     'mv_vht_immunization',
     'mv_vht_supervision', 
@@ -88,6 +87,7 @@ DECLARE
     'mv_assessment',
     'mv_anc_visit_follow_up',
     'mv_wash',--
+    'mv_integrated_echis_performance',    
     'mv_form_meta',
     --*'mv_population_demographics',
     --*'contactview_vht',
