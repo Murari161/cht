@@ -1,0 +1,65 @@
+-- Clear previous results (optional)
+DELETE FROM deps_saved_ddl;
+
+-- Save DDL for your specific list
+SELECT cht.deps_save_ddl_for_objects_2(ARRAY[
+    'report.mv_communicable_diseases_district',
+    'report.mv_eidsr_weekly_enrollment_pivot',
+    'report.mv_eidsr_event_data_summary_flat',
+    'malaria.mv_malaria_deaths',
+    'malaria.mv_iccm_dataset',
+    'malaria.mv_malaria_monthly_dataset',
+    'report.mv_tb_case_notification',
+    'report.mv_dr_tb',
+    'report.mv_ppm',
+    'report.mv_tb_screening',
+    'report.mv_tb_elements_new',
+    'report.mv_tb_elements_wide',
+    'report.mv_tb_treatment_outcomes',
+    'report.mv_tb_weekly_status',
+    'report.mv_tb_lab',
+    'report.mv_tb_paediatrics',
+    'report.mv_leprosy',
+    'report.mv_tbh_coinfection',
+    'report.mv_acf',
+    'report.mv_tpt_weekly',
+    'report.mv_tb_data_elements',
+    'report.mv_epi_dataelements',
+    'report.mv_clinical_services_combo',
+    'report.mv_clinical_services',
+    'report.mv_palliative_care',
+    'report.mv_surgeries',
+    'report.mv_disability_elements_2',
+    'report.mv_monthly_stock_analysis_raw',
+    'report.mv_monthly_stock_analysis_aggregate',
+    'report.mv_amr_rx_audit_visit',
+    'report.mv_amr_prescription_audit_clean',
+    'report.mv_nutrition_hmis_elements_v3',
+    'report.mv_nutrition_hmis_elements_v2',
+    'report.mv_rmnch_dist_dataelements',
+    'cht.mv_community_death_notification_revised',
+    'report.mv_performance_indicators_v2',
+    'report.mv_performance_raw',
+    'report.mv_097b_data_updated',
+    'report.mv_non_communicable_diseases',
+    'cht.mv_vht_supervision',
+    'cht.mv_chew_hierarchy_2',
+    'cht.mv_chew_performance',
+    'cht.mv_form_meta',
+    'cht.mv_assessment_new',
+    'cht.mv_screening',
+    'cht.mv_health_education_new',
+    'cht.mv_pregnancy_new',
+    'cht.mv_referral_follow_up',
+    'cht.mv_household_model_notification',
+    'cht.mv_cebs_signal_report_vht',
+    'cht.mv_cebs_signal_verification',
+    'cht.mv_cebs_signal_verification_notification',
+    'cht.mv_vht_immunization',
+    'cht.mv_delivery'
+]);
+
+-- View results
+SELECT deps_view_schema, deps_view_name, deps_ddl_to_run 
+FROM deps_saved_ddl 
+ORDER BY deps_view_schema, deps_view_name;

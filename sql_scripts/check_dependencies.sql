@@ -1,6 +1,3 @@
-
----check dependencies
-
 SELECT n.nspname AS schema_name, c.relname AS object_name, 
 CASE c.relkind 
 WHEN 'v' THEN 'view' 

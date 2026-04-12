@@ -1,8 +1,9 @@
-CREATE MATERIALIZED VIEW report.mv_gbv_community_form
+CREATE MATERIALIZED VIEW cht.mv_gbv_community_form
 TABLESPACE ts_report
 AS SELECT 
     doc ->> '_id' AS uuid,
     doc ->> 'form' AS form,
+    doc ->> '_rev' AS rev,
     
     -- Date derivations
     to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
@@ -131,11 +132,11 @@ AS SELECT
     CURRENT_TIMESTAMP AS last_refresh_date
 
 FROM dwh.cht_data d
-LEFT JOIN cht.mv_chew_hierarchy_2 h ON (doc #>> '{contact,_id}') = h.chw_id
+LEFT JOIN cht.mv_chew_hierarchy_3 h ON (doc #>> '{contact,_id}') = h.chw_id
 WHERE (doc ->> 'form') = 'gbv_community_form'
   AND is_current
 WITH DATA;
 
 -- Indexes
-CREATE INDEX mv_gbv_community_reported_idx ON report.mv_gbv_community_form (reported);
-CREATE INDEX mv_gbv_community_chw_idx ON report.mv_gbv_community_form (chw_id);
+CREATE INDEX mv_gbv_community_reported_idx ON cht.mv_gbv_community_form (reported);
+CREATE INDEX mv_gbv_community_chw_idx ON cht.mv_gbv_community_form (chw_id);
