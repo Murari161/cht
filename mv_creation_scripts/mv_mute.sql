@@ -1,6 +1,6 @@
--- cht.mv_unmute source
-DROP MATERIALIZED VIEW IF EXISTS cht.mv_unmute;
-CREATE MATERIALIZED VIEW cht.mv_unmute
+-- cht.mv_mute source
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_mute;
+CREATE MATERIALIZED VIEW cht.mv_mute
 TABLESPACE ts_report
 AS SELECT doc ->> '_id'::text AS uuid,
     doc ->> 'form'::text AS form,
@@ -24,11 +24,11 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,inputs,contact,name}'::text[] AS inputs_contact_name,
     doc #>> '{fields,patient_id}'::text[] AS patient_id,
     doc #>> '{fields,contact_name}'::text[] AS contact_name,
-    doc #>> '{fields,unmute_reason}'::text[] AS unmute_reason,
-    doc #>> '{fields,unmute_reason_other}'::text[] AS unmute_reason_other,
-    doc #>> '{fields,person_unmuting,g_unmute_reason}'::text[] AS g_unmute_reason,
-    doc #>> '{fields,person_unmuting,g_unmute_reason_other}'::text[] AS g_unmute_reason_other,
-   doc #>> '{contact,_id}'                         AS chw_id,
+    doc #>> '{fields,mute_reason}'::text[] AS mute_reason,
+    doc #>> '{fields,mute_reason_other}'::text[] AS mute_reason_other,
+    doc #>> '{fields,person_muting,g_mute_reason}'::text[] AS g_mute_reason,
+    doc #>> '{fields,person_muting,g_mute_reason_other}'::text[] AS g_mute_reason_other,
+    doc #>> '{contact,_id}'                         AS chw_id,
       h.facility_name,
       h.dhis2_facility_id,
       h.village,
@@ -36,12 +36,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
       h.region,
       CURRENT_TIMESTAMP                                 AS last_refresh_date  
 FROM dwh.cht_data d
-LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id
-  WHERE (doc ->> 'form'::text) = 'unmute'::text AND is_current
+LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id 
+  WHERE (doc ->> 'form'::text) = 'mute'::text AND is_current
 WITH DATA;
 
 -- View indexes:
-CREATE INDEX mv_unmute_chw_id ON cht.mv_unmute USING btree (chw_id) tablespace ts_indexes;
-CREATE INDEX mv_unmute_reported ON cht.mv_unmute USING btree (reported) tablespace ts_indexes;
-CREATE INDEX mv_unmute_year_month ON cht.mv_unmute USING btree (year, month) tablespace ts_indexes;
-CREATE INDEX mv_unmute_district_year_month ON cht.mv_unmute USING btree (district, year, month) tablespace ts_indexes;
+CREATE INDEX mv_mute_chw_id ON cht.mv_mute USING btree (chw_id) tablespace ts_indexes;
+CREATE INDEX mv_mute_reported ON cht.mv_mute USING btree (reported) tablespace ts_indexes;
+CREATE INDEX mv_mute_year_month ON cht.mv_mute USING btree (year, month) tablespace ts_indexes;
+CREATE INDEX mv_mute_district ON cht.mv_mute USING btree (district) tablespace ts_indexes;
+CREATE INDEX mv_mute_village ON cht.mv_mute USING btree (village) tablespace ts_indexes;

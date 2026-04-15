@@ -1,0 +1,111 @@
+-- cht.mv_person source
+DROP MATERIALIZED VIEW cht.mv_person;
+CREATE MATERIALIZED VIEW cht.mv_person
+TABLESPACE ts_report
+AS SELECT doc ->> '_id'::text AS doc_id,
+    doc ->> '_rev'::text AS rev,
+    doc ->> 'imported_date'::text AS imported_date,
+    to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
+    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
+    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
+    to_char(to_timestamp((((doc ->>'reported_date'::text)::bigint) / 1000)::double precision), 'MM'::text)::integer AS month,
+    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS monthname,
+    doc ->> 'type'::text AS type,
+    doc ->> 'household_id'::text AS household_id,
+    doc ->> 'name'::text AS name,
+    doc ->> 'date_of_birth'::text AS date_of_birth,
+    doc ->> 'sex'::text AS sex,
+    doc ->> 'today_d'::text AS today_d,
+    doc ->> 'c_name'::text AS c_name,
+    doc ->> 'notes'::text AS notes,
+    doc ->> 'c_sex'::text AS c_sex,
+    doc ->> 'dob_method'::text AS dob_method,
+    doc ->> 'dob_calendar'::text AS dob_calendar,
+    doc ->> 'age_years'::text AS age_years,
+    doc ->> 'ephemeral_years'::text AS ephemeral_years,
+    doc ->> 'dob_approx'::text AS dob_approx,
+    doc ->> 'dob_raw'::text AS dob_raw,
+    doc ->> 'c_dob_iso'::text AS c_dob_iso,
+    doc ->> 'c_dob_debug'::text AS c_dob_debug,
+    doc ->> 'current_age'::text AS current_age,
+    doc ->> 'date_vht_visit'::text AS date_vht_visit,
+    doc ->> 'has_disability'::text AS has_disability,
+    doc ->> 'test_for_hiv_last3months'::text AS test_for_hiv_last3months,
+    doc ->> 'hiv_test_result'::text AS hiv_test_result,
+    doc ->> 'on_art_treatment'::text AS on_art_treatment,
+    doc ->> 'has_tb'::text AS has_tb,
+    doc ->> 'on_tb_treatment'::text AS on_tb_treatment,
+    doc ->> 'current_fp_method'::text AS current_fp_method,
+    doc ->> 'current_fp_method_label'::text AS current_fp_method_label,
+    doc ->> 'phone'::text AS phone,
+    doc ->> 'phone2'::text AS phone2,
+    doc ->> 'p_date_vht_visit'::text AS p_date_vht_visit,
+    doc ->> 'relationship_with_hh'::text AS relationship_with_hh,
+    doc ->> 'other_relationship'::text AS other_relationship,
+    doc ->> 'client_category'::text AS client_category,
+    doc ->> 'national_identification_number'::text AS national_identification_number,
+    doc ->> 'refugee_identification_number'::text AS refugee_identification_number,
+    doc ->> 'p_has_disability'::text AS p_has_disability,
+    doc ->> 'disability'::text AS disability,
+    doc ->> 'assistive_tech'::text AS assistive_tech,
+    doc ->> 'rehabilitation'::text AS rehabilitation,
+    doc ->> 'afp_vpd'::text AS afp_vpd,
+    doc ->> 'refer_afp'::text AS refer_afp,
+    doc ->> 'child_in_school'::text AS child_in_school,
+    doc ->> 'p_test_for_hiv_last3months'::text AS p_test_for_hiv_last3months,
+    doc ->> 'hiv_test_result_label'::text AS hiv_test_result_label,
+    doc ->> 'p_hiv_test_result'::text AS p_hiv_test_result,
+    doc ->> 'p_on_art_treatment'::text AS p_on_art_treatment,
+    doc ->> 'note_attend_art_clinic'::text AS note_attend_art_clinic,
+    doc ->> 'taking_medication'::text AS taking_medication,
+    doc ->> 'note_explain_importance_taking_med'::text AS note_explain_importance_taking_med,
+    doc ->> 'note_encourage_to_continue_taking_med'::text AS note_encourage_to_continue_taking_med,
+    doc ->> 'note_encourage_client'::text AS note_encourage_client,
+    doc ->> 'note_advise_client_check_status'::text AS note_advise_client_check_status,
+    doc ->> 'note_advise_client_check_status2'::text AS note_advise_client_check_status2,
+    doc ->> 'p_has_tb'::text AS p_has_tb,
+    doc ->> 'p_on_tb_treatment'::text AS p_on_tb_treatment,
+    doc ->> 'note_tb_referral'::text AS note_tb_referral,
+    doc ->> 'received_hpv_'::text AS received_hpv_,
+    doc ->> 'hpv_card'::text AS hpv_card,
+    doc ->> 'received_hpv'::text AS received_hpv,
+    doc ->> 'check_hpv_note'::text AS check_hpv_note,
+    doc ->> 'educate_hpv_note'::text AS educate_hpv_note,
+    doc ->> 'refer_hpv'::text AS refer_hpv,
+    doc ->> 'received_tt_vaccine'::text AS received_tt_vaccine,
+    doc ->> 'takes_alcohol'::text AS takes_alcohol,
+    doc ->> 'has_hypertension'::text AS has_hypertension,
+    doc ->> 'has_sickle_cell'::text AS has_sickle_cell,
+    doc ->> 'uses_tobacco'::text AS uses_tobacco,
+    doc ->> 'sleep_under_llin'::text AS sleep_under_llin,
+    doc ->> 'why_not_using_llin'::text AS why_not_using_llin,
+    doc ->> 'why_not_using_llin_other'::text AS why_not_using_llin_other,
+    doc ->> 'note_vht_assist_how_to_get_llin'::text AS note_vht_assist_how_to_get_llin,
+    doc ->> 'note_vht_demonstrate_on_llin_use'::text AS note_vht_demonstrate_on_llin_use,
+    doc ->> 'using_fp_method'::text AS using_fp_method,
+    doc ->> 'fp_method'::text AS fp_method,
+    doc ->> 'note_fp_registration'::text AS note_fp_registration,
+    doc #>> '{parent,_id}'::text[] AS household_id_2,
+    doc #>> '{contact,_id}'                         AS vht_area_id,
+      h.facility_name,
+      h.dhis2_facility_id,
+      h.village,
+      h.district,
+      h.region,
+      CURRENT_TIMESTAMP                                 AS last_refresh_date  
+FROM dwh.cht_data d
+LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{parent,parent,_id}') = h.vht_area_id
+  WHERE (doc ->> 'type'::text) = 'person'::text AND is_current
+WITH DATA;
+
+-- View indexes:
+CREATE INDEX person_doc_id_idx ON cht.mv_person USING btree (doc_id) tablespace ts_indexes;
+CREATE INDEX person_household_id_idx ON cht.mv_person USING btree (household_id) tablespace ts_indexes;
+CREATE INDEX person_reported_idx ON cht.mv_person USING btree (reported) tablespace ts_indexes;
+CREATE INDEX person_vht_area_id_idx ON cht.mv_person USING btree (vht_area_id) tablespace ts_indexes;
+CREATE INDEX person_district_idx ON cht.mv_person USING btree (district) tablespace ts_indexes;
+CREATE INDEX person_dhis2_facility_id_idx ON cht.mv_person USING btree (dhis2_facility_id) tablespace ts_indexes;
+CREATE INDEX person_facility_name_idx ON cht.mv_person USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX person_district ON cht.mv_person USING btree (district) tablespace ts_indexes;
+CREATE INDEX person_region ON cht.mv_person USING btree (region) tablespace ts_indexes;
+CREATE INDEX person_village ON cht.mv_person USING btree (village) tablespace ts_indexes;
