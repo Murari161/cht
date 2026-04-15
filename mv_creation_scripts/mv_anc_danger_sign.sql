@@ -1,0 +1,92 @@
+-- cht.mv_anc_danger_sign source
+
+CREATE MATERIALIZED VIEW cht.mv_anc_danger_sign
+TABLESPACE ts_report
+AS SELECT doc ->> '_id'::text AS uuid,
+    doc ->> 'form'::text AS form,
+    to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
+    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
+    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
+    to_char(to_timestamp((((doc ->>'reported_date'::text)::bigint) / 1000)::double precision), 'MM'::text)::integer AS month,
+    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS monthname,
+    ((doc -> 'fields'::text) -> 'meta'::text) ->> 'instanceID'::text AS instanceid,
+    (((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) ->> 'deprecatedID'::text AS deprecatedid,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'lat'::text AS location_lat,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'long'::text AS location_long,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'error'::text AS location_error,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
+    (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
+    (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    doc #>> '{fields,inputs,source_id}'::text[] AS source_id,
+    doc #>> '{fields,inputs,source}'::text[] AS source,
+    doc #>> '{fields,inputs,is_follow_up}'::text[] AS is_follow_up,
+    doc #>> '{fields,inputs,t_place_name}'::text[] AS t_place_name,
+    doc #>> '{fields,inputs,t_vht_name}'::text[] AS t_vht_name,
+    doc #>> '{fields,inputs,t_vht_phone}'::text[] AS t_vht_phone,
+    doc #>> '{fields,inputs,user,contact_id}'::text[] AS user_contact_id,
+    doc #>> '{fields,inputs,user,facility_id}'::text[] AS user_facility_id,
+    doc #>> '{fields,inputs,contact,_id}'::text[] AS contact_id,
+    doc #>> '{fields,inputs,contact,date_of_birth}'::text[] AS contact_date_of_birth,
+    doc #>> '{fields,inputs,contact,sex}'::text[] AS contact_sex,
+    doc #>> '{fields,inputs,contact,name}'::text[] AS contact_name,
+    doc #>> '{fields,inputs,contact,parent,_id}'::text[] AS parent_id,
+    doc #>> '{fields,inputs,contact,parent,name}'::text[] AS parent_name,
+    doc #>> '{fields,inputs,contact,parent,parent,village}'::text[] AS parent_village,
+    doc #>> '{fields,inputs,contact,parent,parent,contact,phone}'::text[] AS parent_phone,
+    doc #>> '{fields,is_of_child_bearing_age}'::text[] AS is_of_child_bearing_age,
+    doc #>> '{fields,visited_contact_uuid}'::text[] AS visited_contact_uuid,
+    doc #>> '{fields,patient_age_in_years}'::text[] AS patient_age_in_years,
+    doc #>> '{fields,patient_age_in_months}'::text[] AS patient_age_in_months,
+    doc #>> '{fields,patient_age_in_days}'::text[] AS patient_age_in_days,
+    doc #>> '{fields,patient_age_display}'::text[] AS patient_age_display,
+    doc #>> '{fields,patient_id}'::text[] AS patient_id,
+    doc #>> '{fields,patient_name}'::text[] AS patient_name,
+    doc #>> '{fields,patient_name_with_s}'::text[] AS patient_name_with_s,
+    doc #>> '{fields,patient_gender}'::text[] AS patient_gender,
+    doc #>> '{fields,follow_up_label}'::text[] AS follow_up_label,
+    doc #>> '{fields,chw_area_name}'::text[] AS chw_area_name,
+    doc #>> '{fields,chw_name}'::text[] AS chw_name,
+    doc #>> '{fields,chw_phone}'::text[] AS chw_phone,
+    doc #>> '{fields,chw_village}'::text[] AS chw_village,
+    doc #>> '{fields,needs_signoff}'::text[] AS needs_signoff,
+    doc #>> '{fields,group_danger_sign_check,visited_health_facility}'::text[] AS visited_health_facility,
+    doc #>> '{fields,group_danger_sign_check,still_experiencing_danger_signs}'::text[] AS still_experiencing_danger_signs,
+    doc #>> '{fields,group_danger_sign_check,note_monitor_till_next_anc_check_up_at_Facility}'::text[] AS note_monitor_till_next_anc_check_up_at_facility,
+    doc #>> '{fields,group_danger_sign_check,note_still_experiencing_danger_signs}'::text[] AS note_still_experiencing_danger_signs,
+    doc #>> '{fields,group_danger_sign_check,note_danger_signs}'::text[] AS note_danger_signs,
+    doc #>> '{fields,group_danger_sign_check,vaginal_bleeding}'::text[] AS vaginal_bleeding,
+    doc #>> '{fields,group_danger_sign_check,lower_abdomen_pain}'::text[] AS lower_abdomen_pain,
+    doc #>> '{fields,group_danger_sign_check,severe_headache}'::text[] AS severe_headache,
+    doc #>> '{fields,group_danger_sign_check,very_pale}'::text[] AS very_pale,
+    doc #>> '{fields,group_danger_sign_check,fever}'::text[] AS fever,
+    doc #>> '{fields,group_danger_sign_check,reduced_or_no_feotal_movements}'::text[] AS reduced_or_no_feotal_movements,
+    doc #>> '{fields,group_danger_sign_check,blurred_vision}'::text[] AS blurred_vision,
+    doc #>> '{fields,group_danger_sign_check,swelling}'::text[] AS swelling,
+    doc #>> '{fields,group_danger_sign_check,breathlessness}'::text[] AS breathlessness,
+    doc #>> '{fields,group_danger_sign_check,has_danger_signs}'::text[] AS has_danger_signs,
+    doc #>> '{fields,group_danger_sign_check,has_no_danger_signs}'::text[] AS has_no_danger_signs,
+    doc #>> '{fields,group_danger_sign_check,note_has_no_danger_signs}'::text[] AS note_has_no_danger_signs,
+    doc #>> '{fields,group_danger_sign_check,note_has_danger_signs}'::text[] AS note_has_danger_signs,
+    doc #>> '{fields,group_danger_sign_check,refer_to_health_facility}'::text[] AS refer_to_health_facility,
+    doc #>> '{fields,group_danger_sign_check,note_complete_follow_up_task}'::text[] AS note_complete_follow_up_task, 
+    doc #>> '{contact,_id}'                         AS chw_id,
+      h.facility_name,
+      h.dhis2_facility_id,
+      h.village,
+      h.district,
+      h.region,
+    CURRENT_TIMESTAMP AS last_refresh_date
+   FROM dwh.cht_data couchdb
+   LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id 
+  WHERE (couchdb.doc ->> 'form'::text) = 'anc_danger_sign'::text AND couchdb.is_current
+WITH DATA;
+
+-- View indexes:
+CREATE INDEX useview_anc_danger_sign_uuid ON cht.mv_anc_danger_sign USING btree (reported);
+CREATE INDEX useview_anc_danger_sign_chw_id ON cht.mv_anc_danger_sign USING btree (chw_id);
+CREATE INDEX useview_anc_danger_sign_facility_id ON cht.mv_anc_danger_sign USING btree (facility_name);
+CREATE INDEX useview_anc_danger_sign_district ON cht.mv_anc_danger_sign USING btree (district);
+CREATE INDEX useview_anc_danger_sign_region ON cht.mv_anc_danger_sign USING btree (region);
+CREATE INDEX useview_anc_danger_sign_date ON cht.mv_anc_danger_sign USING btree (date);
+CREATE INDEX useview_anc_danger_sign_year ON cht.mv_anc_danger_sign USING btree (year);
+CREATE INDEX useview_anc_danger_sign_month ON cht.mv_anc_danger_sign USING btree (month);

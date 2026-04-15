@@ -1,44 +1,40 @@
--- cht.form_metadata source
-
-CREATE MATERIALIZED VIEW cht.form_metadata
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_form_meta;
+CREATE MATERIALIZED VIEW cht.mv_form_meta
 TABLESPACE ts_report
-AS SELECT doc ->> '_id'::text AS uuid,
-    doc #>> '{contact,_id}'::text[] AS reported_by,
-    doc #>> '{contact,_id}'::text[] AS chw,
-    sup_users.fullname AS supervisor_name,
-    vht_users.fullname AS vht_name,
-    contactview.facility AS facility_name,
-    contactview.district AS district,
-    to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
-    doc #>> '{contact,parent,_id}'::text[] AS reported_by_parent,
-    COALESCE(doc ->> 'patient_id'::text, doc #>> '{fields,patient_id}'::text[]) AS patient_id,
-    doc ->> 'form'::text AS form,
-    doc ->> 'form'::text AS formname,
-    COALESCE(doc ->> 'errors'::text, '[]'::text) <> '[]'::text AS errors,
-    CASE
-            WHEN (doc -> 'roles'::text) = '["chew", "super_chew"]'::jsonb THEN 'SUPER CHEW'::text
-            WHEN (doc -> 'roles'::text) = '["chew"]'::jsonb THEN 'CHEW'::text
-            WHEN (EXISTS ( SELECT 1
-               FROM jsonb_array_elements_text(form.doc -> 'roles'::text) r(role)
-              WHERE r.role = 'chew'::text)) THEN 'CHEW'::text
-            WHEN (EXISTS ( SELECT 1
-               FROM jsonb_array_elements_text(form.doc -> 'roles'::text) r(role)
-              WHERE r.role = 'vht'::text)) THEN 'VHT'::text
-            ELSE 'OTHER'::text
-        END AS role
-   FROM dwh.cht_data form  
-LEFT JOIN cht.mv_cht_users sup_users ON (form.doc #>> '{contact,_id}'::text[]) = sup_users.contact_id
-     LEFT JOIN cht.contactview_vht contactview ON (form.doc #>> '{fields,inputs,contact,_id}'::text[]) = contactview.area_uuid
-     LEFT JOIN cht.mv_cht_users vht_users ON contactview.uuid = vht_users.contact_id
-WHERE (doc ->> 'type'::text) = 'data_record'::text AND (doc #>> '{contact,_id}'::text[]) IS NOT NULL AND (doc ->> 'form'::text) IS NOT NULL AND is_current = true
+AS SELECT cht.doc ->> '_id'::text AS form_uuid,
+    cht.doc ->> 'form'::text AS form_name,
+    COALESCE(cht.doc ->> 'patient_id'::text, cht.doc #>> '{fields,patient_id}'::text[]) AS patient_id,
+    to_timestamp((NULLIF(cht.doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
+    to_char(to_timestamp((((cht.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY-MM-DD'::text)::date AS date,
+    to_char(to_timestamp((((cht.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY'::text)::integer AS year,
+    to_char(to_timestamp((((cht.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'MM'::text)::integer AS month,
+    to_char(to_timestamp((((cht.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'FMMonth'::text) AS monthname,
+    cht.doc #>> '{fields,inputs,contact,_id}' AS inputs_contact_id,
+    cht.doc #>> '{contact,_id}'::text[] AS contact_id,
+    h.chw_id,
+    h.username,
+    h.chw_name,
+    h.phone,
+    h.email,
+    h.role,
+    h.vht_area_name,
+    h.village,
+    h.parish,
+    h.facility_name,
+    h.dhis2_facility_id,
+    h.district,
+    h.region,
+    CURRENT_TIMESTAMP AS last_refresh_date
+   FROM dwh.cht_data cht
+     LEFT JOIN cht.mv_chw_hierarchy h ON (cht.doc #>> '{contact,_id}'::text[]) = h.chw_id
+  WHERE cht.is_current = true AND (cht.doc ->> 'type'::text) = 'data_record'::text AND cht.doc ? 'form'::text AND (cht.doc #>> '{contact,_id}'::text[]) IS NOT NULL
 WITH DATA;
 
 -- View indexes:
-CREATE INDEX form_metadata_chw ON cht.form_metadata USING btree (chw);
-CREATE INDEX form_metadata_form ON cht.form_metadata USING btree (form);
-CREATE INDEX form_metadata_formname ON cht.form_metadata USING btree (formname);
-CREATE INDEX form_metadata_patient_id ON cht.form_metadata USING btree (patient_id);
-CREATE INDEX form_metadata_reported ON cht.form_metadata USING btree (reported);
-CREATE INDEX form_metadata_reported_by ON cht.form_metadata USING btree (reported_by);
-CREATE INDEX form_metadata_reported_by_parent ON cht.form_metadata USING btree (reported_by_parent);
-CREATE UNIQUE INDEX form_metadata_uuid ON cht.form_metadata USING btree (uuid);
+CREATE INDEX idx_form_meta_date ON cht.mv_form_meta USING btree (date) tablespace ts_indexes;
+CREATE INDEX idx_form_meta_district ON cht.mv_form_meta USING btree (district) tablespace ts_indexes;
+CREATE INDEX idx_form_meta_form_name ON cht.mv_form_meta USING btree (form_name) tablespace ts_indexes;
+CREATE INDEX idx_form_meta_month ON cht.mv_form_meta USING btree (month) tablespace ts_indexes;
+CREATE INDEX idx_form_meta_monthname ON cht.mv_form_meta USING btree (monthname) tablespace ts_indexes;
+CREATE INDEX idx_form_meta_reported ON cht.mv_form_meta USING btree (reported) tablespace ts_indexes;
+CREATE INDEX idx_form_meta_role ON cht.mv_form_meta USING btree (role) tablespace ts_indexes;

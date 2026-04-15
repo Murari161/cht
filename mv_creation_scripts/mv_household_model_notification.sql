@@ -1,31 +1,23 @@
+-- cht.mv_household_model_notification source
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_household_model_notification;
 CREATE MATERIALIZED VIEW cht.mv_household_model_notification
 TABLESPACE ts_report
-AS
-SELECT
-    -- Standard fields (appear in all forms)
-    doc ->> '_id'::text AS uuid,
+AS SELECT doc ->> '_id'::text AS uuid,
     doc ->> 'form'::text AS form,
     doc ->> 'from'::text AS submitter,
     to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
-    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS month,
-    doc ->'fields'->'meta'->>'instanceID' AS instanceID,
-    doc ->'fields'->'inputs'->'meta'->>'deprecatedID' AS deprecatedID,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'lat' AS location_lat,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'long' AS location_long,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'error' AS location_error,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
-    doc ->'geolocation'->>'code' AS geolocation_code,
-    doc ->'geolocation'->>'message' AS geolocation_message,
-    doc #>> '{contact,_id}'::text[] AS chw_id,
-    doc #>> '{contact,parent,_id}'::text[] AS contact_chw_area_id,
-    doc #>> '{contact,parent,parent,_id}'::text[] AS contact_facility_id,
-    doc #>> '{contact,parent,parent,parent,_id}'::text[] AS parish_id,
-    doc #>> '{contact,parent,parent,parent,parent,_id}'::text[] AS district_id,
-    doc #>> '{contact,parent,parent,parent,parent,parent,_id}'::text[] AS region_id,
-
-    -- Form-specific fields (from the XML)
+    to_char(to_timestamp((((doc ->>'reported_date'::text)::bigint) / 1000)::double precision), 'MM'::text)::integer AS month,
+    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS monthname,
+    ((doc -> 'fields'::text) -> 'meta'::text) ->> 'instanceID'::text AS instanceid,
+    (((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) ->> 'deprecatedID'::text AS deprecatedid,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'lat'::text AS location_lat,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'long'::text AS location_long,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'error'::text AS location_error,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
+    (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
+    (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
     doc #>> '{fields,inputs,source}'::text[] AS inputs_source,
     doc #>> '{fields,inputs,source_id}'::text[] AS inputs_source_id,
     doc #>> '{fields,inputs,t_sanitary_dwelling_house}'::text[] AS t_sanitary_dwelling_house,
@@ -70,23 +62,27 @@ SELECT
     doc #>> '{fields,notification,note_vector_and_vermin_control}'::text[] AS note_vector_and_vermin_control,
     doc #>> '{fields,notification,household_follow_up_date}'::text[] AS household_follow_up_date,
     doc #>> '{fields,group_notification_summary,s_note_household_details}'::text[] AS s_note_household_details,
-    doc #>> '{fields,group_notification_summary,s_note_patient_details_values}'::text[] AS s_note_patient_details_values,
-    doc #>> '{fields,group_notification_summary,household_findings}'::text[] AS household_findings,
-    doc #>> '{fields,group_notification_summary,household_model}'::text[] AS household_model,
-    doc #>> '{fields,group_notification_summary,s_note_followup}'::text[] AS s_note_followup,
-    doc #>> '{fields,group_notification_summary,note_follow_date}'::text[] AS note_follow_date,
-
-    -- Last column for tracking refresh
-    CURRENT_TIMESTAMP AS last_refresh_date
-
-FROM dwh.cht_data couchdb
-WHERE (doc ->> 'form'::text) = 'household_model_notification'::text
-  AND is_current
+    doc #>> '{contact,_id}'                         AS chw_id,
+      h.facility_name,
+      h.dhis2_facility_id,
+      h.village,
+      h.district,
+      h.region,
+      CURRENT_TIMESTAMP                                 AS last_refresh_date 
+   FROM dwh.cht_data couchdb
+LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id
+  WHERE (doc ->> 'form'::text) = 'household_model_notification'::text AND is_current
 WITH DATA;
 
--- Indexes
-CREATE INDEX mv_household_model_notification_reported
-    ON cht.mv_household_model_notification USING btree (reported);
-
-CREATE INDEX mv_household_model_notificationn_chw_id
-    ON cht.mv_household_model_notification USING btree (chw_id);
+-- View indexes:
+CREATE INDEX mv_household_model_notification_reported ON cht.mv_household_model_notification USING btree (reported) tablespace ts_indexes; 
+CREATE INDEX mv_household_model_notificationn_chw_id ON cht.mv_household_model_notification USING btree (chw_id) tablespace ts_indexes;
+CREATE INDEX mv_household_model_notification_date ON cht.mv_household_model_notification USING btree (date) tablespace ts_indexes;
+CREATE INDEX mv_household_model_notification_year ON cht.mv_household_model_notification USING btree (year) tablespace ts_indexes;
+CREATE INDEX mv_household_model_notification_month ON cht.mv_household_model_notification USING btree (month) tablespace ts_indexes;
+CREATE INDEX mv_household_model_notification_monthname ON cht.mv_household_model_notification USING btree (monthname) tablespace ts_indexes; 
+CREATE INDEX mv_household_model_notification_district ON cht.mv_household_model_notification USING btree (district) tablespace ts_indexes;
+CREATE INDEX mv_household_model_notification_region ON cht.mv_household_model_notification USING btree (region) tablespace ts_indexes; 
+CREATE INDEX mv_household_model_notification_facility_name ON cht.mv_household_model_notification USING btree (facility_name) tablespace ts_indexes; 
+CREATE INDEX mv_household_model_notification_dhis2_facility_id ON cht.mv_household_model_notification USING btree (dhis2_facility_id) tablespace ts_indexes; 
+CREATE INDEX mv_household_model_notification_village ON cht.mv_household_model_notification USING btree (village) tablespace ts_indexes;

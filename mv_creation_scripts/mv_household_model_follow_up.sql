@@ -1,32 +1,23 @@
-
-CREATE MATERIALIZED VIEW cht.mv_household_model_follow_up_new
+-- cht.mv_household_model_follow_up source
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_household_model_follow_up;
+CREATE MATERIALIZED VIEW cht.mv_household_model_follow_up
 TABLESPACE ts_report
-AS
-SELECT
-    -- Standard fields (appear in all forms)
-    doc ->> '_id'::text AS uuid,
+AS SELECT doc ->> '_id'::text AS uuid,
     doc ->> 'form'::text AS form,
     doc ->> 'from'::text AS submitter,
     to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
-    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS month,
-    doc ->'fields'->'meta'->>'instanceID' AS instanceID,
-    doc ->'fields'->'inputs'->'meta'->>'deprecatedID' AS deprecatedID,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'lat' AS location_lat,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'long' AS location_long,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'error' AS location_error,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
-    doc ->'geolocation'->>'code' AS geolocation_code,
-    doc ->'geolocation'->>'message' AS geolocation_message,
-    doc #>> '{contact,_id}'::text[] AS chw_id,
-    doc #>> '{contact,parent,_id}'::text[] AS contact_chw_area_id,
-    doc #>> '{contact,parent,parent,_id}'::text[] AS contact_facility_id,
-    doc #>> '{contact,parent,parent,parent,_id}'::text[] AS parish_id,
-    doc #>> '{contact,parent,parent,parent,parent,_id}'::text[] AS district_id,
-    doc #>> '{contact,parent,parent,parent,parent,parent,_id}'::text[] AS region_id,
-
-    -- Form-specific fields (from the XML)
+    to_char(to_timestamp((((doc ->>'reported_date'::text)::bigint) / 1000)::double precision), 'MM'::text)::integer AS month,
+    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS monthname,
+    ((doc -> 'fields'::text) -> 'meta'::text) ->> 'instanceID'::text AS instanceid,
+    (((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) ->> 'deprecatedID'::text AS deprecatedid,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'lat'::text AS location_lat,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'long'::text AS location_long,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'error'::text AS location_error,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
+    (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
+    (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
     doc #>> '{fields,inputs,source}'::text[] AS inputs_source,
     doc #>> '{fields,inputs,source_id}'::text[] AS inputs_source_id,
     doc #>> '{fields,inputs,t_hh_head_name}'::text[] AS inputs_t_hh_head_name,
@@ -89,28 +80,24 @@ SELECT
     doc #>> '{fields,hh_model_assessment,next_household_follow_up_date}'::text[] AS next_household_follow_up_date,
     doc #>> '{fields,is_model_household}'::text[] AS is_model_household,
     doc #>> '{fields,next_wash_report_task_date}'::text[] AS next_wash_report_task_date,
-    doc #>> '{fields,group_summary,s_note_household_model_follow_up}'::text[] AS s_note_household_model_follow_up,
-    doc #>> '{fields,group_summary,s_note_be_sure_to_submit}'::text[] AS s_note_be_sure_to_submit,
-    doc #>> '{fields,group_summary,s_note_household_details}'::text[] AS s_note_household_details,
-    doc #>> '{fields,group_summary,s_note_hh_head_details}'::text[] AS s_note_hh_head_details,
-    doc #>> '{fields,group_summary,s_note_findings}'::text[] AS s_note_findings,
-    doc #>> '{fields,group_summary,s_note_model_household}'::text[] AS s_note_model_household,
-    doc #>> '{fields,group_summary,s_note_not_a_model_household}'::text[] AS s_note_not_a_model_household,
-    doc #>> '{fields,group_summary,s_note_follow_up}'::text[] AS s_note_follow_up,
-    doc #>> '{fields,group_summary,s_note_wash_follow_up}'::text[] AS s_note_wash_follow_up,
-    doc #>> '{fields,group_summary,s_note_no_wash_follow_up}'::text[] AS s_note_no_wash_follow_up,
-
-    -- Last column for tracking refresh
-    CURRENT_TIMESTAMP AS last_refresh_date
-
-FROM dwh.cht_data
-WHERE (doc ->> 'form'::text) = 'household_model_follow_up'::text
-  AND is_current
+    doc #>> '{contact,_id}'                         AS chw_id,
+      h.facility_name,
+      h.dhis2_facility_id,
+      h.village,
+      h.district,
+      h.region,
+      CURRENT_TIMESTAMP                                 AS last_refresh_date 
+   FROM dwh.cht_data
+    LEFT JOIN cht.mv_chw_hierarchy h ON (dwh.cht_data.doc #>> '{contact,_id}') = h.chw_id
+  WHERE (doc ->> 'form'::text) = 'household_model_follow_up'::text AND is_current
 WITH DATA;
 
--- Indexes
-CREATE INDEX mv_household_model_follow_up_new_reported
-    ON cht.mv_household_model_follow_up_new USING btree (reported);
-
-CREATE INDEX mv_household_model_follow_up_new_chw_id
-    ON cht.mv_household_model_follow_up_new USING btree (chw_id);
+-- View indexes:
+CREATE INDEX mv_household_model_follow_up_chw_id ON cht.mv_household_model_follow_up USING btree (chw_id) tablespace ts_indexes;
+CREATE INDEX mv_household_model_follow_up_reported ON cht.mv_household_model_follow_up USING btree (reported) tablespace ts_indexes;
+CREATE INDEX mv_household_model_follow_up_year_month ON cht.mv_household_model_follow_up USING btree (year, month) tablespace ts_indexes;
+CREATE INDEX mv_household_model_follow_up_district ON cht.mv_household_model_follow_up USING btree (district) tablespace ts_indexes;
+CREATE INDEX mv_household_model_follow_up_facility_name ON cht.mv_household_model_follow_up USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_household_model_follow_up_dhis2_facility_id ON cht.mv_household_model_follow_up USING btree (dhis2_facility_id) tablespace ts_indexes;
+CREATE INDEX mv_household_model_follow_up_village ON cht.mv_household_model_follow_up USING btree (village) tablespace ts_indexes;
+CREATE INDEX mv_household_model_follow_up_region ON cht.mv_household_model_follow_up USING btree (region) tablespace ts_indexes;

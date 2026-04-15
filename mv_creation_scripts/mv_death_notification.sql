@@ -1,31 +1,23 @@
+-- cht.mv_death_notification source
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_death_notification;
 CREATE MATERIALIZED VIEW cht.mv_death_notification
 TABLESPACE ts_report
-AS
-SELECT
-    -- Standard fields (appear in all forms)
-    doc ->> '_id'::text AS uuid,
+AS SELECT doc ->> '_id'::text AS uuid,
     doc ->> 'form'::text AS form,
     doc ->> 'from'::text AS submitter,
     to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
-    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS month,
-    doc ->'fields'->'meta'->>'instanceID' AS instanceID,
-    doc ->'fields'->'inputs'->'meta'->>'deprecatedID' AS deprecatedID,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'lat' AS location_lat,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'long' AS location_long,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'error' AS location_error,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
-    doc ->'geolocation'->>'code' AS geolocation_code,
-    doc ->'geolocation'->>'message' AS geolocation_message,
-    doc #>> '{contact,_id}'::text[] AS chw_id,
-    doc #>> '{contact,parent,_id}'::text[] AS contact_chw_area_id,
-    doc #>> '{contact,parent,parent,_id}'::text[] AS contact_facility_id,
-    doc #>> '{contact,parent,parent,parent,_id}'::text[] AS parish_id,
-    doc #>> '{contact,parent,parent,parent,parent,_id}'::text[] AS district_id,
-    doc #>> '{contact,parent,parent,parent,parent,parent,_id}'::text[] AS region_id,
-
-    -- Form-specific fields (from the XML)
+    to_char(to_timestamp((((doc ->>'reported_date'::text)::bigint) / 1000)::double precision), 'MM'::text)::integer AS month,
+    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS monthname,
+    ((doc -> 'fields'::text) -> 'meta'::text) ->> 'instanceID'::text AS instanceid,
+    (((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) ->> 'deprecatedID'::text AS deprecatedid,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'lat'::text AS location_lat,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'long'::text AS location_long,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'error'::text AS location_error,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
+    (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
+    (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
     doc #>> '{fields,inputs,source}'::text[] AS inputs_source,
     doc #>> '{fields,inputs,source_id}'::text[] AS inputs_source_id,
     doc #>> '{fields,inputs,t_client_death_date}'::text[] AS inputs_t_client_death_date,
@@ -66,22 +58,6 @@ SELECT
     doc #>> '{fields,notification_details,actions}'::text[] AS notification_details_actions,
     doc #>> '{fields,notification_details,action_others}'::text[] AS notification_details_action_others,
     doc #>> '{fields,notification_details,action_note}'::text[] AS notification_details_action_note,
-    doc #>> '{fields,r_summary,submit}'::text[] AS r_summary_submit,
-    doc #>> '{fields,r_summary,summary_h1}'::text[] AS r_summary_summary_h1,
-    doc #>> '{fields,r_summary,s_person_details}'::text[] AS r_summary_s_person_details,
-    doc #>> '{fields,r_summary,s_death_verification_status}'::text[] AS r_summary_s_death_verification_status,
-    doc #>> '{fields,r_summary,verification_status_label}'::text[] AS r_summary_verification_status_label,
-    doc #>> '{fields,r_summary,s_verification_status}'::text[] AS r_summary_s_verification_status,
-    doc #>> '{fields,r_summary,actions_labels_en}'::text[] AS r_summary_actions_labels_en,
-    doc #>> '{fields,r_summary,actions_labels_lg}'::text[] AS r_summary_actions_labels_lg,
-    doc #>> '{fields,r_summary,s_actions_taken}'::text[] AS r_summary_s_actions_taken,
-    doc #>> '{fields,r_summary,s_findings}'::text[] AS r_summary_s_findings,
-    doc #>> '{fields,r_summary,s_instruction}'::text[] AS r_summary_s_instruction,
-    doc #>> '{fields,r_summary,s_inform_super}'::text[] AS r_summary_s_inform_super,
-    doc #>> '{fields,r_summary,s_followup}'::text[] AS r_summary_s_followup,
-    doc #>> '{fields,r_summary,s_followup_note}'::text[] AS r_summary_s_followup_note,
-
-    -- New fields from death_notification_submission/fields (added for consistency)
     doc #>> '{fields,status}'::text[] AS submission_status,
     doc #>> '{fields,death_report}'::text[] AS submission_death_report,
     doc #>> '{fields,place_id}'::text[] AS submission_place_id,
@@ -101,18 +77,19 @@ SELECT
     doc #>> '{fields,d_user_contact_id}'::text[] AS submission_d_user_contact_id,
     doc #>> '{fields,d_user_name}'::text[] AS submission_d_user_name,
     doc #>> '{fields,d_user_phone}'::text[] AS submission_d_user_phone,
-
-    -- Last column for tracking refresh
-    CURRENT_TIMESTAMP AS last_refresh_date
-
-FROM dwh.cht_data couchdb
-WHERE (doc ->> 'form'::text) = 'death_notification'::text
-  AND is_current
+    doc #>> '{contact,_id}'                         AS chw_id,
+      h.facility_name,
+      h.dhis2_facility_id,
+      h.village,
+      h.district,
+      h.region,
+      CURRENT_TIMESTAMP                                 AS last_refresh_date 
+   FROM dwh.cht_data couchdb
+LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id
+  WHERE (doc ->> 'form'::text) = 'death_notification'::text AND is_current
 WITH DATA;
 
--- Indexes
-CREATE INDEX mv_death_notification_reported
-    ON cht.mv_death_notification USING btree (reported);
-
-CREATE INDEX mv_death_notification_chw_id
-    ON cht.mv_death_notification USING btree (chw_id);
+-- View indexes:
+CREATE INDEX mv_death_notification_chw_id ON cht.mv_death_notification USING btree (chw_id) tablespace ts_indexes;
+CREATE INDEX mv_death_notification_reported ON cht.mv_death_notification USING btree (reported) tablespace ts_indexes;
+CREATE INDEX mv_death_notification_year_month ON cht.mv_death_notification USING btree (year, month) tablespace ts_indexes;

@@ -16,12 +16,17 @@
       h.village,
       h.district,
       h.region,
-      CURRENT_TIMESTAMP                                 AS last_refresh_date     
-
+      CURRENT_TIMESTAMP                                 AS last_refresh_date  
 FROM dwh.cht_data d
-LEFT JOIN cht.mv_chew_hierarchy_2 h
-  ON (d.doc #>> '{contact,_id}') = h.chw_id 
+LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id 
 
 
 
 --grant permissions------
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_delivery_report TO albert_fellow; 
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_delivery_report TO baker; 
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_delivery_report TO mkizito; 
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_delivery_report TO mpaul; 
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_delivery_report TO nmadrine; 
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_delivery_report TO rutayisire; 
+GRANT UPDATE, TRUNCATE, TRIGGER, REFERENCES, INSERT, DELETE, SELECT ON TABLE cht.mv_delivery_report TO tom_fellow;

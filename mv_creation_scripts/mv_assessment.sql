@@ -19,12 +19,6 @@ SELECT
     doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
     doc ->'geolocation'->>'code' AS geolocation_code,
     doc ->'geolocation'->>'message' AS geolocation_message,
-    doc #>> '{contact,_id}'::text[] AS contact_chw_id,
-    doc #>> '{contact,parent,_id}'::text[] AS contact_chw_area_id,
-    doc #>> '{contact,parent,parent,_id}'::text[] AS contact_facility_id,
-    doc #>> '{contact,parent,parent,parent,_id}'::text[] AS parish_id,
-    doc #>> '{contact,parent,parent,parent,parent,_id}'::text[] AS district_id,
-    doc #>> '{contact,parent,parent,parent,parent,parent,_id}'::text[] AS region_id,
 
     -- Form-specific fields (from the XML)
     doc #>> '{fields,inputs,source}'::text[] AS inputs_source,
@@ -191,8 +185,9 @@ SELECT
     doc #>> '{fields,group_routine_care,start_breastfeeding_immediately}'::text[] AS g_start_breastfeeding_immediately,
     doc #>> '{fields,group_routine_care,feed_the_baby}'::text[] AS g_feed_the_baby,
     doc #>> '{fields,group_routine_care,ensure_baby_well_positioned}'::text[] AS g_ensure_baby_well_positioned,
+    doc #>> '{fields,group_patient_summary,have_you_referred}' AS have_you_referred,
     -- Last column for tracking refresh
-         doc #>> '{contact,_id}'                         AS chw_id,
+    doc #>> '{contact,_id}'                         AS chw_id,
       h.facility_name,
       h.village,
       h.district,
@@ -200,7 +195,7 @@ SELECT
       CURRENT_TIMESTAMP                                 AS last_refresh_date     
 
 FROM dwh.cht_data d
-LEFT JOIN cht.mv_chew_hierarchy_2 h
+LEFT JOIN cht.mv_chw_hierarchy h
   ON (d.doc #>> '{contact,_id}') = h.chw_id 
 
 WHERE (doc ->> 'form'::text) = 'assessment'::text
@@ -209,9 +204,26 @@ WITH NO DATA;
 
 -- Indexes
 CREATE INDEX mv_assessment_new_reported
-    ON cht.mv_assessment_new USING btree (reported);
+    ON cht.mv_assessment_new USING btree (reported) TABLESPACE ts_indexes;
 CREATE INDEX mv_assessment_new_patient_id
-    ON cht.mv_assessment_new USING btree (patient_id);
+    ON cht.mv_assessment_new USING btree (patient_id) TABLESPACE ts_indexes;
 CREATE INDEX mv_assessment_new_chw_id
-    ON cht.mv_assessment_new USING btree (chw_id);
+    ON cht.mv_assessment_new USING btree (chw_id) TABLESPACE ts_indexes;
+CREATE INDEX mv_assessment_new_year_month
+    ON cht.mv_assessment_new USING btree (year, month) TABLESPACE ts_indexes;
+CREATE INDEX mv_assessment_new_date
+    ON cht.mv_assessment_new USING btree (date) TABLESPACE ts_indexes;
+-- Org hierarchy
+CREATE INDEX mv_assessment_new_region_district_facility
+ON cht.mv_assessment_new (region, district, facility_name) TABLESPACE ts_indexes;
+
+CREATE INDEX mv_assessment_new_district
+ON cht.mv_assessment_new (district) TABLESPACE ts_indexes;
+
+CREATE INDEX mv_assessment_new_district_facility
+ON cht.mv_assessment_new (district, facility_name) TABLESPACE ts_indexes;
+
+-- High-impact (MOST IMPORTANT)
+CREATE INDEX mv_assessment_new_year_month_district
+ON cht.mv_assessment_new (year, month, district) TABLESPACE ts_indexes;
 
