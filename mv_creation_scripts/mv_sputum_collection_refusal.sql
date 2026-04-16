@@ -1,121 +1,112 @@
-CREATE MATERIALIZED VIEW report.mv_sputum_collection_refusal
+-- cht.mv_sputum_collection_refusal source
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_sputum_collection_refusal;
+CREATE MATERIALIZED VIEW cht.mv_sputum_collection_refusal
 TABLESPACE ts_report
-AS
-SELECT
-    doc ->> '_id'::text                              AS doc_id,
-    doc ->> '_rev'::text                             AS rev,                                 -- [NEW FIELD]
+AS SELECT doc ->> '_id'::text AS uuid,
+    doc ->> 'form'::text AS form,
+    doc ->> 'from'::text AS submitter,
     to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
-    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS month,
-    doc ->'fields'->'meta'->>'instanceID' AS instanceID,
-    doc ->'fields'->'inputs'->'meta'->>'deprecatedID' AS deprecatedID,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'lat' AS location_lat,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'long' AS location_long,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'error' AS location_error,
-    doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
-    doc ->'geolocation'->>'code' AS geolocation_code,
-    doc ->'geolocation'->>'message' AS geolocation_message,
-    doc ->> 'from'::text                             AS  from,
-
-    doc #>> '{fields,inputs,source}'                                      AS source,
-    doc #>> '{fields,inputs,source_id}'                                   AS source_id,
-    doc #>> '{fields,inputs,t_place_name}'                                AS t_place_name,
-    doc #>> '{fields,inputs,t_patient_name}'                              AS t_patient_name,
-    doc #>> '{fields,inputs,t_patient_gender}'                            AS t_patient_gender,
-    doc #>> '{fields,inputs,t_patient_phone}'                             AS t_patient_phone,
-    doc #>> '{fields,inputs,t_patient_age_in_years}'                      AS t_patient_age_in_years,
-    doc #>> '{fields,inputs,t_patient_id}'                                AS t_patient_id,
-    doc #>> '{fields,inputs,t_cough}'                                     AS t_cough,
-    doc #>> '{fields,inputs,t_fever}'                                     AS t_fever,
-    doc #>> '{fields,inputs,t_weight_loss}'                               AS t_weight_loss,
-    doc #>> '{fields,inputs,t_excessive_night_sweat}'                     AS t_excessive_night_sweat,
-    doc #>> '{fields,inputs,t_poor_weight_gain}'                          AS t_poor_weight_gain,
-    doc #>> '{fields,inputs,t_is_on_tb_treatment}'                        AS t_is_on_tb_treatment,
-    doc #>> '{fields,inputs,t_client_category}'                           AS t_client_category,
-    doc #>> '{fields,inputs,t_patient_age_display}'                       AS t_patient_age_display,
-    doc #>> '{fields,inputs,t_patient_age_in_days}'                       AS t_patient_age_in_days,
-    doc #>> '{fields,inputs,t_patient_age_in_months}'                     AS t_patient_age_in_months,
-    doc #>> '{fields,inputs,t_chw_area_id}'                               AS t_chw_area_id,
-    doc #>> '{fields,inputs,t_chw_area_name}'                             AS t_chw_area_name,
-    doc #>> '{fields,inputs,t_chw_name}'                                  AS t_chw_name,
-    doc #>> '{fields,inputs,t_national_identification_number}'            AS t_national_identification_number,
-    doc #>> '{fields,inputs,t_chw_id}'                                    AS t_chw_id,
-    doc #>> '{fields,inputs,t_chw_phone}'                                 AS t_chw_phone,
-    doc #>> '{fields,inputs,user,contact_id}'                             AS user_contact_id,
-    doc #>> '{fields,inputs,user,facility_id}'                            AS user_facility_id,
-
-    doc #>> '{fields,patient_age_in_years}'                               AS patient_age_in_years,
-    doc #>> '{fields,patient_age_in_months}'                              AS patient_age_in_months,
-    doc #>> '{fields,patient_age_in_days}'                                AS patient_age_in_days,
-    doc #>> '{fields,patient_age_display}'                                AS patient_age_display,
-    doc #>> '{fields,patient_id}'                                         AS patient_id,
-    doc #>> '{fields,patient_name}'                                       AS patient_name,
-    doc #>> '{fields,patient_pronoun}'                                    AS patient_pronoun,
-    doc #>> '{fields,patient_gender}'                                     AS patient_gender,
-    doc #>> '{fields,patient_possessive_pronoun}'                         AS patient_possessive_pronoun,
-    doc #>> '{fields,patient_gender_pronoun}'                             AS patient_gender_pronoun,
-    doc #>> '{fields,patient_phone}'                                      AS patient_phone,
-    doc #>> '{fields,place_id}'                                           AS place_id,
-    doc #>> '{fields,place_name}'                                         AS place_name,
-    doc #>> '{fields,cough}'                                              AS cough,
-    doc #>> '{fields,fever}'                                              AS fever,
-    doc #>> '{fields,weight_loss}'                                        AS weight_loss,
-    doc #>> '{fields,excessive_night_sweat}'                              AS excessive_night_sweat,
-    doc #>> '{fields,poor_weight_gain}'                                   AS poor_weight_gain,
-    doc #>> '{fields,is_on_tb_treatment}'                                 AS is_on_tb_treatment,
-    doc #>> '{fields,client_category}'                                    AS client_category,
-    doc #>> '{fields,national_identification_number}'                     AS national_identification_number,
-    doc #>> '{fields,barcode_scanner_result}'                             AS barcode_scanner_result,
-    doc #>> '{fields,needs_signoff}'                                      AS needs_signoff,
-
-    doc #>> '{field,sputum_collection_refusal,note_to_ha}'    AS note_to_ha,
-    
-    doc #>> '{fields,sputum_collection_consent,consented_sputum_sample}'           AS consented_sputum_sample,
-    doc #>> '{fields,sputum_collection_consent,inform_tb_focal_person}'            AS inform_tb_focal_person,
-    doc #>> '{fields,sputum_collection_consent,registered_phone_number}'           AS registered_phone_number,
-    doc #>> '{fields,sputum_collection_consent,receive_results_on_same_phonenumber}' AS receive_results_on_same_phonenumber,
-    doc #>> '{fields,sputum_collection_consent,enter_new_phone_number}'            AS enter_new_phone_number,
-    doc #>> '{fields,sputum_collection_consent,no_registered_phone_number}'        AS no_registered_phone_number,
-    doc #>> '{fields,sputum_collection_consent,phonenumber_to_receive_results}'    AS phonenumber_to_receive_results,
-    doc #>> '{fields,sputum_collection_consent,results_phone_number}'              AS results_phone_number,
-
-    doc #>> '{fields,sputum_collection,give_patient_instructions}'         AS give_patient_instructions,
-    doc #>> '{fields,sputum_collection,has_patient_produced_sputum}'       AS has_patient_produced_sputum,
-    doc #>> '{fields,sputum_collection,confirm_container_tightly_closed}'  AS confirm_container_tightly_closed,
-    doc #>> '{fields,sputum_collection,confirm_send_sample_for_testing}'   AS confirm_send_sample_for_testing,
-    doc #>> '{fields,sputum_collection,leave_sputum_bottle_with_client}'   AS leave_sputum_bottle_with_client,
-    doc #>> '{fields,sputum_collection,keep_container_closed}'             AS keep_container_closed,
-    doc #>> '{fields,sputum_collection,has_left_sputum_bottle_with_client}' AS has_left_sputum_bottle_with_client,
-
-    doc #>> '{fields,group_summary,group_summary}'                AS group_summary,
-    doc #>> '{fields,group_summary,s_summary_submit}'             AS s_summary_submit,
-    doc #>> '{fields,group_summary,s_note_person_details}'        AS s_note_person_details,
-    doc #>> '{fields,group_summary,s_note_person_details_values}' AS s_note_person_details_values,
-    doc #>> '{fields,group_summary,s_note_findings}'              AS s_note_findings,
-    doc #>> '{fields,group_summary,s_note_sputum_collection}'     AS s_note_sputum_collection,
-    doc #>> '{fields,group_summary,s_note_declined_to_give_sputum}' AS s_note_declined_to_give_sputum,
-    doc #>> '{fields,group_summary,s_note_sputum_collected}'      AS s_note_sputum_collected,
-    doc #>> '{fields,group_summary,s_note_sputum_not_available}'  AS s_note_sputum_not_available,
-    doc #>> '{fields,group_summary,s_note_instructions}'          AS s_note_instructions,
-    doc #>> '{fields,group_summary,s_note_please_sync}'           AS s_note_please_sync,
-
-
-       --- reporting hierarchy
-    doc #>> '{contact,_id}'                         AS chw_id,                   
-    doc #>> '{contact,parent,_id}'                  AS chw_area_id,  
-    doc #>> '{contact,parent,parent,_id}'           AS facility_id,                                    
-    doc #>> '{contact,parent,parent,parent,_id}'    AS parish_id,              
-    doc #>> '{contact,parent,parent,parent,parent,_id}'           AS district,                 
-    doc #>> '{contact,parent,parent,parent,parent,parent,_id}'    AS region    
-
-FROM dwh.cht_data AS couchdb
-WHERE (doc ->> 'form') = 'sputum_collection_refusal'
-  AND is_current
+    to_char(to_timestamp((((doc ->>'reported_date'::text)::bigint) / 1000)::double precision), 'MM'::text)::integer AS month,
+    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS monthname,
+    ((doc -> 'fields'::text) -> 'meta'::text) ->> 'instanceID'::text AS instanceid,
+    (((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) ->> 'deprecatedID'::text AS deprecatedid,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'lat'::text AS location_lat,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'long'::text AS location_long,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'error'::text AS location_error,
+    ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
+    (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
+    (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    doc #>> '{fields,inputs,source}'::text[] AS source,
+    doc #>> '{fields,inputs,source_id}'::text[] AS source_id,
+    doc #>> '{fields,inputs,t_place_name}'::text[] AS t_place_name,
+    doc #>> '{fields,inputs,t_patient_name}'::text[] AS t_patient_name,
+    doc #>> '{fields,inputs,t_patient_gender}'::text[] AS t_patient_gender,
+    doc #>> '{fields,inputs,t_patient_phone}'::text[] AS t_patient_phone,
+    doc #>> '{fields,inputs,t_patient_age_in_years}'::text[] AS t_patient_age_in_years,
+    doc #>> '{fields,inputs,t_patient_id}'::text[] AS t_patient_id,
+    doc #>> '{fields,inputs,t_cough}'::text[] AS t_cough,
+    doc #>> '{fields,inputs,t_fever}'::text[] AS t_fever,
+    doc #>> '{fields,inputs,t_weight_loss}'::text[] AS t_weight_loss,
+    doc #>> '{fields,inputs,t_excessive_night_sweat}'::text[] AS t_excessive_night_sweat,
+    doc #>> '{fields,inputs,t_poor_weight_gain}'::text[] AS t_poor_weight_gain,
+    doc #>> '{fields,inputs,t_is_on_tb_treatment}'::text[] AS t_is_on_tb_treatment,
+    doc #>> '{fields,inputs,t_client_category}'::text[] AS t_client_category,
+    doc #>> '{fields,inputs,t_patient_age_display}'::text[] AS t_patient_age_display,
+    doc #>> '{fields,inputs,t_patient_age_in_days}'::text[] AS t_patient_age_in_days,
+    doc #>> '{fields,inputs,t_patient_age_in_months}'::text[] AS t_patient_age_in_months,
+    doc #>> '{fields,inputs,t_chw_area_id}'::text[] AS t_chw_area_id,
+    doc #>> '{fields,inputs,t_chw_area_name}'::text[] AS t_chw_area_name,
+    doc #>> '{fields,inputs,t_chw_name}'::text[] AS t_chw_name,
+    doc #>> '{fields,inputs,t_national_identification_number}'::text[] AS t_national_identification_number,
+    doc #>> '{fields,inputs,t_chw_id}'::text[] AS t_chw_id,
+    doc #>> '{fields,inputs,t_chw_phone}'::text[] AS t_chw_phone,
+    doc #>> '{fields,inputs,user,contact_id}'::text[] AS user_contact_id,
+    doc #>> '{fields,inputs,user,facility_id}'::text[] AS user_facility_id,
+    doc #>> '{fields,patient_age_in_years}'::text[] AS patient_age_in_years,
+    doc #>> '{fields,patient_age_in_months}'::text[] AS patient_age_in_months,
+    doc #>> '{fields,patient_age_in_days}'::text[] AS patient_age_in_days,
+    doc #>> '{fields,patient_age_display}'::text[] AS patient_age_display,
+    doc #>> '{fields,patient_id}'::text[] AS patient_id,
+    doc #>> '{fields,patient_name}'::text[] AS patient_name,
+    doc #>> '{fields,patient_pronoun}'::text[] AS patient_pronoun,
+    doc #>> '{fields,patient_gender}'::text[] AS patient_gender,
+    doc #>> '{fields,patient_possessive_pronoun}'::text[] AS patient_possessive_pronoun,
+    doc #>> '{fields,patient_gender_pronoun}'::text[] AS patient_gender_pronoun,
+    doc #>> '{fields,patient_phone}'::text[] AS patient_phone,
+    doc #>> '{fields,place_id}'::text[] AS place_id,
+    doc #>> '{fields,place_name}'::text[] AS place_name,
+    doc #>> '{fields,cough}'::text[] AS cough,
+    doc #>> '{fields,fever}'::text[] AS fever,
+    doc #>> '{fields,weight_loss}'::text[] AS weight_loss,
+    doc #>> '{fields,excessive_night_sweat}'::text[] AS excessive_night_sweat,
+    doc #>> '{fields,poor_weight_gain}'::text[] AS poor_weight_gain,
+    doc #>> '{fields,is_on_tb_treatment}'::text[] AS is_on_tb_treatment,
+    doc #>> '{fields,client_category}'::text[] AS client_category,
+    doc #>> '{fields,national_identification_number}'::text[] AS national_identification_number,
+    doc #>> '{fields,barcode_scanner_result}'::text[] AS barcode_scanner_result,
+    doc #>> '{fields,needs_signoff}'::text[] AS needs_signoff,
+    doc #>> '{fields,sputum_collection_refusal,note_to_ha}'::text[] AS note_to_ha,
+    doc #>> '{fields,sputum_collection_consent,consented_sputum_sample}'::text[] AS consented_sputum_sample,
+    doc #>> '{fields,sputum_collection_consent,inform_tb_focal_person}'::text[] AS inform_tb_focal_person,
+    doc #>> '{fields,sputum_collection_consent,registered_phone_number}'::text[] AS registered_phone_number,
+    doc #>> '{fields,sputum_collection_consent,receive_results_on_same_phonenumber}'::text[] AS receive_results_on_same_phonenumber,
+    doc #>> '{fields,sputum_collection_consent,enter_new_phone_number}'::text[] AS enter_new_phone_number,
+    doc #>> '{fields,sputum_collection_consent,no_registered_phone_number}'::text[] AS no_registered_phone_number,
+    doc #>> '{fields,sputum_collection_consent,phonenumber_to_receive_results}'::text[] AS phonenumber_to_receive_results,
+    doc #>> '{fields,sputum_collection_consent,results_phone_number}'::text[] AS results_phone_number,
+    doc #>> '{fields,group_barcode,action}'::text[] AS group_barcode_action,
+    doc #>> '{fields,group_barcode,tap_barcode_scanner}'::text[] AS barcode_tap_barcode_scanner,
+    doc #>> '{fields,group_barcode,outputs,CHT_BARCODE}'::text[] AS barcode_outputs_cht_barcode,
+    doc #>> '{fields,sputum_collection,give_patient_instructions}'::text[] AS give_patient_instructions,
+    doc #>> '{fields,sputum_collection,has_patient_produced_sputum}'::text[] AS has_patient_produced_sputum,
+    doc #>> '{fields,sputum_collection,confirm_container_tightly_closed}'::text[] AS confirm_container_tightly_closed,
+    doc #>> '{fields,sputum_collection,confirm_send_sample_for_testing}'::text[] AS confirm_send_sample_for_testing,
+    doc #>> '{fields,sputum_collection,leave_sputum_bottle_with_client}'::text[] AS leave_sputum_bottle_with_client,
+    doc #>> '{fields,sputum_collection,keep_container_closed}'::text[] AS keep_container_closed,
+    doc #>> '{fields,sputum_collection,has_left_sputum_bottle_with_client}'::text[] AS has_left_sputum_bottle_with_client,
+    doc #>> '{contact,_id}'                         AS chw_id,
+      h.facility_name,
+      h.dhis2_facility_id,
+      h.village,
+      h.district,
+      h.region,
+      CURRENT_TIMESTAMP                                 AS last_refresh_date  
+FROM dwh.cht_data d
+LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id
+  WHERE (doc ->> 'form'::text) = 'sputum_collection_refusal'::text AND is_current
 WITH DATA;
 
-CREATE UNIQUE INDEX sputum_collection_refusal_uuid_idx
-    ON report.mv_sputum_collection_refusal USING btree (uuid);
-
-CREATE INDEX sputum_collection_refusal_reported_idx
-    ON report.mv_sputum_collection_refusal USING btree (reported);
+-- View indexes:
+CREATE INDEX mv_sputum_collection_refusal_chw_id ON cht.mv_sputum_collection_refusal USING btree (chw_id) tablespace ts_indexes;
+CREATE INDEX mv_sputum_collection_refusal_reported ON cht.mv_sputum_collection_refusal USING btree (reported) tablespace ts_indexes;
+CREATE INDEX mv_sputum_collection_refusal_date ON cht.mv_sputum_collection_refusal USING btree (date) tablespace ts_indexes;
+CREATE INDEX mv_sputum_collection_refusal_year ON cht.mv_sputum_collection_refusal USING btree (year) tablespace ts_indexes;
+CREATE INDEX mv_sputum_collection_refusal_month ON cht.mv_sputum_collection_refusal USING btree (month) tablespace ts_indexes;
+CREATE INDEX mv_sputum_collection_refusal_monthname ON cht.mv_sputum_collection_refusal USING btree (monthname) tablespace ts_indexes;
+CREATE INDEX mv_sputum_collection_refusal_district ON cht.mv_sputum_collection_refusal USING btree (district) tablespace ts_indexes;
+CREATE INDEX mv_sputum_collection_refusal_region ON cht.mv_sputum_collection_refusal USING btree (region) tablespace ts_indexes;
+CREATE INDEX mv_sputum_collection_refusal_facility_name ON cht.mv_sputum_collection_refusal USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_sputum_collection_refusal_dhis2_facility_id ON cht.mv_sputum_collection_refusal USING btree (dhis2_facility_id) tablespace ts_indexes;
+CREATE INDEX mv_sputum_collection_refusal_village ON cht.mv_sputum_collection_refusal USING btree (village) tablespace ts_indexes;

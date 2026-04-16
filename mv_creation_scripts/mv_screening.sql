@@ -1,14 +1,15 @@
 -- cht.mv_screening source
-
+DROP MATERIALIZED VIEW cht.mv_screening;
 CREATE MATERIALIZED VIEW cht.mv_screening
 TABLESPACE ts_report
 AS SELECT doc ->> '_id'::text AS uuid,
     doc ->> 'form'::text AS form,
     doc ->> 'from'::text AS submitter,
     to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
-    to_char(to_timestamp((((doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY-MM-DD'::text)::date AS date,
-    to_char(to_timestamp((((doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY'::text)::integer AS year,
-    to_char(to_timestamp((((doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'FMMonth'::text) AS month,
+    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
+    (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
+    to_char(to_timestamp((((doc ->>'reported_date'::text)::bigint) / 1000)::double precision), 'MM'::text)::integer AS month,
+    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS monthname,
     ((doc -> 'fields'::text) -> 'meta'::text) ->> 'instanceID'::text AS instanceid,
     (((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) ->> 'deprecatedID'::text AS deprecatedid,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'lat'::text AS location_lat,
@@ -17,12 +18,6 @@ AS SELECT doc ->> '_id'::text AS uuid,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
-    doc #>> '{contact,_id}'::text[] AS chw_id,
-    doc #>> '{contact,parent,_id}'::text[] AS contact_chw_area_id,
-    doc #>> '{contact,parent,parent,_id}'::text[] AS contact_facility_id,
-    doc #>> '{contact,parent,parent,parent,_id}'::text[] AS parish_id,
-    doc #>> '{contact,parent,parent,parent,parent,_id}'::text[] AS district_id,
-    doc #>> '{contact,parent,parent,parent,parent,parent,_id}'::text[] AS region_id,
     doc #>> '{fields,inputs,source}'::text[] AS inputs_source,
     doc #>> '{fields,inputs,source_id}'::text[] AS inputs_source_id,
     doc #>> '{fields,inputs,contact,_id}'::text[] AS inputs_contact_id,
@@ -97,24 +92,26 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,group_other_screening,why_not_using_llin_other}'::text[] AS other_why_not_using_llin_other,
     doc #>> '{fields,group_other_screening,note_vht_assist_how_to_get_llin}'::text[] AS other_note_vht_assist_how_to_get_llin,
     doc #>> '{fields,group_other_screening,note_vht_demonstrate_on_llin_use}'::text[] AS other_note_vht_demonstrate_on_llin_use,
-    doc #>> '{fields,group_summary,hiv_test_summary}'::text[] AS other_hiv_test_summary,
-    doc #>> '{fields,group_summary,s_note_patient_details}'::text[] AS other_s_note_patient_details,
-    doc #>> '{fields,group_summary,s_note_patient_details_values}'::text[] AS other_s_note_patient_details_values,
-    doc #>> '{fields,group_summary,s_note_findings}'::text[] AS other_s_note_findings,
-    doc #>> '{fields,group_summary,s_note_referred_for_pregnancy_confirmation}'::text[] AS other_s_note_referred_for_pregnancy_confirmation,
-    doc #>> '{fields,group_summary,s_note_referred_for_fp_services}'::text[] AS other_s_note_referred_for_fp_services,
-    doc #>> '{fields,group_summary,s_note_findings_fp}'::text[] AS other_s_note_findings_fp,
-    doc #>> '{fields,group_summary,s_note_hiv}'::text[] AS other_s_note_hiv,
-    doc #>> '{fields,group_summary,s_note_has_tb}'::text[] AS other_s_note_has_tb,
-    doc #>> '{fields,group_summary,s_note_has_no_tb}'::text[] AS other_s_note_has_no_tb,
-    doc #>> '{fields,group_summary,s_note_follow_up}'::text[] AS other_s_note_follow_up,
-    doc #>> '{fields,group_summary,s_note_follow_up_value}'::text[] AS other_s_note_follow_up_value,
-    doc #>> '{fields,group_summary,s_note_thank_you}'::text[] AS other_s_note_thank_you,
-    CURRENT_TIMESTAMP AS last_refresh_date
-   FROM dwh.cht_data couchdb
+    doc #>> '{contact,_id}'                         AS chw_id,
+      h.facility_name,
+      h.dhis2_facility_id,
+      h.village,
+      h.district,
+      h.region,
+      CURRENT_TIMESTAMP                                 AS last_refresh_date  
+FROM dwh.cht_data d
+LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id
   WHERE (doc ->> 'form'::text) = 'screening'::text AND is_current
 WITH DATA;
 
 -- View indexes:
-CREATE INDEX mv_screening_chw_id ON cht.mv_screening USING btree (chw_id);
-CREATE INDEX mv_screening_reported ON cht.mv_screening USING btree (reported);
+CREATE INDEX mv_screening_chw_id ON cht.mv_screening USING btree (chw_id) tablespace ts_indexes;
+CREATE INDEX mv_screening_reported ON cht.mv_screening USING btree (reported) tablespace ts_indexes;
+CREATE INDEX mv_screening_date ON cht.mv_screening USING btree (date) tablespace ts_indexes;
+CREATE INDEX mv_screening_year ON cht.mv_screening USING btree (year) tablespace ts_indexes;
+CREATE INDEX mv_screening_month ON cht.mv_screening USING btree (month) tablespace ts_indexes;
+CREATE INDEX mv_screening_monthname ON cht.mv_screening USING btree (monthname) tablespace ts_indexes;
+CREATE INDEX mv_screening_district ON cht.mv_screening USING btree (district) tablespace ts_indexes;
+CREATE INDEX mv_screening_region ON cht.mv_screening USING btree (region) tablespace ts_indexes;
+CREATE INDEX mv_screening_facility_name ON cht.mv_screening USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_screening_dhis2_facility_id ON cht.mv_screening USING btree (dhis2_facility_id) tablespace ts_indexes;

@@ -17,8 +17,7 @@
       h.district,
       h.region,
       CURRENT_TIMESTAMP                                 AS last_refresh_date  
-FROM dwh.cht_data d
-LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id 
+FROM dwh.cht_data d LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id 
 
 
 
