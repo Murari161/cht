@@ -1,6 +1,6 @@
 -- cht.mv_ha_danger_signs_follow_up_new source
-DROP MATERIALIZED VIEW IF EXISTS cht.mv_ha_danger_signs_follow_up_new;
-CREATE MATERIALIZED VIEW cht.mv_ha_danger_signs_follow_up_new
+DROP MATERIALIZED VIEW cht.mv_ha_danger_signs_follow_up;
+CREATE MATERIALIZED VIEW cht.mv_ha_danger_signs_follow_up
 TABLESPACE ts_report
 AS SELECT doc ->> '_id'::text AS doc_id,
     doc ->> '_rev'::text AS rev,
@@ -101,9 +101,9 @@ LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id
 WITH DATA;
 
 -- View indexes:
-CREATE INDEX screening_reported_new_idx ON cht.mv_ha_danger_signs_follow_up_new USING btree (reported) TABLESPACE ts_indexes;
-CREATE INDEX screening_chw_id_new_idx ON cht.mv_ha_danger_signs_follow_up_new USING btree (chw_id) TABLESPACE ts_indexes;
-CREATE INDEX screening_district_new_idx ON cht.mv_ha_danger_signs_follow_up_new USING btree (district) TABLESPACE ts_indexes;
-CREATE INDEX screening_facility_new_idx ON cht.mv_ha_danger_signs_follow_up_new USING btree (facility_name) TABLESPACE ts_indexes;
-CREATE INDEX screening_year_new_idx ON cht.mv_ha_danger_signs_follow_up_new USING btree (year) TABLESPACE ts_indexes;
-CREATE INDEX screening_month_new_idx ON cht.mv_ha_danger_signs_follow_up_new USING btree (month) TABLESPACE ts_indexes;
+CREATE INDEX ha_danger_signs_follow_up_reported_idx ON cht.mv_ha_danger_signs_follow_up USING btree (reported) TABLESPACE ts_indexes;
+CREATE INDEX ha_danger_signs_follow_up_chw_id_idx ON cht.mv_ha_danger_signs_follow_up USING btree (chw_id) TABLESPACE ts_indexes;
+CREATE INDEX ha_danger_signs_follow_up_district_idx ON cht.mv_ha_danger_signs_follow_up USING btree (district) TABLESPACE ts_indexes;
+CREATE INDEX ha_danger_signs_follow_up_facility_idx ON cht.mv_ha_danger_signs_follow_up USING btree (facility_name) TABLESPACE ts_indexes;
+CREATE INDEX ha_danger_signs_follow_up_year_idx ON cht.mv_ha_danger_signs_follow_up USING btree (year) TABLESPACE ts_indexes;
+CREATE INDEX ha_danger_signs_follow_up_month_idx ON cht.mv_ha_danger_signs_follow_up USING btree (month) TABLESPACE ts_indexes;

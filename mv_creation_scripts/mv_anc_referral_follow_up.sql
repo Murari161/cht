@@ -1,6 +1,6 @@
 -- cht.mv_anc_referral_follow_up_new source
 DROP MATERIALIZED VIEW IF EXISTS cht.mv_anc_referral_follow_up_new;
-CREATE MATERIALIZED VIEW cht.mv_anc_referral_follow_up_new
+CREATE MATERIALIZED VIEW cht.mv_anc_referral_follow_up
 TABLESPACE ts_report
 AS SELECT doc ->> '_id'::text AS uuid,
     doc ->> '_rev'::text AS rev,
@@ -60,11 +60,11 @@ AS SELECT doc ->> '_id'::text AS uuid,
 WITH DATA;
 
 -- View indexes:
-CREATE INDEX mv_anc_referral_follow_up_uuid ON cht.mv_anc_referral_follow_up_new USING btree (reported);
-CREATE INDEX mv_anc_referral_follow_up_chw_id ON cht.mv_anc_referral_follow_up_new USING btree (chw_id);
-CREATE INDEX mv_anc_referral_follow_up_year_month ON cht.mv_anc_referral_follow_up_new USING btree (year, month);
-CREATE INDEX mv_anc_referral_follow_up_date ON cht.mv_anc_referral_follow_up_new USING btree (date);
-CREATE INDEX mv_anc_referral_follow_up_facility ON cht.mv_anc_referral_follow_up_new USING btree (facility_name);
-CREATE INDEX mv_anc_referral_follow_up_dhis2_facility_id ON cht.mv_anc_referral_follow_up_new USING btree (dhis2_facility_id);
-CREATE INDEX mv_anc_referral_follow_up_district ON cht.mv_anc_referral_follow_up_new USING btree (district);
-CREATE INDEX mv_anc_referral_follow_up_region ON cht.mv_anc_referral_follow_up_new USING btree (region);  
+CREATE INDEX mv_anc_referral_follow_up_uuid ON cht.mv_anc_referral_follow_up USING btree (reported);
+CREATE INDEX mv_anc_referral_follow_up_chw_id ON cht.mv_anc_referral_follow_up USING btree (chw_id);
+CREATE INDEX mv_anc_referral_follow_up_year_month ON cht.mv_anc_referral_follow_up USING btree (year, month);
+CREATE INDEX mv_anc_referral_follow_up_date ON cht.mv_anc_referral_follow_up USING btree (date);
+CREATE INDEX mv_anc_referral_follow_up_facility ON cht.mv_anc_referral_follow_up USING btree (facility_name);
+CREATE INDEX mv_anc_referral_follow_up_dhis2_facility_id ON cht.mv_anc_referral_follow_up USING btree (dhis2_facility_id);
+CREATE INDEX mv_anc_referral_follow_up_district ON cht.mv_anc_referral_follow_up USING btree (district);
+CREATE INDEX mv_anc_referral_follow_up_region ON cht.mv_anc_referral_follow_up USING btree (region);  

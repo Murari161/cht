@@ -1,5 +1,5 @@
 -- cht.mv_death_report source
-
+DROP MATERIALIZED VIEW cht.mv_death_report;
 CREATE MATERIALIZED VIEW cht.mv_death_report
 TABLESPACE ts_report
 AS SELECT doc ->> '_id'::text AS uuid,
@@ -71,7 +71,10 @@ LEFT JOIN cht.mv_chw_hierarchy h ON (doc #>> '{contact,_id}') = h.vht_area_id
 WITH DATA;
 
 -- View indexes:
-CREATE INDEX mv_death_report_chw_id ON cht.mv_death_report USING btree (chw_id) tablespace ts_indexes;
+CREATE INDEX mv_death_report_vht_area_id ON cht.mv_death_report USING btree (vht_area_id) tablespace ts_indexes;
 CREATE INDEX mv_death_report_reported_new ON cht.mv_death_report USING btree (reported) tablespace ts_indexes;
 CREATE INDEX mv_death_report_year_month ON cht.mv_death_report USING btree (year, month) tablespace ts_indexes;
 CREATE INDEX mv_death_report_date_of_death ON cht.mv_death_report USING btree (date_of_death) tablespace ts_indexes;
+CREATE INDEX mv_death_report_district ON cht.mv_death_report USING btree (district) tablespace ts_indexes;
+CREATE INDEX mv_death_report_facility ON cht.mv_death_report USING btree (facility_name) tablespace ts_indexes; 
+CREATE INDEX mv_death_report_patient_id ON cht.mv_death_report USING btree (patient_id) tablespace ts_indexes;

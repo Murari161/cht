@@ -1,4 +1,5 @@
-CREATE MATERIALIZED VIEW cht.mv_assessment_new
+drop materialized view cht.mv_assessment;
+CREATE MATERIALIZED VIEW cht.mv_assessment
 TABLESPACE ts_report
 AS
 SELECT
@@ -203,27 +204,27 @@ WHERE (doc ->> 'form'::text) = 'assessment'::text
 WITH NO DATA;
 
 -- Indexes
-CREATE INDEX mv_assessment_new_reported
-    ON cht.mv_assessment_new USING btree (reported) TABLESPACE ts_indexes;
-CREATE INDEX mv_assessment_new_patient_id
-    ON cht.mv_assessment_new USING btree (patient_id) TABLESPACE ts_indexes;
-CREATE INDEX mv_assessment_new_chw_id
-    ON cht.mv_assessment_new USING btree (chw_id) TABLESPACE ts_indexes;
-CREATE INDEX mv_assessment_new_year_month
-    ON cht.mv_assessment_new USING btree (year, month) TABLESPACE ts_indexes;
-CREATE INDEX mv_assessment_new_date
-    ON cht.mv_assessment_new USING btree (date) TABLESPACE ts_indexes;
+CREATE INDEX mv_assessment_reported
+    ON cht.mv_assessment USING btree (reported) TABLESPACE ts_indexes;
+CREATE INDEX mv_assessment_patient_id
+    ON cht.mv_assessment USING btree (patient_id) TABLESPACE ts_indexes;
+CREATE INDEX mv_assessment_chw_id
+    ON cht.mv_assessment USING btree (chw_id) TABLESPACE ts_indexes;
+CREATE INDEX mv_assessment_year_month
+    ON cht.mv_assessment USING btree (year, month) TABLESPACE ts_indexes;
+CREATE INDEX mv_assessment_date
+    ON cht.mv_assessment USING btree (date) TABLESPACE ts_indexes;
 -- Org hierarchy
-CREATE INDEX mv_assessment_new_region_district_facility
-ON cht.mv_assessment_new (region, district, facility_name) TABLESPACE ts_indexes;
+CREATE INDEX mv_assessment_region_district_facility
+ON cht.mv_assessment (region, district, facility_name) TABLESPACE ts_indexes;
 
-CREATE INDEX mv_assessment_new_district
-ON cht.mv_assessment_new (district) TABLESPACE ts_indexes;
+CREATE INDEX mv_assessment_district
+ON cht.mv_assessment (district) TABLESPACE ts_indexes;
 
-CREATE INDEX mv_assessment_new_district_facility
-ON cht.mv_assessment_new (district, facility_name) TABLESPACE ts_indexes;
+CREATE INDEX mv_assessment_district_facility
+ON cht.mv_assessment (district, facility_name) TABLESPACE ts_indexes;
 
 -- High-impact (MOST IMPORTANT)
-CREATE INDEX mv_assessment_new_year_month_district
-ON cht.mv_assessment_new (year, month, district) TABLESPACE ts_indexes;
+CREATE INDEX mv_assessment_year_month_district
+ON cht.mv_assessment (year, month, district) TABLESPACE ts_indexes;
 

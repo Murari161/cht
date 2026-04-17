@@ -26,7 +26,7 @@ AS SELECT d.doc ->> '_id'::text AS doc_id,
     d.doc #>> '{fields,inputs,contact,patient_id}'::text[] AS inputs_contact_patient_id,
     d.doc #>> '{fields,inputs,contact,name}'::text[] AS inputs_contact_name,
     d.doc #>> '{fields,inputs,contact,contact,reported_date}'::text[] AS reported_date,
-    d.doc #>> '{fields,inputs,contact,parent,_id}'::text[] AS parent_id,
+    d.doc #>> '{fields,inputs,contact,parent,_id}'::text[] AS parent_id, --
     d.doc #>> '{fields,inputs,contact,parent,parent,name}'::text[] AS parent_name,
     d.doc #>> '{fields,inputs,contact,parent,parent,phone}'::text[] AS phone,
     d.doc #>> '{fields,patient_id}'::text[] AS patient_id,
@@ -120,14 +120,15 @@ AS SELECT d.doc ->> '_id'::text AS doc_id,
     d.doc #>> '{fields,challenges,actions,solution}'::text[] AS solution,
     d.doc #>> '{fields,challenges,actions,solution_timeline}'::text[] AS solution_timeline,
     d.doc #>> '{fields,challenges,actions,responsible_person}'::text[] AS responsible_person,
-    d.doc #>> '{contact,_id}'::text[] AS chw_id,
+    d.doc #>> '{fields,inputs,contact,parent,_id}'::text[] AS vht_area_id,
     h.facility_name,
+    h.dhis2_facility_id,
     h.village,
     h.district,
     h.region,
     CURRENT_TIMESTAMP AS last_refresh_date
    FROM dwh.cht_data d
-     LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}'::text[]) = h.chw_id
+     LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{fields,inputs,contact,parent,_id}'::text[]) = h.vht_area_id
   WHERE (d.doc ->> 'form'::text) = 'support_supervision'::text AND d.is_current
 WITH DATA;
 
@@ -137,7 +138,7 @@ CREATE INDEX support_supervision_date_idx ON cht.mv_support_supervision USING bt
 CREATE INDEX support_supervision_year_idx ON cht.mv_support_supervision USING btree (year) tablespace ts_indexes;
 CREATE INDEX support_supervision_month_idx ON cht.mv_support_supervision USING btree (month) tablespace ts_indexes;
 CREATE INDEX support_supervision_monthname_idx ON cht.mv_support_supervision USING btree (monthname) tablespace ts_indexes;
-CREATE INDEX support_supervision_chw_id_idx ON cht.mv_support_supervision USING btree (chw_id) tablespace ts_indexes;
+CREATE INDEX support_supervision_vht_area_id_idx ON cht.mv_support_supervision USING btree (vht_area_id) tablespace ts_indexes;
 CREATE INDEX support_supervision_facility_name_idx ON cht.mv_support_supervision USING btree (facility_name) tablespace ts_indexes;
 CREATE INDEX support_supervision_dhis2_facility_id_idx ON cht.mv_support_supervision USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX support_supervision_village_idx ON cht.mv_support_supervision USING btree (village) tablespace ts_indexes;

@@ -4,6 +4,9 @@ CREATE MATERIALIZED VIEW cht.mv_pregnancy
 TABLESPACE ts_report
 AS SELECT d.doc ->> '_id'::text AS doc_id,
     d.doc ->> '_rev'::text AS rev,
+    d.doc ->> 'form'::text AS form,
+    d.doc ->> 'from'::text AS "from",
+    d.doc ->> 'type'::text AS type,
     to_timestamp((NULLIF(d.doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
     to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY-MM-DD'::text)::date AS date,
     to_char(to_timestamp((((d.doc ->> 'reported_date'::text)::bigint) / 1000)::double precision), 'YYYY'::text)::integer AS year,
@@ -15,9 +18,13 @@ AS SELECT d.doc ->> '_id'::text AS doc_id,
     ((((d.doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'long'::text AS location_long,
     ((((d.doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'error'::text AS location_error,
     ((((d.doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
-    (d.doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
-    (d.doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
-    d.doc ->> 'from'::text AS "from",
+    d.doc #>> '{geolocation,speed}'              AS geo_speed,
+    d.doc #>> '{geolocation,heading}'            AS geo_heading,
+    d.doc #>> '{geolocation,accuracy}'           AS geo_accuracy,
+    d.doc #>> '{geolocation,altitude}'           AS geo_altitude,
+    d.doc #>> '{geolocation,latitude}'           AS geo_latitude,
+    d.doc #>> '{geolocation,longitude}'          AS geo_longitude,
+    d.doc #>> '{geolocation,altitudeAccuracy}'   AS geo_altitude_accuracy,
     d.doc #>> '{fields,inputs,source}'::text[] AS source,
     d.doc #>> '{fields,inputs,source_id}'::text[] AS source_id,
     d.doc #>> '{fields,inputs,user,contact_id}'::text[] AS user_contact_id,
@@ -25,7 +32,7 @@ AS SELECT d.doc ->> '_id'::text AS doc_id,
     d.doc #>> '{fields,inputs,contact,_id}'::text[] AS inputs_contact_id,
     d.doc #>> '{fields,inputs,contact,name}'::text[] AS inputs_contact_name,
     d.doc #>> '{fields,inputs,contact,date_of_birth}'::text[] AS inputs_contact_date_of_birth,
-    d.doc #>> '{fields,inputs,contact/sex}'::text[] AS inputs_contact_sex,
+    d.doc #>> '{fields,inputs,contact,sex}'::text[] AS inputs_contact_sex,
     d.doc #>> '{fields,inputs,contact,parent,_id}'::text[] AS inputs_parent_id,
     d.doc #>> '{fields,inputs,contact,parent,name}'::text[] AS inputs_parent_name,
     d.doc #>> '{fields,is_of_child_bearing_age}'::text[] AS is_of_child_bearing_age,
@@ -154,11 +161,11 @@ AS SELECT d.doc ->> '_id'::text AS doc_id,
 WITH DATA;
 
 -- View indexes:
-CREATE INDEX screening_reported_idx ON cht.mv_pregnancy USING btree (reported) tablespace ts_indexes;
-CREATE INDEX screening_date_idx ON cht.mv_pregnancy USING btree (date) tablespace ts_indexes;
-CREATE INDEX screening_year_idx ON cht.mv_pregnancy USING btree (year) tablespace ts_indexes;
-CREATE INDEX screening_month_idx ON cht.mv_pregnancy USING btree (month) tablespace ts_indexes;
-CREATE INDEX screening_monthname_idx ON cht.mv_pregnancy USING btree (monthname) tablespace ts_indexes;
-CREATE INDEX screening_village_idx ON cht.mv_pregnancy USING btree (village) tablespace ts_indexes;
-CREATE INDEX screening_district_idx ON cht.mv_pregnancy USING btree (district) tablespace ts_indexes;
-CREATE INDEX screening_region_idx ON cht.mv_pregnancy USING btree (region) tablespace ts_indexes;
+CREATE INDEX pregnancy_reported_idx ON cht.mv_pregnancy USING btree (reported) tablespace ts_indexes;
+CREATE INDEX pregnancy_date_idx ON cht.mv_pregnancy USING btree (date) tablespace ts_indexes;
+CREATE INDEX pregnancy_year_idx ON cht.mv_pregnancy USING btree (year) tablespace ts_indexes;
+CREATE INDEX pregnancy_month_idx ON cht.mv_pregnancy USING btree (month) tablespace ts_indexes;
+CREATE INDEX pregnancy_monthname_idx ON cht.mv_pregnancy USING btree (monthname) tablespace ts_indexes;
+CREATE INDEX pregnancy_village_idx ON cht.mv_pregnancy USING btree (village) tablespace ts_indexes;
+CREATE INDEX pregnancy_district_idx ON cht.mv_pregnancy USING btree (district) tablespace ts_indexes;
+CREATE INDEX pregnancy_region_idx ON cht.mv_pregnancy USING btree (region) tablespace ts_indexes;

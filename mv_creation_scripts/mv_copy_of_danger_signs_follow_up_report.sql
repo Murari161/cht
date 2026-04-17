@@ -1,5 +1,5 @@
 -- cht.mv_copy_of_danger_signs_follow_up_report source
-DROP MATERIALIZED VIEW IF EXISTS cht.mv_copy_of_danger_signs_follow_up_report;
+DROP MATERIALIZED VIEW cht.mv_copy_of_danger_signs_follow_up_report;
 CREATE MATERIALIZED VIEW cht.mv_copy_of_danger_signs_follow_up_report
 TABLESPACE ts_report
 AS SELECT doc ->> '_id'::text AS id,

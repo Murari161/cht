@@ -1,5 +1,5 @@
 -- cht.mv_health_education_new source
-DROP MATERIALIZED VIEW IF EXISTS cht.mv_health_education;
+DROP MATERIALIZED VIEW cht.mv_health_education;
 CREATE MATERIALIZED VIEW cht.mv_health_education
 TABLESPACE ts_report
 AS SELECT doc ->> '_id'::text AS uuid,

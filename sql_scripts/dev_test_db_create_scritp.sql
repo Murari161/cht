@@ -1,4 +1,4 @@
-CREATE TABLE report.mv_communicable_diseases_district (
+--CREATE TABLE report.mv_communicable_diseases_district (
     region text,
     district text,
     tperiod text,
@@ -67,7 +67,7 @@ CREATE TABLE report.mv_communicable_diseases_district (
     "Total" numeric
 );
 
-CREATE TABLE report.mv_eidsr_weekly_enrollment_pivot (
+--CREATE TABLE report.mv_eidsr_weekly_enrollment_pivot (
     year integer,
     period integer,
     week text,
@@ -82,7 +82,7 @@ CREATE TABLE report.mv_eidsr_weekly_enrollment_pivot (
     entebbe_regional_enrolled numeric
 );
 
-CREATE TABLE report.mv_eidsr_event_data_summary_flat (
+--CREATE TABLE report.mv_eidsr_event_data_summary_flat (
     event_date timestamp with time zone,
     year text,
     period numeric,
@@ -111,7 +111,7 @@ CREATE TABLE report.mv_eidsr_event_data_summary_flat (
     rsv_not_performed integer
 );
 
-CREATE TABLE malaria.mv_malaria_deaths (
+--CREATE TABLE malaria.mv_malaria_deaths (
     year text,
     period text,
     tperiod text,
@@ -129,7 +129,7 @@ CREATE TABLE malaria.mv_malaria_deaths (
 );
 
 
-CREATE TABLE malaria.mv_iccm_dataset (
+--CREATE TABLE malaria.mv_iccm_dataset (
     region text,
     district text,
     period text,
@@ -156,7 +156,7 @@ CREATE TABLE malaria.mv_iccm_dataset (
 );
 
 
-CREATE TABLE report.mv_tb_case_notification (
+--CREATE TABLE report.mv_tb_case_notification (
     year text,
     quarter text,
     region text,
@@ -198,7 +198,7 @@ CREATE TABLE report.mv_tb_case_notification (
     pct_mentally_ill numeric
 );
 
-CREATE TABLE report.mv_dr_tb (
+--CREATE TABLE report.mv_dr_tb (
     year text,
     quarter text,
     month text,
@@ -254,7 +254,7 @@ CREATE TABLE report.mv_dr_tb (
     last_refresh_date timestamp
 );
 
-CREATE TABLE report.mv_ppm (
+--CREATE TABLE report.mv_ppm (
     year text,
     week text,
     month text,
@@ -279,7 +279,7 @@ CREATE TABLE report.mv_ppm (
 );
 
 
-CREATE TABLE report.mv_tb_screening (
+--CREATE TABLE report.mv_tb_screening (
     year text,
     quarter text,
     month text,
@@ -336,7 +336,7 @@ CREATE TABLE report.mv_tb_screening (
     last_refresh_date timestamp
 );
 
-CREATE TABLE report.mv_tb_elements_new (
+--CREATE TABLE report.mv_tb_elements_new (
     year text,
     week text,
     month text,
@@ -407,7 +407,7 @@ CREATE TABLE report.mv_tb_elements_new (
 
 
 
-CREATE TABLE report.mv_tb_elements_wide (
+--CREATE TABLE report.mv_tb_elements_wide (
     year text,
     week text,
     month text,
@@ -476,7 +476,7 @@ CREATE TABLE report.mv_tb_elements_wide (
     last_refresh_date timestamp
 );
 
-CREATE TABLE report.mv_tb_treatment_outcomes (
+--CREATE TABLE report.mv_tb_treatment_outcomes (
     year text,
     quarter text,
     month text,
@@ -564,7 +564,7 @@ CREATE TABLE report.mv_tb_treatment_outcomes (
     last_refresh_date timestamp
 );
 
-CREATE TABLE report.mv_tb_weekly_status (
+--CREATE TABLE report.mv_tb_weekly_status (
     year text,
     week text,
     month text,
@@ -595,7 +595,7 @@ CREATE TABLE report.mv_tb_weekly_status (
     last_refresh_date timestamp
 );
 
-CREATE TABLE report.mv_tb_lab (
+--CREATE TABLE report.mv_tb_lab (
     year text,
     quarter text,
     region text,
@@ -619,7 +619,7 @@ CREATE TABLE report.mv_tb_lab (
     last_refresh_date timestamp
 );
 
-CREATE TABLE report.mv_tb_paediatrics (
+--CREATE TABLE report.mv_tb_paediatrics (
     year text,
     region text,
     district text,
@@ -633,7 +633,7 @@ CREATE TABLE report.mv_tb_paediatrics (
 );
 
 
-CREATE TABLE report.mv_leprosy (
+--CREATE TABLE report.mv_leprosy (
     year text,
     week text,
     month text,
@@ -659,7 +659,7 @@ CREATE TABLE report.mv_leprosy (
 );
 
 
-CREATE TABLE report.mv_palliative_care (
+--CREATE TABLE report.mv_palliative_care (
     year text,
     month text,
     monthname text,
@@ -685,7 +685,7 @@ CREATE TABLE report.mv_palliative_care (
     "Worst pain possible (9/10-10/10)" integer
 );
 
-CREATE TABLE report.mv_tbh_coinfection (
+--CREATE TABLE report.mv_tbh_coinfection (
     year text,
     quarter text,
     month text,
@@ -730,7 +730,7 @@ CREATE TABLE report.mv_tbh_coinfection (
 
 
 
-CREATE TABLE report.mv_acf (
+--CREATE TABLE report.mv_acf (
     year text,
     quarter text,
     month text,
@@ -753,7 +753,7 @@ CREATE TABLE report.mv_acf (
     last_refresh_date timestamp
 );
 
-CREATE TABLE report.mv_tpt_weekly (
+--CREATE TABLE report.mv_tpt_weekly (
     year text,
     week text,
     quarter text,
@@ -767,7 +767,7 @@ CREATE TABLE report.mv_tpt_weekly (
     last_refresh_date timestamp
 );
 
-CREATE TABLE report.mv_tb_data_elements (
+--CREATE TABLE report.mv_tb_data_elements (
     year text,
     week text,
     month text,
@@ -839,7 +839,7 @@ CREATE TABLE report.mv_tb_data_elements (
     last_refresh_date timestamp
 );
 
-CREATE TABLE report.mv_epi_dataelements (
+--CREATE TABLE report.mv_epi_dataelements (
     year integer,
     month integer,
     monthname text,
@@ -900,7 +900,7 @@ CREATE TABLE report.mv_epi_dataelements (
 );
 
 
-CREATE TABLE report.mv_clinical_services_combo (
+--CREATE TABLE report.mv_clinical_services_combo (
     record_id text,
     record_sync_date timestamp,
     facility text,
@@ -932,7 +932,7 @@ CREATE TABLE report.mv_clinical_services_combo (
 );
 
 
-CREATE TABLE report.mv_clinical_services (
+--CREATE TABLE report.mv_clinical_services (
     year integer,
     month integer,
     monthname text,
@@ -969,7 +969,7 @@ CREATE TABLE report.mv_clinical_services (
 
 
 
-CREATE TABLE report.mv_surgeries (
+--CREATE TABLE report.mv_surgeries (
     year integer,
     month integer,
     monthname text,
@@ -981,7 +981,7 @@ CREATE TABLE report.mv_surgeries (
 );
 
 
-CREATE TABLE report.mv_monthly_stock_analysis_raw (
+--CREATE TABLE report.mv_monthly_stock_analysis_raw (
     "national" text,
     region text,
     district text,
@@ -1049,7 +1049,7 @@ CREATE TABLE report.mv_monthly_stock_analysis_raw (
     status_over_stocked integer
 );
 
-CREATE TABLE report.mv_monthly_stock_analysis_aggregate (
+--CREATE TABLE report.mv_monthly_stock_analysis_aggregate (
     facilityid text,
     facility text,
     region text,
@@ -1069,7 +1069,7 @@ CREATE TABLE report.mv_monthly_stock_analysis_aggregate (
     month integer
 );
 
-CREATE TABLE report.mv_amr_rx_audit_visit (
+--CREATE TABLE report.mv_amr_rx_audit_visit (
     key_uuid text,
     submission_date date,
     date_of_audit date,
@@ -1166,7 +1166,7 @@ CREATE MATERIALIZED VIEW report.mv_amr_prescription_audit_clean AS  SELECT key_u
   WHERE (NULLIF(btrim(antimicrobial), ''::text) IS NOT NULL);
 
 
-CREATE TABLE report.mv_nutrition_hmis_elements_v3 (
+--CREATE TABLE report.mv_nutrition_hmis_elements_v3 (
     composite_group_id text,
     region text,
     district text,
@@ -1186,7 +1186,7 @@ CREATE TABLE report.mv_nutrition_hmis_elements_v3 (
 
 
 
-CREATE TABLE report.disability_elements_data_2 (
+--CREATE TABLE report.mv_disability_elements_data_2 (
     -- Location and Metadata
     region TEXT,
     district TEXT,
@@ -1276,7 +1276,7 @@ CREATE TABLE report.disability_elements_data_2 (
     PRIMARY KEY (facility, year, month, category)
 );
 
-CREATE TABLE cht.mv_community_death_notification_revised (
+--CREATE TABLE cht.mv_community_death_notification (
     uuid TEXT,
     form TEXT,
     submitter TEXT,
@@ -1365,7 +1365,7 @@ CREATE TABLE cht.mv_community_death_notification_revised (
 );
 
 
-CREATE TABLE report.mv_performance_indicators_v2 (
+--CREATE TABLE report.mv_performance_indicators_v2 (
     reporting_period TEXT,
     year INTEGER,
     quarter INTEGER,
@@ -1385,7 +1385,7 @@ CREATE TABLE report.mv_performance_indicators_v2 (
 );
 
 
-CREATE TABLE report.mv_performance_raw (
+--CREATE TABLE report.mv_performance_raw (
     fact_hmis_key BIGINT, -- Adjust to MATCH your dwh.fact_hmis primary key type
     data_value NUMERIC,
     time_period TEXT,
@@ -1408,7 +1408,7 @@ CREATE TABLE report.mv_performance_raw (
 );
 
 
-CREATE TABLE report.mv_097b_data_updated (
+--CREATE TABLE report.mv_097b_data_updated (
     -- Location & Metadata
     region TEXT,
     district TEXT,
@@ -1553,7 +1553,7 @@ CREATE TABLE report.mv_097b_data_updated (
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE report.mv_non_communicable_diseases (
+--CREATE TABLE report.mv_non_communicable_diseases (
     -- Metadata
     year INTEGER,
     month INTEGER,
@@ -1675,7 +1675,7 @@ CREATE TABLE report.mv_non_communicable_diseases (
 );
 
 
-CREATE TABLE cht.mv_vht_supervision (
+--CREATE TABLE cht.mv_vht_supervision (
     uuid TEXT,
     form TEXT,
     submitter TEXT,
@@ -1712,7 +1712,7 @@ CREATE TABLE cht.mv_vht_supervision (
 );
 
 
-CREATE TABLE cht.mv_chew_hierarchy_2 (
+--CREATE TABLE cht.mv_chew_hierarchy_2 (
     chw_id TEXT,
     username TEXT,
     chw_name TEXT,
@@ -1737,7 +1737,7 @@ CREATE TABLE cht.mv_chew_hierarchy_2 (
 );
 
 
-CREATE TABLE cht.mv_chew_performance (
+--CREATE TABLE cht.mv_chew_performance (
     region TEXT,
     district TEXT,
     year INTEGER,
@@ -1822,7 +1822,7 @@ CREATE TABLE cht.mv_chew_performance (
 );
 
 
-CREATE TABLE cht.mv_form_meta (
+--CREATE TABLE cht.mv_form_meta (
     form_uuid TEXT PRIMARY KEY,
     form_name TEXT,
     patient_id TEXT,
@@ -1848,7 +1848,7 @@ CREATE TABLE cht.mv_form_meta (
 );
 
 
-CREATE TABLE cht.mv_assessment_new (
+--CREATE TABLE cht.mv_assessment (
     uuid TEXT,
     form TEXT,
     submitter TEXT,
@@ -2042,7 +2042,7 @@ CREATE TABLE cht.mv_assessment_new (
     last_refresh_date TIMESTAMP
 );
 
-CREATE TABLE cht.mv_screening (
+--CREATE TABLE cht.mv_screening (
     uuid TEXT,
     form TEXT,
     submitter TEXT,
@@ -2157,7 +2157,7 @@ CREATE TABLE cht.mv_screening (
 
 
 
-CREATE TABLE cht.mv_health_education_new (
+--CREATE TABLE cht.mv_health_education (
     uuid TEXT,
     form TEXT,
     submitter TEXT,
@@ -2272,7 +2272,7 @@ CREATE TABLE cht.mv_health_education_new (
     last_refresh_date TIMESTAMP
 );
 
-CREATE TABLE cht.mv_pregnancy_new (
+--CREATE TABLE cht.mv_pregnancy (
     doc_id TEXT,
     rev TEXT,
     reported TIMESTAMP,
@@ -2422,7 +2422,7 @@ CREATE TABLE cht.mv_pregnancy_new (
 );
 
 
-CREATE TABLE cht.mv_referral_follow_up (
+--CREATE TABLE cht.mv_referral_follow_up (
     doc_id TEXT,
     rev TEXT,
     reported TIMESTAMP,
@@ -2499,7 +2499,7 @@ CREATE TABLE cht.mv_referral_follow_up (
 );
 
 
-CREATE TABLE cht.mv_household_model_notification (
+--CREATE TABLE cht.mv_household_model_notification (
     uuid TEXT,
     form TEXT,
     submitter TEXT,
@@ -2573,7 +2573,7 @@ CREATE TABLE cht.mv_household_model_notification (
     last_refresh_date TIMESTAMP
 );
 
-CREATE TABLE cht.mv_cebs_signal_report_vht (
+--CREATE TABLE cht.mv_cebs_signal_report_vht (
     uuid TEXT,
     form TEXT,
     reported TIMESTAMP,
@@ -2631,7 +2631,7 @@ CREATE TABLE cht.mv_cebs_signal_report_vht (
     last_refresh_date TIMESTAMP
 );
 
-CREATE TABLE cht.mv_cebs_signal_verification (
+--CREATE TABLE cht.mv_cebs_signal_verification (
     uuid TEXT,
     form TEXT,
     reported TIMESTAMP,
@@ -2699,7 +2699,7 @@ CREATE TABLE cht.mv_cebs_signal_verification (
     last_refresh_date TIMESTAMP
 );
 
-CREATE TABLE cht.mv_cebs_signal_verification_notification (
+--CREATE TABLE cht.mv_cebs_signal_verification_notification (
     uuid TEXT,
     form TEXT,
     reported TIMESTAMP,
@@ -2758,7 +2758,7 @@ CREATE TABLE cht.mv_cebs_signal_verification_notification (
 
 
 
-CREATE TABLE cht.mv_vht_immunization (
+--CREATE TABLE cht.mv_vht_immunization (
     last_refresh_date TIMESTAMP,
     district TEXT,
     sub_district TEXT,
@@ -2784,7 +2784,7 @@ CREATE TABLE cht.mv_vht_immunization (
 );
 
 
-CREATE TABLE cht.mv_delivery (
+--CREATE TABLE cht.mv_delivery (
     uuid TEXT,
     rev TEXT,
     reported TIMESTAMP,

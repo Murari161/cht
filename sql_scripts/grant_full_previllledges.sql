@@ -1,0 +1,41 @@
+-- Grant full privileges (DELETE, TRUNCATE, TRIGGER, SELECT, REFERENCES, INSERT, UPDATE) 
+-- to user jmurari on all specified tables
+
+GRANT DELETE, TRUNCATE, TRIGGER, SELECT, REFERENCES, INSERT, UPDATE 
+ON TABLE 
+    report.mv_communicable_diseases_district,
+    report.mv_eidsr_weekly_enrollment_pivot,
+    report.mv_eidsr_event_data_summary_flat,
+    malaria.mv_malaria_deaths,
+    malaria.mv_iccm_dataset,
+    report.mv_tb_case_notification,
+    report.mv_dr_tb,
+    report.mv_ppm,
+    report.mv_tb_screening,
+    report.mv_tb_elements_new,
+    report.mv_tb_elements_wide,
+    report.mv_tb_treatment_outcomes,
+    report.mv_tb_weekly_status,
+    report.mv_tb_lab,
+    report.mv_tb_paediatrics,
+    report.mv_leprosy,
+    report.mv_palliative_care,
+    report.mv_tbh_coinfection,
+    report.mv_acf,
+    report.mv_tpt_weekly,
+    report.mv_tb_data_elements,
+    report.mv_epi_dataelements,
+    report.mv_clinical_services_combo,
+    report.mv_clinical_services,
+    report.mv_surgeries,
+    report.mv_monthly_stock_analysis_raw,
+    report.mv_monthly_stock_analysis_aggregate,
+    report.mv_amr_rx_audit_visit,
+    report.mv_amr_prescription_audit_clean,
+    report.mv_nutrition_hmis_elements_v3,
+    report.mv_disability_elements_2,
+    report.mv_performance_indicators_v2,
+    report.mv_performance_raw,
+    report.mv_097b_data_updated,
+    report.mv_non_communicable_diseases
+TO jmurari;

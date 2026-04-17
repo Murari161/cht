@@ -1,5 +1,5 @@
 -- cht.mv_anc_danger_sign_follow_up source
-DROP MATERIALIZED VIEW IF EXISTS cht.mv_anc_danger_sign_follow_up;
+DROP MATERIALIZED VIEW cht.mv_anc_danger_sign_follow_up;
 CREATE MATERIALIZED VIEW cht.mv_anc_danger_sign_follow_up
 TABLESPACE ts_report
 AS SELECT doc_id,
@@ -67,7 +67,7 @@ AS SELECT doc_id,
       CURRENT_TIMESTAMP                                 AS last_refresh_date  
    FROM dwh.cht_data d
    LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id
-  WHERE d.type = 'data_record'::text AND (d.doc ->> 'form'::text) = 'anc_danger_sign_escalation'::text AND d.is_current IS TRUE
+  WHERE d.type = 'data_record'::text AND (d.doc ->> 'form'::text) = 'anc_danger_sign_follow_up'::text AND d.is_current IS TRUE
 WITH DATA;
 
 CREATE UNIQUE INDEX idx_mv_anc_danger_sign_follow_up_doc_id_rev_id

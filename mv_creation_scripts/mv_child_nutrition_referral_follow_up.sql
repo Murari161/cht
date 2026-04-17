@@ -1,5 +1,5 @@
 -- cht.mv_child_nutrition_referral_follow_up source
-DROP MATERIALIZED VIEW IF EXISTS cht.mv_child_nutrition_referral_follow_up;
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_child_nutrition_referral_follow_up_new;
 CREATE MATERIALIZED VIEW cht.mv_child_nutrition_referral_follow_up
 TABLESPACE ts_report
 AS SELECT doc ->> '_id'::text AS uuid,

@@ -133,7 +133,7 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
     h.region,
     CURRENT_TIMESTAMP AS last_refresh_date
    FROM dwh.cht_data d
-     LEFT JOIN cht.mv_chew_hierarchy_2 h ON (d.doc #>> '{contact,_id}'::text[]) = h.chw_id
+     LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}'::text[]) = h.chw_id
   WHERE (d.doc ->> 'form'::text) = 'delivery'::text AND d.is_current = true
 WITH DATA;
 
