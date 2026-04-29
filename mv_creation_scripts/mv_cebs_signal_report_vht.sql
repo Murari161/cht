@@ -52,7 +52,7 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
     ((d.doc -> 'fields'::text) -> 'group_summary'::text) ->> 's_note_key_instruction'::text AS s_note_key_instruction,
     ((d.doc -> 'fields'::text) -> 'group_summary'::text) ->> 'switch_on_data'::text AS switch_on_data,
     d.doc #>> '{contact,_id}'::text[] AS chw_id,
-    h.facility_name,
+    h.facility,
     h.village,
     h.district,
     h.region,
@@ -67,13 +67,13 @@ CREATE INDEX mv_cebs_signal_report_vht_eported ON cht.mv_cebs_signal_report_vht 
 CREATE INDEX mv_cebs_signal_report_vhtchw_is ON cht.mv_cebs_signal_report_vht USING btree (chw_id) TABLESPACE ts_indexes;
 CREATE INDEX mv_cebs_signal_report_vht_year_month ON cht.mv_cebs_signal_report_vht USING btree (year, month) TABLESPACE ts_indexes;
 CREATE INDEX mv_cebs_signal_report_vht_region_district_facility
-ON cht.mv_cebs_signal_report_vht (region, district, facility_name) TABLESPACE ts_indexes;
+ON cht.mv_cebs_signal_report_vht (region, district, facility) TABLESPACE ts_indexes;
 
 CREATE INDEX mv_cebs_signal_report_vht_district
 ON cht.mv_cebs_signal_report_vht (district) TABLESPACE ts_indexes;
 
 CREATE INDEX mv_cebs_signal_report_vht_district_facility
-ON cht.mv_cebs_signal_report_vht (district, facility_name) TABLESPACE ts_indexes;
+ON cht.mv_cebs_signal_report_vht (district, facility) TABLESPACE ts_indexes;
 
 -- High-impact (MOST IMPORTANT)
 CREATE INDEX mv_cebs_signal_report_vht_year_month_district

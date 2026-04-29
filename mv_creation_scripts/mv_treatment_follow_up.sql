@@ -49,7 +49,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,group_follow_up,note_cured}'::text[] AS note_cured,
     doc #>> '{fields,group_key_health_messages,feeding_advice}'::text[] AS feeding_advice,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -68,6 +68,6 @@ CREATE INDEX treatment_follow_up_monthname_idx ON cht.mv_treatment_follow_up USI
 CREATE INDEX treatment_follow_up_district_idx ON cht.mv_treatment_follow_up USING btree (district) tablespace ts_indexes;
 CREATE INDEX treatment_follow_up_region_idx ON cht.mv_treatment_follow_up USING btree (region) tablespace ts_indexes;
 CREATE INDEX treatment_follow_up_chw_id_idx ON cht.mv_treatment_follow_up USING btree (chw_id) tablespace ts_indexes;
-CREATE INDEX treatment_follow_up_facility_name_idx ON cht.mv_treatment_follow_up USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX treatment_follow_up_facility_idx ON cht.mv_treatment_follow_up USING btree (facility) tablespace ts_indexes;
 CREATE INDEX treatment_follow_up_dhis2_facility_id_idx ON cht.mv_treatment_follow_up USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX treatment_follow_up_village_idx ON cht.mv_treatment_follow_up USING btree (village) tablespace ts_indexes;

@@ -70,7 +70,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,health_education,select_health_condition}'::text[] AS select_health_condition,
     doc #>> '{fields,group_patient_summary,s_note_patient_details}'::text[] AS s_note_patient_details,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -90,5 +90,5 @@ CREATE INDEX mv_anc_danger_sign_notification_up_monthname ON cht.mv_anc_danger_s
 CREATE INDEX mv_anc_danger_sign_notification_up_chw_id ON cht.mv_anc_danger_sign_notification USING btree (chw_id);
 CREATE INDEX mv_anc_danger_sign_notification_up_district ON cht.mv_anc_danger_sign_notification USING btree (district);
 CREATE INDEX mv_anc_danger_sign_notification_up_region ON cht.mv_anc_danger_sign_notification USING btree (region);
-CREATE INDEX mv_anc_danger_sign_notification_up_facility_name ON cht.mv_anc_danger_sign_notification USING btree (facility_name);
+CREATE INDEX mv_anc_danger_sign_notification_up_facility ON cht.mv_anc_danger_sign_notification USING btree (facility);
 CREATE INDEX mv_anc_danger_sign_notification_up_dhis2_facility_id ON cht.mv_anc_danger_sign_notification USING btree (dhis2_facility_id);

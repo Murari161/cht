@@ -84,7 +84,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,pregnancy_details,next_maternal_health_date}'::text[] AS next_maternal_health_date,
     doc #>> '{fields,health_education,select_health_condition}'::text[] AS select_health_condition,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -99,6 +99,6 @@ WITH DATA;
 CREATE INDEX mv_maternal_health_education_reported ON cht.mv_maternal_health_education USING btree (reported) tablespace ts_indexes;
 CREATE INDEX mv_maternal_health_education_chw_id ON cht.mv_maternal_health_education USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX mv_maternal_health_education_year_month ON cht.mv_maternal_health_education USING btree (year, month) tablespace ts_indexes;
-CREATE INDEX mv_maternal_health_education_facility ON cht.mv_maternal_health_education USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_maternal_health_education_facility ON cht.mv_maternal_health_education USING btree (facility) tablespace ts_indexes;
 CREATE INDEX mv_maternal_health_education_district ON cht.mv_maternal_health_education USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_maternal_health_education_region ON cht.mv_maternal_health_education USING btree (region) tablespace ts_indexes;

@@ -48,7 +48,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,group_test_questions,form_for_collecting_symptoms}'::text[] AS form_for_collecting_symptoms,
     doc #>> '{fields,group_test_questions,option_for_completing_form}'::text[] AS option_for_completing_form,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -67,7 +67,7 @@ CREATE INDEX training_evaluation_monthname_idx ON cht.mv_training_evaluation USI
 CREATE INDEX training_evaluation_district_idx ON cht.mv_training_evaluation USING btree (district) tablespace ts_indexes;
 CREATE INDEX training_evaluation_region_idx ON cht.mv_training_evaluation USING btree (region) tablespace ts_indexes;
 CREATE INDEX training_evaluation_chw_id_idx ON cht.mv_training_evaluation USING btree (chw_id) tablespace ts_indexes;
-CREATE INDEX training_evaluation_facility_name_idx ON cht.mv_training_evaluation USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX training_evaluation_facility_idx ON cht.mv_training_evaluation USING btree (facility) tablespace ts_indexes;
 CREATE INDEX training_evaluation_dhis2_facility_id_idx ON cht.mv_training_evaluation USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX training_evaluation_village_idx ON cht.mv_training_evaluation USING btree (village) tablespace ts_indexes;
 CREATE INDEX training_evaluation_last_refresh_date_idx ON cht.mv_training_evaluation USING btree (last_refresh_date) tablespace ts_indexes;                                                     

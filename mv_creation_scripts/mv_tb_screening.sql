@@ -109,7 +109,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,sputum_collection,keep_container_closed}'::text[] AS keep_container_closed,
     doc #>> '{fields,sputum_collection,has_left_sputum_bottle_with_client}'::text[] AS has_left_sputum_bottle_with_client,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -126,7 +126,7 @@ CREATE INDEX tb_screening_year_idx ON cht.mv_tb_screening USING btree (year);
 CREATE INDEX tb_screening_month_idx ON cht.mv_tb_screening USING btree (month);
 CREATE INDEX tb_screening_monthname_idx ON cht.mv_tb_screening USING btree (monthname);
 CREATE INDEX tb_screening_chw_id_idx ON cht.mv_tb_screening USING btree (chw_id);
-CREATE INDEX tb_screening_facility_name_idx ON cht.mv_tb_screening USING btree (facility_name);
+CREATE INDEX tb_screening_facility_idx ON cht.mv_tb_screening USING btree (facility);
 CREATE INDEX tb_screening_dhis2_facility_id_idx ON cht.mv_tb_screening USING btree (dhis2_facility_id);
 CREATE INDEX tb_screening_village_idx ON cht.mv_tb_screening USING btree (village);
 CREATE INDEX tb_screening_district_idx ON cht.mv_tb_screening USING btree (district);

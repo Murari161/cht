@@ -81,7 +81,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,group_watch_danger_signs,note_fever_more_than7days}'::text[] AS note_fever_more_than7days,
     doc #>> '{fields,group_watch_danger_signs,note_muac_red_yellow}'::text[] AS note_muac_red_yellow,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -101,6 +101,6 @@ CREATE INDEX mv_sdx_follow_up_month ON cht.mv_sdx_follow_up USING btree (month) 
 CREATE INDEX mv_sdx_follow_up_monthname ON cht.mv_sdx_follow_up USING btree (monthname) tablespace ts_indexes;
 CREATE INDEX mv_sdx_follow_up_district ON cht.mv_sdx_follow_up USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_sdx_follow_up_region ON cht.mv_sdx_follow_up USING btree (region) tablespace ts_indexes;
-CREATE INDEX mv_sdx_follow_up_facility_name ON cht.mv_sdx_follow_up USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_sdx_follow_up_facility ON cht.mv_sdx_follow_up USING btree (facility) tablespace ts_indexes;
 CREATE INDEX mv_sdx_follow_up_dhis2_facility_id ON cht.mv_sdx_follow_up USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX mv_sdx_follow_up_village ON cht.mv_sdx_follow_up USING btree (village) tablespace ts_indexes;

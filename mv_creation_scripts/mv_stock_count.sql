@@ -50,7 +50,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,items,dmpa}'::text[] AS dmpa,
     doc #>> '{fields,items,condoms}'::text[] AS condoms,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -67,7 +67,7 @@ CREATE INDEX mv_stock_count_year_idx ON cht.mv_stock_count USING btree (year) ta
 CREATE INDEX mv_stock_count_month_idx ON cht.mv_stock_count USING btree (month) tablespace ts_indexes;
 CREATE INDEX mv_stock_count_monthname_idx ON cht.mv_stock_count USING btree (monthname) tablespace ts_indexes;
 CREATE INDEX mv_stock_count_chw_id_idx ON cht.mv_stock_count USING btree (chw_id) tablespace ts_indexes;
-CREATE INDEX mv_stock_count_facility_name_idx ON cht.mv_stock_count USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_stock_count_facility_idx ON cht.mv_stock_count USING btree (facility) tablespace ts_indexes;
 CREATE INDEX mv_stock_count_dhis2_facility_id_idx ON cht.mv_stock_count USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX mv_stock_count_village_idx ON cht.mv_stock_count USING btree (village) tablespace ts_indexes;
 CREATE INDEX mv_stock_count_district_idx ON cht.mv_stock_count USING btree (district) tablespace ts_indexes;

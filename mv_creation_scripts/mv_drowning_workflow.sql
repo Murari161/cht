@@ -44,7 +44,7 @@ SELECT
 
     --- reporting hierarchy
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,

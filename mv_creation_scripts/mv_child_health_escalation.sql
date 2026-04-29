@@ -68,7 +68,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,danger_signs,fever_duration}'::text[] AS danger_signs_fever_duration,
     doc #>> '{fields,danger_signs,immunization_missed}'::text[] AS danger_signs_immunization_missed,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -84,5 +84,5 @@ CREATE INDEX mv_child_health_escalation_patient ON cht.mv_child_health_escalatio
 CREATE INDEX mv_child_health_escalation_reported ON cht.mv_child_health_escalation USING btree (reported) tablespace ts_indexes;
 CREATE INDEX mv_child_health_escalation_chw_id ON cht.mv_child_health_escalation USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX mv_child_health_escalation_district ON cht.mv_child_health_escalation USING btree (district) tablespace ts_indexes;
-CREATE INDEX mv_child_health_escalation_facility ON cht.mv_child_health_escalation USING btree (facility_name) tablespace ts_indexes; 
+CREATE INDEX mv_child_health_escalation_facility ON cht.mv_child_health_escalation USING btree (facility) tablespace ts_indexes; 
 CREATE INDEX mv_child_health_escalation_year_month ON cht.mv_child_health_escalation USING btree (year, month) tablespace ts_indexes;  

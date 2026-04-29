@@ -76,7 +76,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,group_safe_postnatal_practices,note_clean_dry_umbilical_cord}'::text[] AS note_clean_dry_umbilical_cord,
     doc #>> '{fields,group_safe_postnatal_practices,note_fp}'::text[] AS note_fp,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -97,5 +97,5 @@ CREATE INDEX pnc_follow_up_village_idx ON cht.mv_pnc_follow_up USING btree (vill
 CREATE INDEX pnc_follow_up_district_idx ON cht.mv_pnc_follow_up USING btree (district) tablespace ts_indexes;
 CREATE INDEX pnc_follow_up_region_idx ON cht.mv_pnc_follow_up USING btree (region) tablespace ts_indexes;
 CREATE INDEX pnc_follow_up_chw_id_idx ON cht.mv_pnc_follow_up USING btree (chw_id) tablespace ts_indexes;
-CREATE INDEX pnc_follow_up_facility_name_idx ON cht.mv_pnc_follow_up USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX pnc_follow_up_facility_idx ON cht.mv_pnc_follow_up USING btree (facility) tablespace ts_indexes;
 CREATE INDEX pnc_follow_up_dhis2_facility_id_idx ON cht.mv_pnc_follow_up USING btree (dhis2_facility_id) tablespace ts_indexes;

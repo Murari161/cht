@@ -62,7 +62,7 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
     ((d.doc -> 'fields'::text) -> 'verification'::text) ->> 'date_facility_informed'::text AS date_facility_informed,
     ((d.doc -> 'fields'::text) -> 'verification'::text) ->> 'signal_been_referred'::text AS signal_been_referred,
     d.doc #>> '{contact,_id}'::text[] AS chw_id,
-    h.facility_name,
+    h.facility,
     h.village,
     h.district,
     h.region,
@@ -76,6 +76,6 @@ WITH DATA;
 CREATE INDEX mv_cebs_signal_verification_eported ON cht.mv_cebs_signal_verification USING btree (reported) TABLESPACE ts_indexes;
 CREATE INDEX mv_cebs_signal_verificationchw_is ON cht.mv_cebs_signal_verification USING btree (chw_id) TABLESPACE ts_indexes;
 CREATE INDEX mv_cebs_signal_verification_year_month ON cht.mv_cebs_signal_verification USING btree (year, month) TABLESPACE ts_indexes;
-CREATE INDEX mv_cebs_signal_verification_region_district_facility ON cht.mv_cebs_signal_verification (region, district, facility_name) TABLESPACE ts_indexes;
+CREATE INDEX mv_cebs_signal_verification_region_district_facility ON cht.mv_cebs_signal_verification (region, district, facility) TABLESPACE ts_indexes;
 CREATE INDEX mv_cebs_signal_verification_district ON cht.mv_cebs_signal_verification (district) TABLESPACE ts_indexes;
-CREATE INDEX mv_cebs_signal_verification_district_facility ON cht.mv_cebs_signal_verification (district, facility_name) TABLESPACE ts_indexes; 
+CREATE INDEX mv_cebs_signal_verification_district_facility ON cht.mv_cebs_signal_verification (district, facility) TABLESPACE ts_indexes; 

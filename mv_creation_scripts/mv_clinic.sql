@@ -59,7 +59,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     (doc -> 'hh_model_assessment'::text) ->> 'n_well_maintained_compound_indicator'::text AS n_well_maintained_compound_indicator,
     (doc -> 'hh_model_assessment'::text) ->> 'n_vermin_rodent_control_indicator'::text AS n_vermin_rodent_control_indicator,
     doc #>> '{parent,_id}'                         AS vht_area_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -79,5 +79,5 @@ CREATE INDEX idx_mv_clinic_year_month ON cht.mv_clinic USING btree (year, month)
 CREATE INDEX idx_mv_clinic_vht_area_id ON cht.mv_clinic USING btree (vht_area_id) tablespace ts_indexes;
 CREATE INDEX idx_mv_clinic_district ON cht.mv_clinic USING btree (district) tablespace ts_indexes;
 CREATE INDEX idx_mv_clinic_region ON cht.mv_clinic USING btree (region) tablespace ts_indexes;
-CREATE INDEX idx_mv_clinic_facility_name ON cht.mv_clinic USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX idx_mv_clinic_facility ON cht.mv_clinic USING btree (facility) tablespace ts_indexes;
 CREATE INDEX idx_mv_clinic_dhis2_facility_id ON cht.mv_clinic USING btree (dhis2_facility_id) tablespace ts_indexes;

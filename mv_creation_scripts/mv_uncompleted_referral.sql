@@ -37,7 +37,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,referral_notification,generated_note_name_25}'::text[] AS generated_note_name_25,
     doc #>> '{fields,referral_notification,referred_to_health_facility}'::text[] AS referred_to_health_facility,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -56,6 +56,6 @@ CREATE INDEX uncompleted_referral_monthname_idx ON cht.mv_uncompleted_referral U
 CREATE INDEX uncompleted_referral_district_idx ON cht.mv_uncompleted_referral USING btree (district);
 CREATE INDEX uncompleted_referral_region_idx ON cht.mv_uncompleted_referral USING btree (region);
 CREATE INDEX uncompleted_referral_chw_id_idx ON cht.mv_uncompleted_referral USING btree (chw_id);
-CREATE INDEX uncompleted_referral_facility_name_idx ON cht.mv_uncompleted_referral USING btree (facility_name);
+CREATE INDEX uncompleted_referral_facility_idx ON cht.mv_uncompleted_referral USING btree (facility);
 CREATE INDEX uncompleted_referral_dhis2_facility_id_idx ON cht.mv_uncompleted_referral USING btree (dhis2_facility_id);
 CREATE INDEX uncompleted_referral_village_idx ON cht.mv_uncompleted_referral USING btree (village);

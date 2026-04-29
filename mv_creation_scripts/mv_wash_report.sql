@@ -77,7 +77,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,is_model_household}'::text[] AS is_model_household,
     doc #>> '{fields,next_wash_report_task_date}'::text[] AS next_wash_report_task_date,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -96,5 +96,5 @@ CREATE INDEX mv_wash_report_date ON cht.mv_wash_report USING btree (date) tables
 CREATE INDEX mv_wash_report_region ON cht.mv_wash_report USING btree (region) tablespace ts_indexes;
 CREATE INDEX mv_wash_report_district ON cht.mv_wash_report USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_wash_report_village ON cht.mv_wash_report USING btree (village) tablespace ts_indexes;
-CREATE INDEX mv_wash_report_facility_name ON cht.mv_wash_report USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_wash_report_facility ON cht.mv_wash_report USING btree (facility) tablespace ts_indexes;
 CREATE INDEX mv_wash_report_dhis2_facility_id ON cht.mv_wash_report USING btree (dhis2_facility_id) tablespace ts_indexes; 

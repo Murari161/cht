@@ -189,7 +189,7 @@ SELECT
     doc #>> '{fields,group_patient_summary,have_you_referred}' AS have_you_referred,
     -- Last column for tracking refresh
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.village,
       h.district,
       h.region,
@@ -216,13 +216,13 @@ CREATE INDEX mv_assessment_date
     ON cht.mv_assessment USING btree (date) TABLESPACE ts_indexes;
 -- Org hierarchy
 CREATE INDEX mv_assessment_region_district_facility
-ON cht.mv_assessment (region, district, facility_name) TABLESPACE ts_indexes;
+ON cht.mv_assessment (region, district, facility) TABLESPACE ts_indexes;
 
 CREATE INDEX mv_assessment_district
 ON cht.mv_assessment (district) TABLESPACE ts_indexes;
 
 CREATE INDEX mv_assessment_district_facility
-ON cht.mv_assessment (district, facility_name) TABLESPACE ts_indexes;
+ON cht.mv_assessment (district, facility) TABLESPACE ts_indexes;
 
 -- High-impact (MOST IMPORTANT)
 CREATE INDEX mv_assessment_year_month_district

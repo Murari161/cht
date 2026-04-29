@@ -89,7 +89,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,group_danger,specify}'::text[] AS specify,
     doc #>> '{fields,group_danger,comment}'::text[] AS comment,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -104,6 +104,6 @@ WITH DATA;
 CREATE INDEX ha_danger_signs_follow_up_reported_idx ON cht.mv_ha_danger_signs_follow_up USING btree (reported) TABLESPACE ts_indexes;
 CREATE INDEX ha_danger_signs_follow_up_chw_id_idx ON cht.mv_ha_danger_signs_follow_up USING btree (chw_id) TABLESPACE ts_indexes;
 CREATE INDEX ha_danger_signs_follow_up_district_idx ON cht.mv_ha_danger_signs_follow_up USING btree (district) TABLESPACE ts_indexes;
-CREATE INDEX ha_danger_signs_follow_up_facility_idx ON cht.mv_ha_danger_signs_follow_up USING btree (facility_name) TABLESPACE ts_indexes;
+CREATE INDEX ha_danger_signs_follow_up_facility_idx ON cht.mv_ha_danger_signs_follow_up USING btree (facility) TABLESPACE ts_indexes;
 CREATE INDEX ha_danger_signs_follow_up_year_idx ON cht.mv_ha_danger_signs_follow_up USING btree (year) TABLESPACE ts_indexes;
 CREATE INDEX ha_danger_signs_follow_up_month_idx ON cht.mv_ha_danger_signs_follow_up USING btree (month) TABLESPACE ts_indexes;

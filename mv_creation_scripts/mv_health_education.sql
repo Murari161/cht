@@ -83,7 +83,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     (doc #>> '{fields,g_other_topic,nb_attendee_other_topic}'::text[])::integer AS g_other_topic_nb_attendee_other_topic,
     doc #>> '{fields,g_other_topic,additional_notes_other_topic}'::text[] AS g_other_topic_additional_notes_other_topic,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -98,7 +98,7 @@ WITH DATA;
 CREATE INDEX mv_health_education_chw_id ON cht.mv_health_education USING btree (chw_id) TABLESPACE ts_indexes;
 CREATE INDEX mv_health_education_reported ON cht.mv_health_education USING btree (reported) TABLESPACE ts_indexes;
 CREATE INDEX mv_health_education_year_month ON cht.mv_health_education USING btree (year, month) TABLESPACE ts_indexes;
-CREATE INDEX mv_health_education_facility ON cht.mv_health_education USING btree (facility_name) TABLESPACE ts_indexes;
+CREATE INDEX mv_health_education_facility ON cht.mv_health_education USING btree (facility) TABLESPACE ts_indexes;
 CREATE INDEX mv_health_education_dhis2_facility_id ON cht.mv_health_education USING btree (dhis2_facility_id) TABLESPACE ts_indexes;
 CREATE INDEX mv_health_education_district ON cht.mv_health_education USING btree (district) TABLESPACE ts_indexes;  
 CREATE INDEX mv_health_education_region ON cht.mv_health_education USING btree (region) TABLESPACE ts_indexes;  

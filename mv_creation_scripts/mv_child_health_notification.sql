@@ -53,7 +53,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,referral,confirm_refer_to_facility}'::text[] AS confirm_refer_to_facility,
     doc #>> '{fields,health_education,select_health_condition}'::text[] AS select_health_condition,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -72,5 +72,5 @@ CREATE INDEX mv_child_health_notification_month ON cht.mv_child_health_notificat
 CREATE INDEX mv_child_health_notification_chw_id ON cht.mv_child_health_notification USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX mv_child_health_notification_district ON cht.mv_child_health_notification USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_child_health_notification_region ON cht.mv_child_health_notification USING btree (region) tablespace ts_indexes;
-CREATE INDEX mv_child_health_notification_facility_name ON cht.mv_child_health_notification USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_child_health_notification_facility ON cht.mv_child_health_notification USING btree (facility) tablespace ts_indexes;
 CREATE INDEX mv_child_health_notification_dhis2_facility_id ON cht.mv_child_health_notification USING btree (dhis2_facility_id) tablespace ts_indexes;  

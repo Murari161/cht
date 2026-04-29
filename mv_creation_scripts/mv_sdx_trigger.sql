@@ -42,7 +42,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,diagnosis}'::text[] AS diagnosis,
     doc #>> '{fields,sdx_id}'::text[] AS sdx_id,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -63,5 +63,5 @@ CREATE INDEX mv_sdx_trigger_monthname ON cht.mv_sdx_trigger USING btree (monthna
 CREATE INDEX mv_sdx_trigger_district ON cht.mv_sdx_trigger USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_sdx_trigger_region ON cht.mv_sdx_trigger USING btree (region) tablespace ts_indexes;
 CREATE INDEX mv_sdx_trigger_village ON cht.mv_sdx_trigger USING btree (village) tablespace ts_indexes;
-CREATE INDEX mv_sdx_trigger_facility_name ON cht.mv_sdx_trigger USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_sdx_trigger_facility ON cht.mv_sdx_trigger USING btree (facility) tablespace ts_indexes;
 CREATE INDEX mv_sdx_trigger_dhis2_facility_id ON cht.mv_sdx_trigger USING btree (dhis2_facility_id) tablespace ts_indexes;

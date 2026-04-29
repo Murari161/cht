@@ -35,7 +35,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,patient_gender}'::text[] AS patient_gender,
     doc #>> '{fields,group_pregnancy_status,has_delivered}'::text[] AS has_delivered,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -53,4 +53,4 @@ CREATE INDEX delivery_year_idx ON cht.mv_delivery_check USING btree (year) table
 CREATE INDEX delivery_month_idx ON cht.mv_delivery_check USING btree (month) tablespace ts_indexes;
 CREATE INDEX delivery_chw_id_idx ON cht.mv_delivery_check USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX delivery_district_idx ON cht.mv_delivery_check USING btree (district) tablespace ts_indexes;
-CREATE INDEX delivery_facility_idx ON cht.mv_delivery_check USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX delivery_facility_idx ON cht.mv_delivery_check USING btree (facility) tablespace ts_indexes;

@@ -93,7 +93,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,group_other_screening,note_vht_assist_how_to_get_llin}'::text[] AS other_note_vht_assist_how_to_get_llin,
     doc #>> '{fields,group_other_screening,note_vht_demonstrate_on_llin_use}'::text[] AS other_note_vht_demonstrate_on_llin_use,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -113,5 +113,5 @@ CREATE INDEX mv_screening_month ON cht.mv_screening USING btree (month) tablespa
 CREATE INDEX mv_screening_monthname ON cht.mv_screening USING btree (monthname) tablespace ts_indexes;
 CREATE INDEX mv_screening_district ON cht.mv_screening USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_screening_region ON cht.mv_screening USING btree (region) tablespace ts_indexes;
-CREATE INDEX mv_screening_facility_name ON cht.mv_screening USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_screening_facility ON cht.mv_screening USING btree (facility) tablespace ts_indexes;
 CREATE INDEX mv_screening_dhis2_facility_id ON cht.mv_screening USING btree (dhis2_facility_id) tablespace ts_indexes;

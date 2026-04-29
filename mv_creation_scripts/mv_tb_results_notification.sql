@@ -76,7 +76,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,sputum_collection,has_left_sputum_bottle_with_client}'::text[] AS has_left_sputum_bottle_with_client,
     doc #>> '{fields,sputum_collection_consent,results_phone_number}'::text[] AS results_phone_number,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -93,7 +93,7 @@ CREATE INDEX tb_results_notification_year_idx ON cht.mv_tb_results_notification 
 CREATE INDEX tb_results_notification_month_idx ON cht.mv_tb_results_notification USING btree (month) tablespace ts_indexes;
 CREATE INDEX tb_results_notification_monthname_idx ON cht.mv_tb_results_notification USING btree (monthname) tablespace ts_indexes;
 CREATE INDEX tb_results_notification_chw_id_idx ON cht.mv_tb_results_notification USING btree (chw_id) tablespace ts_indexes;
-CREATE INDEX tb_results_notification_facility_name_idx ON cht.mv_tb_results_notification USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX tb_results_notification_facility_idx ON cht.mv_tb_results_notification USING btree (facility) tablespace ts_indexes;
 CREATE INDEX tb_results_notification_dhis2_facility_id_idx ON cht.mv_tb_results_notification USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX tb_results_notification_village_idx ON cht.mv_tb_results_notification USING btree (village) tablespace ts_indexes;
 CREATE INDEX tb_results_notification_district_idx ON cht.mv_tb_results_notification USING btree (district) tablespace ts_indexes;

@@ -81,7 +81,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,is_model_household}'::text[] AS is_model_household,
     doc #>> '{fields,next_wash_report_task_date}'::text[] AS next_wash_report_task_date,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -97,7 +97,7 @@ CREATE INDEX mv_household_model_follow_up_chw_id ON cht.mv_household_model_follo
 CREATE INDEX mv_household_model_follow_up_reported ON cht.mv_household_model_follow_up USING btree (reported) tablespace ts_indexes;
 CREATE INDEX mv_household_model_follow_up_year_month ON cht.mv_household_model_follow_up USING btree (year, month) tablespace ts_indexes;
 CREATE INDEX mv_household_model_follow_up_district ON cht.mv_household_model_follow_up USING btree (district) tablespace ts_indexes;
-CREATE INDEX mv_household_model_follow_up_facility_name ON cht.mv_household_model_follow_up USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_household_model_follow_up_facility ON cht.mv_household_model_follow_up USING btree (facility) tablespace ts_indexes;
 CREATE INDEX mv_household_model_follow_up_dhis2_facility_id ON cht.mv_household_model_follow_up USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX mv_household_model_follow_up_village ON cht.mv_household_model_follow_up USING btree (village) tablespace ts_indexes;
 CREATE INDEX mv_household_model_follow_up_region ON cht.mv_household_model_follow_up USING btree (region) tablespace ts_indexes;

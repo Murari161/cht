@@ -44,7 +44,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,fp_ref_follow_up,reason_not_enrolled_fp}'::text[] AS reason_not_enrolled_fp,
     doc #>> '{fields,fp_ref_follow_up,n_pregnancy_registration}'::text[] AS n_pregnancy_registration,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -60,7 +60,7 @@ CREATE INDEX idx_mv_fp_referral_follow_up_chw_id ON cht.mv_fp_referral_follow_up
 CREATE INDEX idx_mv_fp_referral_follow_up_year_month ON cht.mv_fp_referral_follow_up (year, month) tablespace ts_indexes;
 CREATE INDEX idx_mv_fp_referral_follow_up_date ON cht.mv_fp_referral_follow_up (date) tablespace ts_indexes;
 CREATE INDEX idx_mv_fp_referral_follow_up_reported ON cht.mv_fp_referral_follow_up (reported) tablespace ts_indexes;
-CREATE INDEX idx_mv_fp_referral_follow_up_facility ON cht.mv_fp_referral_follow_up (facility_name) tablespace ts_indexes;
+CREATE INDEX idx_mv_fp_referral_follow_up_facility ON cht.mv_fp_referral_follow_up (facility) tablespace ts_indexes;
 CREATE INDEX idx_mv_fp_referral_follow_up_dhis2_facility_id ON cht.mv_fp_referral_follow_up (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX idx_mv_fp_referral_follow_up_district ON cht.mv_fp_referral_follow_up (district) tablespace ts_indexes;
 CREATE INDEX idx_mv_fp_referral_follow_up_region ON cht.mv_fp_referral_follow_up (region) tablespace ts_indexes; 

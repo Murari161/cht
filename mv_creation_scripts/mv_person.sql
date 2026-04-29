@@ -87,7 +87,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc ->> 'note_fp_registration'::text AS note_fp_registration,
     doc #>> '{parent,_id}'::text[] AS household_id_2,
     doc #>> '{contact,_id}'                         AS vht_area_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -105,7 +105,7 @@ CREATE INDEX person_reported_idx ON cht.mv_person USING btree (reported) tablesp
 CREATE INDEX person_vht_area_id_idx ON cht.mv_person USING btree (vht_area_id) tablespace ts_indexes;
 CREATE INDEX person_district_idx ON cht.mv_person USING btree (district) tablespace ts_indexes;
 CREATE INDEX person_dhis2_facility_id_idx ON cht.mv_person USING btree (dhis2_facility_id) tablespace ts_indexes;
-CREATE INDEX person_facility_name_idx ON cht.mv_person USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX person_facility_idx ON cht.mv_person USING btree (facility) tablespace ts_indexes;
 CREATE INDEX person_district ON cht.mv_person USING btree (district) tablespace ts_indexes;
 CREATE INDEX person_region ON cht.mv_person USING btree (region) tablespace ts_indexes;
 CREATE INDEX person_village ON cht.mv_person USING btree (village) tablespace ts_indexes;

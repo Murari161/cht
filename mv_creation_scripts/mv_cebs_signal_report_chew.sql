@@ -40,7 +40,7 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
     ((d.doc -> 'fields'::text) -> 'signal_type'::text) ->> 'person_under_vht_area'::text AS person_under_vht_area,
     ((d.doc -> 'fields'::text) -> 'signal_type'::text) ->> 'brief_description'::text AS brief_description,
     d.doc #>> '{contact,_id}'::text[] AS chw_id,
-    h.facility_name,
+    h.facility,
     h.village,
     h.district,
     h.region,
@@ -53,6 +53,6 @@ WITH DATA;
 -- View indexes:
 CREATE INDEX mv_cebs_signal_report_chew_eported ON cht.mv_cebs_signal_report_chew USING btree (reported) TABLESPACE ts_indexes;
 CREATE INDEX mv_cebs_signal_report_chewchw_is ON cht.mv_cebs_signal_report_chew USING btree (chw_id) TABLESPACE ts_indexes;
-CREATE INDEX mv_cebs_signal_report_chewchw_facility ON cht.mv_cebs_signal_report_chew USING btree (chw_id, facility_name) TABLESPACE ts_indexes;
+CREATE INDEX mv_cebs_signal_report_chewchw_facility ON cht.mv_cebs_signal_report_chew USING btree (chw_id, facility) TABLESPACE ts_indexes;
 CREATE INDEX mv_cebs_signal_report_chewchw_district ON cht.mv_cebs_signal_report_chew USING btree (chw_id, district) TABLESPACE ts_indexes;
 CREATE INDEX mv_cebs_signal_report_chewchw_region ON cht.mv_cebs_signal_report_chew USING btree (chw_id, region) TABLESPACE ts_indexes;

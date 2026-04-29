@@ -80,7 +80,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,fp_registration,next_appt_date}'::text[] AS next_appt_date,
     doc #>> '{fields,fp_registration,format_next_appt_date}'::text[] AS format_next_appt_date,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -99,6 +99,6 @@ CREATE INDEX mv_fp_registration_month ON cht.mv_fp_registration USING btree (mon
 CREATE INDEX mv_fp_registration_monthname ON cht.mv_fp_registration USING btree (monthname) tablespace ts_indexes;
 CREATE INDEX mv_fp_registration_chw_id ON cht.mv_fp_registration USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX mv_fp_registration_district ON cht.mv_fp_registration USING btree (district) tablespace ts_indexes;
-CREATE INDEX mv_fp_registration_facility_name ON cht.mv_fp_registration USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_fp_registration_facility ON cht.mv_fp_registration USING btree (facility) tablespace ts_indexes;
 CREATE INDEX mv_fp_registration_dhis2_facility_id ON cht.mv_fp_registration USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX mv_fp_registration_fp__region ON cht.mv_fp_registration USING btree (region) tablespace ts_indexes;

@@ -46,7 +46,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,group_malnutrition_follow_up,educate_woman}'::text[] AS educate_woman,
     doc #>> '{fields,group_malnutrition_follow_up,counsel_and_woman_to_join_support_group}'::text[] AS counsel_and_woman_to_join_support_group,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -64,7 +64,7 @@ CREATE INDEX maternal_nutrition_follow_up_year_idx ON cht.mv_maternal_nutrition_
 CREATE INDEX maternal_nutrition_follow_up_month_idx ON cht.mv_maternal_nutrition_follow_up USING btree (month) tablespace ts_indexes;
 CREATE INDEX maternal_nutrition_follow_up_monthname_idx ON cht.mv_maternal_nutrition_follow_up USING btree (monthname) tablespace ts_indexes;
 CREATE INDEX maternal_nutrition_follow_up_chw_id_idx ON cht.mv_maternal_nutrition_follow_up USING btree (chw_id) tablespace ts_indexes;
-CREATE INDEX maternal_nutrition_follow_up_facility_name_idx ON cht.mv_maternal_nutrition_follow_up USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX maternal_nutrition_follow_up_facility_idx ON cht.mv_maternal_nutrition_follow_up USING btree (facility) tablespace ts_indexes;
 CREATE INDEX maternal_nutrition_follow_up_dhis2_facility_id_idx ON cht.mv_maternal_nutrition_follow_up USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX maternal_nutrition_follow_up_district_idx ON cht.mv_maternal_nutrition_follow_up USING btree (district) tablespace ts_indexes;
 CREATE INDEX maternal_nutrition_follow_up_region_idx ON cht.mv_maternal_nutrition_follow_up USING btree (region) tablespace ts_indexes;

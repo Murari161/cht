@@ -127,7 +127,7 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
     d.doc #>> '{fields,group_pnc_visits,who_recommendation}'::text[] AS who_recommendation,
     d.doc #>> '{fields,group_pnc_visits,pnc_visits}'::text[] AS pnc_visits,
     d.doc #>> '{contact,_id}'::text[] AS chw_id,
-    h.facility_name,
+    h.facility,
     h.village,
     h.district,
     h.region,
@@ -143,5 +143,5 @@ CREATE INDEX mv_delivery_year_month ON cht.mv_delivery USING btree (year, month)
 CREATE INDEX mv_delivery_date ON cht.mv_delivery USING btree (date) tablespace ts_indexes;
 CREATE INDEX mv_delivery_inputs_contact_id ON cht.mv_delivery USING btree (inputs_contact_id) tablespace ts_indexes;
 CREATE INDEX mv_delivery_chw_id ON cht.mv_delivery USING btree (chw_id) tablespace ts_indexes;
-CREATE INDEX mv_delivery_facility_name ON cht.mv_delivery USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_delivery_facility ON cht.mv_delivery USING btree (facility) tablespace ts_indexes;
 CREATE INDEX mv_delivery_district ON cht.mv_delivery USING btree (district) tablespace ts_indexes;

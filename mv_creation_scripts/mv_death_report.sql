@@ -59,7 +59,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,t_client_place_of_death}'::text[] AS t_client_place_of_death,
     doc #>> '{fields,t_client_national_identification_number}'::text[] AS t_client_national_identification_number,
     doc #>> '{contact,_id}'                         AS vht_area_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -76,5 +76,5 @@ CREATE INDEX mv_death_report_reported_new ON cht.mv_death_report USING btree (re
 CREATE INDEX mv_death_report_year_month ON cht.mv_death_report USING btree (year, month) tablespace ts_indexes;
 CREATE INDEX mv_death_report_date_of_death ON cht.mv_death_report USING btree (date_of_death) tablespace ts_indexes;
 CREATE INDEX mv_death_report_district ON cht.mv_death_report USING btree (district) tablespace ts_indexes;
-CREATE INDEX mv_death_report_facility ON cht.mv_death_report USING btree (facility_name) tablespace ts_indexes; 
+CREATE INDEX mv_death_report_facility ON cht.mv_death_report USING btree (facility) tablespace ts_indexes; 
 CREATE INDEX mv_death_report_patient_id ON cht.mv_death_report USING btree (patient_id) tablespace ts_indexes;

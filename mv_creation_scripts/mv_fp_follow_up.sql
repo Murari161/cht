@@ -73,7 +73,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,fp_follow_up,referred_patient_change_fp}'::text[] AS referred_patient_change_fp,
     doc #>> '{fields,fp_follow_up,next_appt_date}'::text[] AS next_appt_date,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -92,7 +92,7 @@ CREATE INDEX idx_mv_fp_follow_up_chw_date
   ON cht.mv_fp_follow_up (chw_id, date)tablespace ts_indexes;
 CREATE INDEX idx_mv_fp_follow_up_chw_reported
   ON cht.mv_fp_follow_up (chw_id, reported) tablespace ts_indexes;
-  WHERE reported IS NOT NULL;
+  --WHERE reported IS NOT NULL;
 CREATE INDEX idx_mv_fp_follow_up_chw_current_fp_method
   ON cht.mv_fp_follow_up (chw_id, current_fp_method) tablespace ts_indexes;
 CREATE INDEX idx_mv_fp_follow_up_year

@@ -60,7 +60,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,notification,info_fu_date_3}'::text[] AS n_info_fu_date_3,
     doc #>> '{fields,notification,info_sdx_id}'::text[] AS n_info_sdx_id,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -81,5 +81,5 @@ CREATE INDEX mv_sdx_notify_monthname ON cht.mv_sdx_notify USING btree (monthname
 CREATE INDEX mv_sdx_notify_district ON cht.mv_sdx_notify USING btree (district) TABLESPACE ts_indexes;
 CREATE INDEX mv_sdx_notify_region ON cht.mv_sdx_notify USING btree (region) TABLESPACE ts_indexes;
 CREATE INDEX mv_sdx_notify_village ON cht.mv_sdx_notify USING btree (village) TABLESPACE ts_indexes;
-CREATE INDEX mv_sdx_notify_facility_name ON cht.mv_sdx_notify USING btree (facility_name) TABLESPACE ts_indexes;
+CREATE INDEX mv_sdx_notify_facility ON cht.mv_sdx_notify USING btree (facility) TABLESPACE ts_indexes;
 CREATE INDEX mv_sdx_notify_dhis2_facility_id ON cht.mv_sdx_notify USING btree (dhis2_facility_id) TABLESPACE ts_indexes;

@@ -87,7 +87,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,sputum_collection,keep_container_closed}'::text[] AS keep_container_closed,
     doc #>> '{fields,sputum_collection,has_left_sputum_bottle_with_client}'::text[] AS has_left_sputum_bottle_with_client,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -107,6 +107,6 @@ CREATE INDEX mv_sputum_collection_refusal_month ON cht.mv_sputum_collection_refu
 CREATE INDEX mv_sputum_collection_refusal_monthname ON cht.mv_sputum_collection_refusal USING btree (monthname) tablespace ts_indexes;
 CREATE INDEX mv_sputum_collection_refusal_district ON cht.mv_sputum_collection_refusal USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_sputum_collection_refusal_region ON cht.mv_sputum_collection_refusal USING btree (region) tablespace ts_indexes;
-CREATE INDEX mv_sputum_collection_refusal_facility_name ON cht.mv_sputum_collection_refusal USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_sputum_collection_refusal_facility ON cht.mv_sputum_collection_refusal USING btree (facility) tablespace ts_indexes;
 CREATE INDEX mv_sputum_collection_refusal_dhis2_facility_id ON cht.mv_sputum_collection_refusal USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX mv_sputum_collection_refusal_village ON cht.mv_sputum_collection_refusal USING btree (village) tablespace ts_indexes;

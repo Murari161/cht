@@ -54,7 +54,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,referral_completion,educate_caregiver}'::text[] AS educate_caregiver,
     doc #>> '{fields,food_and_good_nutrition,food_and_good_nutrition_choices}'::text[] AS food_and_good_nutrition_choices,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -69,6 +69,6 @@ WITH DATA;
 CREATE INDEX useview_child_nutrition_referral_follow_up_reported ON cht.mv_child_nutrition_referral_follow_up USING btree (reported) tablespace ts_indexes;
 CREATE INDEX useview_child_nutrition_referral_follow_up_chw_id ON cht.mv_child_nutrition_referral_follow_up USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX useview_child_nutrition_referral_follow_up_district ON cht.mv_child_nutrition_referral_follow_up USING btree (district) tablespace ts_indexes;
-CREATE INDEX useview_child_nutrition_referral_follow_up_facility ON cht.mv_child_nutrition_referral_follow_up USING btree (facility_name) tablespace ts_indexes; 
+CREATE INDEX useview_child_nutrition_referral_follow_up_facility ON cht.mv_child_nutrition_referral_follow_up USING btree (facility) tablespace ts_indexes; 
 CREATE INDEX useview_child_nutrition_referral_follow_up_year_month ON cht.mv_child_nutrition_referral_follow_up USING btree (year, month) tablespace ts_indexes;
 CREATE INDEX useview_child_nutrition_referral_follow_up_patient_id ON cht.mv_child_nutrition_referral_follow_up USING btree (t_patient_id) tablespace ts_indexes;

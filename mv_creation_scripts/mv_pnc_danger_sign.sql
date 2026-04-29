@@ -55,7 +55,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,group_danger_sign,note_refer}'::text[] AS note_refer,
     doc #>> '{fields,group_danger_sign,referred_to_facility}'::text[] AS referred_to_facility,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -73,7 +73,7 @@ CREATE INDEX pnc_danger_sign_year_idx ON cht.mv_pnc_danger_sign USING btree (yea
 CREATE INDEX pnc_danger_sign_month_idx ON cht.mv_pnc_danger_sign USING btree (month) tablespace ts_indexes;
 CREATE INDEX pnc_danger_sign_monthname_idx ON cht.mv_pnc_danger_sign USING btree (monthname) tablespace ts_indexes;
 CREATE INDEX pnc_danger_sign_chw_id_idx ON cht.mv_pnc_danger_sign USING btree (chw_id) tablespace ts_indexes;
-CREATE INDEX pnc_danger_sign_facility_name_idx ON cht.mv_pnc_danger_sign USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX pnc_danger_sign_facility_idx ON cht.mv_pnc_danger_sign USING btree (facility) tablespace ts_indexes;
 CREATE INDEX pnc_danger_sign_dhis2_facility_id_idx ON cht.mv_pnc_danger_sign USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX pnc_danger_sign_village_idx ON cht.mv_pnc_danger_sign USING btree (village) tablespace ts_indexes;
 CREATE INDEX pnc_danger_sign_district_idx ON cht.mv_pnc_danger_sign USING btree (district) tablespace ts_indexes;

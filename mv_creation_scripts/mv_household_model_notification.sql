@@ -63,7 +63,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,notification,household_follow_up_date}'::text[] AS household_follow_up_date,
     doc #>> '{fields,group_notification_summary,s_note_household_details}'::text[] AS s_note_household_details,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -83,6 +83,6 @@ CREATE INDEX mv_household_model_notification_month ON cht.mv_household_model_not
 CREATE INDEX mv_household_model_notification_monthname ON cht.mv_household_model_notification USING btree (monthname) tablespace ts_indexes; 
 CREATE INDEX mv_household_model_notification_district ON cht.mv_household_model_notification USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_household_model_notification_region ON cht.mv_household_model_notification USING btree (region) tablespace ts_indexes; 
-CREATE INDEX mv_household_model_notification_facility_name ON cht.mv_household_model_notification USING btree (facility_name) tablespace ts_indexes; 
+CREATE INDEX mv_household_model_notification_facility ON cht.mv_household_model_notification USING btree (facility) tablespace ts_indexes; 
 CREATE INDEX mv_household_model_notification_dhis2_facility_id ON cht.mv_household_model_notification USING btree (dhis2_facility_id) tablespace ts_indexes; 
 CREATE INDEX mv_household_model_notification_village ON cht.mv_household_model_notification USING btree (village) tablespace ts_indexes;

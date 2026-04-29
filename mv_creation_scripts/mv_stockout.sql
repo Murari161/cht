@@ -68,7 +68,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,vht_stock_details,action,other_action_taken}'::text[] AS action_other_action_taken,
     doc #>> '{fields,vht_stock_details,action,issued_stock_note}'::text[] AS action_issued_stock_note,
     doc #>> '{fields,inputs,contact,_id}'                         AS vht_area_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -85,5 +85,5 @@ CREATE INDEX mv_stockout_year_idx ON cht.mv_stockout USING btree (year) tablespa
 CREATE INDEX mv_stockout_month_idx ON cht.mv_stockout USING btree (month) tablespace ts_indexes;
 CREATE INDEX mv_stockout_monthname_idx ON cht.mv_stockout USING btree (monthname) tablespace ts_indexes;
 CREATE INDEX mv_stockout_vht_area_id_idx ON cht.mv_stockout USING btree (vht_area_id) tablespace ts_indexes;
-CREATE INDEX mv_stockout_facility_name_idx ON cht.mv_stockout USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_stockout_facility_idx ON cht.mv_stockout USING btree (facility) tablespace ts_indexes;
 CREATE INDEX mv_stockout_dhis2_facility_id_idx ON cht.mv_stockout USING btree (dhis2_facility_id) tablespace ts_indexes;

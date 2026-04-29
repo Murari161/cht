@@ -70,7 +70,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,danger_signs,swelling}'::text[] AS danger_signs_swelling,
     doc #>> '{fields,danger_signs,breathlessness}'::text[] AS danger_signs_breathlessness,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -84,7 +84,7 @@ WITH DATA;
 -- View indexes:
 CREATE INDEX useview_anc_danger_sign_escalation_reported ON cht.mv_anc_danger_sign_escalation USING btree (reported);
 CREATE INDEX useview_anc_danger_sign_escalation_chw_id ON cht.mv_anc_danger_sign_escalation USING btree (chw_id);
-CREATE INDEX useview_anc_danger_sign_escalation_facility_id ON cht.mv_anc_danger_sign_escalation USING btree (facility_name);
+CREATE INDEX useview_anc_danger_sign_escalation_facility_id ON cht.mv_anc_danger_sign_escalation USING btree (facility);
 CREATE INDEX useview_anc_danger_sign_escalation_district ON cht.mv_anc_danger_sign_escalation USING btree (district);
 CREATE INDEX useview_anc_danger_sign_escalation_region ON cht.mv_anc_danger_sign_escalation USING btree (region);
 CREATE INDEX useview_anc_danger_sign_escalation_date ON cht.mv_anc_danger_sign_escalation USING btree (date);

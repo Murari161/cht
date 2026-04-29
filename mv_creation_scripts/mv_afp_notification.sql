@@ -48,7 +48,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     ((doc -> 'fields'::text) -> 'afp_confirmation'::text) ->> 'n_follow_up'::text AS n_follow_up,
     ((doc -> 'fields'::text) -> 'afp_confirmation'::text) ->> 'has_sudden_weakness_in_legs_and_arms'::text AS has_sudden_weakness_in_legs_and_arms,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -62,7 +62,7 @@ WITH DATA;
 -- View indexes:
 CREATE INDEX mv_afp_notification_reported ON cht.mv_afp_notification USING btree (reported);
 CREATE INDEX mv_afp_notification_chw_id ON cht.mv_afp_notification USING btree (chw_id);
-create index mv_afp_notification_facility_id on cht.mv_afp_notification using btree (facility_name);
+create index mv_afp_notification_facility_id on cht.mv_afp_notification using btree (facility);
 CREATE INDEX mv_afp_notification_district ON cht.mv_afp_notification USING btree (district);
 CREATE INDEX mv_afp_notification_region ON cht.mv_afp_notification USING btree (region);
 CREATE INDEX mv_afp_notification_date ON cht.mv_afp_notification USING btree (date);

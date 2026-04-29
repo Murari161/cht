@@ -48,7 +48,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,group_referral_details,agreed_to_go_to_facility}'::text[] AS agreed_to_go_to_facility,
     doc #>> '{fields,group_referral_details,facility_visit_date}'::text[] AS facility_visit_date,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -64,7 +64,7 @@ CREATE INDEX mv_anc_referral_follow_up_uuid ON cht.mv_anc_referral_follow_up USI
 CREATE INDEX mv_anc_referral_follow_up_chw_id ON cht.mv_anc_referral_follow_up USING btree (chw_id);
 CREATE INDEX mv_anc_referral_follow_up_year_month ON cht.mv_anc_referral_follow_up USING btree (year, month);
 CREATE INDEX mv_anc_referral_follow_up_date ON cht.mv_anc_referral_follow_up USING btree (date);
-CREATE INDEX mv_anc_referral_follow_up_facility ON cht.mv_anc_referral_follow_up USING btree (facility_name);
+CREATE INDEX mv_anc_referral_follow_up_facility ON cht.mv_anc_referral_follow_up USING btree (facility);
 CREATE INDEX mv_anc_referral_follow_up_dhis2_facility_id ON cht.mv_anc_referral_follow_up USING btree (dhis2_facility_id);
 CREATE INDEX mv_anc_referral_follow_up_district ON cht.mv_anc_referral_follow_up USING btree (district);
 CREATE INDEX mv_anc_referral_follow_up_region ON cht.mv_anc_referral_follow_up USING btree (region);  

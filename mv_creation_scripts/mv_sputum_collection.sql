@@ -61,7 +61,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,sputum_collection,inform_on_importance_of_testing}'::text[] AS inform_on_importance_of_testing,
     doc #>> '{fields,sputum_collection_consent,results_phone_number}'::text[] AS consent_results_phone_number,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -81,6 +81,6 @@ CREATE INDEX mv_sputum_collection_month ON cht.mv_sputum_collection USING btree 
 CREATE INDEX mv_sputum_collection_monthname ON cht.mv_sputum_collection USING btree (monthname) Tablespace ts_indexes;
 CREATE INDEX mv_sputum_collection_district ON cht.mv_sputum_collection USING btree (district) Tablespace ts_indexes;
 CREATE INDEX mv_sputum_collection_region ON cht.mv_sputum_collection USING btree (region) Tablespace ts_indexes;
-CREATE INDEX mv_sputum_collection_facility_name ON cht.mv_sputum_collection USING btree (facility_name) Tablespace ts_indexes;
+CREATE INDEX mv_sputum_collection_facility ON cht.mv_sputum_collection USING btree (facility) Tablespace ts_indexes;
 CREATE INDEX mv_sputum_collection_dhis2_facility_id ON cht.mv_sputum_collection USING btree (dhis2_facility_id) Tablespace ts_indexes;
 CREATE INDEX mv_sputum_collection_village ON cht.mv_sputum_collection USING btree (village) Tablespace ts_indexes;

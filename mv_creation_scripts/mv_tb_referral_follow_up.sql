@@ -55,7 +55,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     doc #>> '{fields,referral_notification,referred_to_health_facility}'::text[] AS referred_to_health_facility,
     doc #>> '{fields,referral_notification,went_to_facility_as_referred}'::text[] AS went_to_facility_as_referred,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -72,7 +72,7 @@ CREATE INDEX tb_referral_follow_up_year_idx ON cht.mv_tb_referral_follow_up USIN
 CREATE INDEX tb_referral_follow_up_month_idx ON cht.mv_tb_referral_follow_up USING btree (month) tablespace ts_indexes;
 CREATE INDEX tb_referral_follow_up_monthname_idx ON cht.mv_tb_referral_follow_up USING btree (monthname) tablespace ts_indexes;
 CREATE INDEX tb_referral_follow_up_chw_id_idx ON cht.mv_tb_referral_follow_up USING btree (chw_id) tablespace ts_indexes;
-CREATE INDEX tb_referral_follow_up_facility_name_idx ON cht.mv_tb_referral_follow_up USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX tb_referral_follow_up_facility_idx ON cht.mv_tb_referral_follow_up USING btree (facility) tablespace ts_indexes;
 CREATE INDEX tb_referral_follow_up_dhis2_facility_id_idx ON cht.mv_tb_referral_follow_up USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX tb_referral_follow_up_village_idx ON cht.mv_tb_referral_follow_up USING btree (village) tablespace ts_indexes;
 CREATE INDEX tb_referral_follow_up_district_idx ON cht.mv_tb_referral_follow_up USING btree (district) tablespace ts_indexes;

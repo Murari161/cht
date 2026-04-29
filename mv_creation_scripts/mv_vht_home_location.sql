@@ -29,7 +29,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,geolocation,additional_comments}'::text[] AS fields_geolocation_additional_comments,
     doc #>> '{fields,geolocation,no_gps_reasons}'::text[] AS fields_geolocation_no_gps_reasons,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -48,5 +48,5 @@ CREATE INDEX mv_vht_home_location_monthname ON cht.mv_vht_home_location USING bt
 CREATE INDEX mv_vht_home_location_region ON cht.mv_vht_home_location USING btree (region) tablespace ts_indexes;
 CREATE INDEX mv_vht_home_location_district ON cht.mv_vht_home_location USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_vht_home_location_village ON cht.mv_vht_home_location USING btree (village) tablespace ts_indexes;
-CREATE INDEX mv_vht_home_location_facility_name ON cht.mv_vht_home_location USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX mv_vht_home_location_facility ON cht.mv_vht_home_location USING btree (facility) tablespace ts_indexes;
 CREATE INDEX mv_vht_home_location_dhis2_facility_id ON cht.mv_vht_home_location USING btree (dhis2_facility_id) tablespace ts_indexes;

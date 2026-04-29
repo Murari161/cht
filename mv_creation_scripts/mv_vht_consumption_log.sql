@@ -79,7 +79,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,items_returned,dmpa_r}'::text[] AS items_returned_dmpa_r,
     doc #>> '{fields,items_returned,condoms_r}'::text[] AS items_returned_condoms_r,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -98,6 +98,6 @@ CREATE INDEX mv_vht_consumption_log_month ON cht.mv_vht_consumption_log USING bt
 CREATE INDEX mv_vht_consumption_log_monthname ON cht.mv_vht_consumption_log USING btree (monthname) tablespace ts_indexes;
 CREATE INDEX mv_vht_consumption_log_district ON cht.mv_vht_consumption_log USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_vht_consumption_log_region ON cht.mv_vht_consumption_log USING btree (region) tablespace ts_indexes;
-CREATE INDEX mv_vht_consumption_log_facility_name ON cht.mv_vht_consumption_log USING btree (facility_name) tablespace ts_indexes;  
+CREATE INDEX mv_vht_consumption_log_facility ON cht.mv_vht_consumption_log USING btree (facility) tablespace ts_indexes;  
 CREATE INDEX mv_vht_consumption_log_dhis2_facility_id ON cht.mv_vht_consumption_log USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX mv_vht_consumption_log_village ON cht.mv_vht_consumption_log USING btree (village) tablespace ts_indexes;

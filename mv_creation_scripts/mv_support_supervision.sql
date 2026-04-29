@@ -121,7 +121,7 @@ AS SELECT d.doc ->> '_id'::text AS doc_id,
     d.doc #>> '{fields,challenges,actions,solution_timeline}'::text[] AS solution_timeline,
     d.doc #>> '{fields,challenges,actions,responsible_person}'::text[] AS responsible_person,
     d.doc #>> '{fields,inputs,contact,parent,_id}'::text[] AS vht_area_id,
-    h.facility_name,
+    h.facility,
     h.dhis2_facility_id,
     h.village,
     h.district,
@@ -139,7 +139,7 @@ CREATE INDEX support_supervision_year_idx ON cht.mv_support_supervision USING bt
 CREATE INDEX support_supervision_month_idx ON cht.mv_support_supervision USING btree (month) tablespace ts_indexes;
 CREATE INDEX support_supervision_monthname_idx ON cht.mv_support_supervision USING btree (monthname) tablespace ts_indexes;
 CREATE INDEX support_supervision_vht_area_id_idx ON cht.mv_support_supervision USING btree (vht_area_id) tablespace ts_indexes;
-CREATE INDEX support_supervision_facility_name_idx ON cht.mv_support_supervision USING btree (facility_name) tablespace ts_indexes;
+CREATE INDEX support_supervision_facility_idx ON cht.mv_support_supervision USING btree (facility) tablespace ts_indexes;
 CREATE INDEX support_supervision_dhis2_facility_id_idx ON cht.mv_support_supervision USING btree (dhis2_facility_id) tablespace ts_indexes;
 CREATE INDEX support_supervision_village_idx ON cht.mv_support_supervision USING btree (village) tablespace ts_indexes;
 CREATE INDEX support_supervision_district_idx ON cht.mv_support_supervision USING btree (district) tablespace ts_indexes;
