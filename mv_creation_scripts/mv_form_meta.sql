@@ -35,10 +35,18 @@ WITH DATA;
 select cht.deps_restore_dependencies('cht', 'mv_form_meta');
 
 -- View indexes:
-CREATE INDEX idx_form_meta_date ON cht.mv_form_meta USING btree (date) tablespace ts_indexes;
-CREATE INDEX idx_form_meta_district ON cht.mv_form_meta USING btree (district) tablespace ts_indexes;
-CREATE INDEX idx_form_meta_form_name ON cht.mv_form_meta USING btree (form_name) tablespace ts_indexes;
-CREATE INDEX idx_form_meta_month ON cht.mv_form_meta USING btree (month) tablespace ts_indexes;
-CREATE INDEX idx_form_meta_monthname ON cht.mv_form_meta USING btree (monthname) tablespace ts_indexes;
-CREATE INDEX idx_form_meta_reported ON cht.mv_form_meta USING btree (reported) tablespace ts_indexes;
-CREATE INDEX idx_form_meta_role ON cht.mv_form_meta USING btree (role) tablespace ts_indexes;
+-- #1: 68% coverage - Most important
+CREATE INDEX CONCURRENTLY idx_form_meta_vht_full 
+ON cht.mv_form_meta (role, year, month, district, facility);
+
+-- #2: 83% cumulative - Choropleth/district queries  
+CREATE INDEX CONCURRENTLY idx_form_meta_vht_district_time 
+ON cht.mv_form_meta (role, year, month, district);
+
+-- #3: 93% cumulative - JOIN performance
+CREATE INDEX CONCURRENTLY idx_form_meta_vht_join 
+ON cht.mv_form_meta (contact_id, role, year, month);
+
+-- #4: 95%+ coverage - Pure time fallback
+CREATE INDEX CONCURRENTLY idx_form_meta_vht_time 
+ON cht.mv_form_meta (role, year, month);
