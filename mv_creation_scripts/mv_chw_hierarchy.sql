@@ -94,6 +94,18 @@ AS WITH users AS (
      LEFT JOIN region_cte cr ON cd.region_id = cr.region_id
 WITH DATA;
 
-CREATE INDEX idx_mv_chw_hierarchy_chw_covering ON cht.mv_chw_hierarchy USING btree (chw_id) INCLUDE (role, chw_name, facility, dhis2_facility_id, district, region, phone, email);
-CREATE INDEX idx_mv_chw_hierarchy_district_role ON cht.mv_chw_hierarchy USING btree (district, role);
-CREATE INDEX idx_mv_chw_hierarchy_vht_lookup ON cht.mv_chw_hierarchy USING btree (role, district, chw_id) INCLUDE (facility, dhis2_facility_id, chw_name, village);
+-- PRIORITY 1: 75% of queries
+CREATE INDEX idx_chw_hierarchy_vht_full 
+ON cht.mv_chw_hierarchy (role, district, facility, chw_id);
+
+-- PRIORITY 2: District-only (15%)
+CREATE INDEX  idx_chw_hierarchy_vht_district 
+ON cht.mv_chw_hierarchy (role, district, chw_id);
+
+-- PRIORITY 3: JOIN performance (critical for all KPIs)
+CREATE INDEX  idx_chw_hierarchy_chw_id_role 
+ON cht.mv_chw_hierarchy (chw_id, role);
+
+-- PRIORITY 4: Fallback + households (5%)
+CREATE INDEX idx_chw_hierarchy_role 
+ON cht.mv_chw_hierarchy (role, chw_id);
