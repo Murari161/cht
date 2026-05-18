@@ -5,6 +5,10 @@ tablespace ts_report AS
 SELECT
   doc #>> '{_id}' AS uuid,
   to_timestamp((nullif(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
+  (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
+  (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
+  (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'MM'))::INT AS month,
+    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS monthname,
   doc #>> '{contact,_id}'::text[] AS reported_by,
   doc #>> '{contact,parent,_id}'::text[] AS reported_by_parent,
   doc #>> '{fields,inputs,source}'::text[] AS source,
@@ -21,9 +25,16 @@ SELECT
   doc #>> '{fields,patient_id}'::text[] AS patient_id,
   doc #>> '{fields,patient_name}'::text[] AS patient_name,
   doc #>> '{fields,needs_signoff}'::text[] AS needs_signoff,
-  doc #>> '{fields,missing_mrdt_photo,indicate_support}'::text[] AS indicate_support
-FROM
-  dwh.cht_data
+  doc #>> '{fields,missing_mrdt_photo,indicate_support}'::text[] AS indicate_support,
+ doc #>> '{contact,_id}'                         AS chw_id,
+      h.facility,
+      h.dhis2_facility_id,
+      h.village,
+      h.district,
+      h.region,
+      CURRENT_TIMESTAMP                                 AS last_refresh_date 
+   FROM dwh.cht_data couchdb
+    LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id
 WHERE
   doc ->> 'form' = 'missing_mrdt_photo'
   AND is_current = true 

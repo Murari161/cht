@@ -5,6 +5,10 @@ SELECT
   doc ->> '_id'::TEXT AS uuid,
   doc #>> '{contact,_id}'::TEXT[] AS chw,
   to_timestamp((nullif(doc ->> 'reported_date'::TEXT, ''::TEXT)::BIGINT / 1000)::DOUBLE PRECISION) AS reported,
+  (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
+  (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
+  (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'MM'))::INT AS month,
+    TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'FMMonth') AS monthname,
   doc #>> '{contact,_id}'::TEXT[] AS reported_by,
   doc #>> '{contact,parent,_id}'::TEXT[] AS reported_by_parent,
   doc #>> '{fields,inputs,meta,location,lat}' AS location_lat,
@@ -61,7 +65,7 @@ SELECT
   doc #>> '{fields,group_fever,patient_temperature}'::text[] AS patient_temperature,
   doc #>> '{fields,group_fever,fever_duration}'::text[] AS fever_duration,
   doc #>> '{fields,group_fever,has_mrdt}'::text[] AS has_mrdt,
-  doc #>> '{fields,group_fever,mrdt_used_repeat}'::text[] AS mrdt_used_repeat,
+  doc #>> '{fields,group_fever,mrdt_usVSed_repeat}'::text[] AS mrdt_used_repeat,
   doc #>> '{fields,group_fever,mrdt_result_repeat}'::text[] AS mrdt_result_repeat,
   doc #>> '{fields,group_fever,why_mrdt_not_done_repeat}'::text[] AS why_mrdt_not_done_repeat,
   doc #>> '{fields,group_fever,want_to_repeat_mrdt}'::text[] AS want_to_repeat_mrdt,
@@ -83,9 +87,17 @@ SELECT
   doc #>> '{fields,malaria_screening,storedClassification}'::text[] AS storedClassification,
   doc #>> '{fields,malaria_screening,storedImageUri}' AS storedImageUri,
   round(octet_length(doc #>> '{fields,malaria_screening,storedImageUri}')/1024.0/1024.0, 2) AS image_size_mb,
-  doc #>> '{fields,malaria_screening,confirm_child_referral_mrdt_result}'::text[] AS confirm_child_referral_mrdt_result
+  doc #>> '{fields,malaria_screening,confirm_child_referral_mrdt_result}'::text[] AS confirm_child_referral_mrdt_result,
+  doc #>> '{contact,_id}'                         AS chw_id,
+      h.facility,
+      h.dhis2_facility_id,
+      h.village,
+      h.district,
+      h.region,
+      CURRENT_TIMESTAMP                                 AS last_refresh_date 
 FROM
-  dwh.cht_data
+  dwh.cht_data couchdb
+  LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id
 WHERE
   doc ->> 'form' = 'assessment'
   AND is_current = true
