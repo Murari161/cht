@@ -1,3 +1,4 @@
+drop materialized view if exists cht.mv_drowning_workflow;
 CREATE MATERIALIZED VIEW cht.mv_drowning_workflow
 TABLESPACE ts_report
 AS
@@ -17,6 +18,13 @@ SELECT
     doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
     doc ->'geolocation'->>'code' AS geolocation_code,
     doc ->'geolocation'->>'message' AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc ->> 'from'::text                             AS  from,
   
     doc #>> '{fields,inputs,source}'::text[]          AS source,
@@ -56,14 +64,12 @@ FROM dwh.cht_data AS couchdb
 LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id
 WHERE (doc ->> 'form') = 'drowning_workflow'
   AND is_current
-WITH DATA;
+WITH NO DATA;
 
 CREATE INDEX screening_reported_idx
     ON cht.mv_drowning_workflow USING btree (reported) tablespace ts_indexes;
-CREATE INDEX screening_year_idx
-    ON cht.mv_drowning_workflow USING btree (year) tablespace ts_indexes;
-CREATE INDEX screening_month_idx
-    ON cht.mv_drowning_workflow USING btree (month) tablespace ts_indexes;
+CREATE INDEX mv_drowning_workflow_year_month_district
+    ON cht.mv_drowning_workflow USING btree (year, month, district) TABLESPACE ts_indexes;
 CREATE INDEX screening_chw_id_idx
     ON cht.mv_drowning_workflow USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX screening_district_idx

@@ -1,5 +1,5 @@
 -- cht.mv_afp_notification source
-
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_afp_notification;
 CREATE MATERIALIZED VIEW cht.mv_afp_notification
 TABLESPACE ts_report
 AS SELECT doc ->> '_id'::text AS uuid,
@@ -17,6 +17,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     ((doc -> 'fields'::text) -> 'inputs'::text) ->> 'source'::text AS source,
     ((doc -> 'fields'::text) -> 'inputs'::text) ->> 'source_id'::text AS source_id,
     ((doc -> 'fields'::text) -> 'inputs'::text) ->> 't_patient_condition'::text AS t_patient_condition,
@@ -57,7 +64,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
    FROM dwh.cht_data d
    LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id 
   WHERE (d.doc ->> 'form'::text) = 'afp_notification'::text AND d.is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX mv_afp_notification_reported ON cht.mv_afp_notification USING btree (reported);
@@ -66,5 +73,4 @@ create index mv_afp_notification_facility_id on cht.mv_afp_notification using bt
 CREATE INDEX mv_afp_notification_district ON cht.mv_afp_notification USING btree (district);
 CREATE INDEX mv_afp_notification_region ON cht.mv_afp_notification USING btree (region);
 CREATE INDEX mv_afp_notification_date ON cht.mv_afp_notification USING btree (date);
-CREATE INDEX mv_afp_notification_year ON cht.mv_afp_notification USING btree (year);
-CREATE INDEX mv_afp_notification_month ON cht.mv_afp_notification USING btree (month);
+CREATE INDEX mv_afp_notification_year_month_district ON cht.mv_afp_notification USING btree (year, month, district) TABLESPACE ts_indexes;

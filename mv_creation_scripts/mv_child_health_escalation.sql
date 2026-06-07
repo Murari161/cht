@@ -1,5 +1,5 @@
 -- cht.mv_child_health_escalation source
-
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_child_health_escalation;
 CREATE MATERIALIZED VIEW cht.mv_child_health_escalation
 TABLESPACE ts_report
 AS SELECT doc ->> '_id'::text AS doc_id,
@@ -18,6 +18,13 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc ->> 'from'::text AS submitter,
     doc ->> 'content_type'::text AS top_content_type,
     to_timestamp((NULLIF(doc #>> '{form_version,time}'::text[], ''::text)::bigint::numeric / 1000.0)::double precision) AS form_version_time,
@@ -77,7 +84,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
    FROM dwh.cht_data couchdb
 LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id
   WHERE (doc ->> 'form'::text) = 'child_health_escalation'::text AND is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX mv_child_health_escalation_patient ON cht.mv_child_health_escalation USING btree (patient_id) tablespace ts_indexes;
@@ -85,4 +92,4 @@ CREATE INDEX mv_child_health_escalation_reported ON cht.mv_child_health_escalati
 CREATE INDEX mv_child_health_escalation_chw_id ON cht.mv_child_health_escalation USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX mv_child_health_escalation_district ON cht.mv_child_health_escalation USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_child_health_escalation_facility ON cht.mv_child_health_escalation USING btree (facility) tablespace ts_indexes; 
-CREATE INDEX mv_child_health_escalation_year_month ON cht.mv_child_health_escalation USING btree (year, month) tablespace ts_indexes;  
+CREATE INDEX mv_child_health_escalation_year_month_district ON cht.mv_child_health_escalation USING btree (year, month, district) TABLESPACE ts_indexes;

@@ -18,6 +18,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc #>> '{fields,inputs,source}'::text[] AS inputs_source,
     doc #>> '{fields,inputs,source_id}'::text[] AS inputs_source_id,
     doc #>> '{fields,inputs,latest_referral_status}'::text[] AS inputs_latest_referral_status,
@@ -90,15 +97,14 @@ AS SELECT doc ->> '_id'::text AS uuid,
 FROM dwh.cht_data d
 LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id
   WHERE (doc ->> 'form'::text) = 'sdx_follow_up'::text AND is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX mv_sdx_follow_up_chw_id ON cht.mv_sdx_follow_up USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX mv_sdx_follow_up_reported ON cht.mv_sdx_follow_up USING btree (reported) tablespace ts_indexes;
 CREATE INDEX mv_sdx_follow_up_date ON cht.mv_sdx_follow_up USING btree (date) tablespace ts_indexes;
-CREATE INDEX mv_sdx_follow_up_year ON cht.mv_sdx_follow_up USING btree (year) tablespace ts_indexes;
-CREATE INDEX mv_sdx_follow_up_month ON cht.mv_sdx_follow_up USING btree (month) tablespace ts_indexes;
 CREATE INDEX mv_sdx_follow_up_monthname ON cht.mv_sdx_follow_up USING btree (monthname) tablespace ts_indexes;
+CREATE INDEX mv_sdx_follow_up_year_month_district ON cht.mv_sdx_follow_up USING btree (year, month, district) TABLESPACE ts_indexes;
 CREATE INDEX mv_sdx_follow_up_district ON cht.mv_sdx_follow_up USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_sdx_follow_up_region ON cht.mv_sdx_follow_up USING btree (region) tablespace ts_indexes;
 CREATE INDEX mv_sdx_follow_up_facility ON cht.mv_sdx_follow_up USING btree (facility) tablespace ts_indexes;

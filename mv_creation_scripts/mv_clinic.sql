@@ -21,10 +21,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc ->> 'hh_number'::text AS hh_number,
     doc ->> 'hh_head_name'::text AS hh_head_name,
     doc ->> 'is_model_household'::text AS is_model_household,
-    (doc -> 'geolocation'::text) ->> 'latitude'::text AS geolocation_latitude,
-    (doc -> 'geolocation'::text) ->> 'longitude'::text AS geolocation_longitude,
-    (doc -> 'geolocation'::text) ->> 'altitude'::text AS geolocation_altitude,
-    (doc -> 'geolocation'::text) ->> 'accuracy'::text AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     (doc -> 'group_wash'::text) ->> 'hh_in_sanitary_dwelling_house'::text AS hh_in_sanitary_dwelling_house,
     (doc -> 'group_wash'::text) ->> 'hh_access_safe_water_source'::text AS hh_access_safe_water_source,
     (doc -> 'group_wash'::text) ->> 'hh_have_safe_drinking_water'::text AS hh_have_safe_drinking_water,
@@ -68,14 +71,14 @@ AS SELECT doc ->> '_id'::text AS uuid,
    FROM dwh.cht_data
 LEFT JOIN cht.mv_chw_hierarchy h ON (doc #>> '{parent,_id}') = h.vht_area_id
   WHERE (doc ->> 'type'::text) = 'clinic'::text AND is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX idx_mv_clinic_contact_id ON cht.mv_clinic USING btree (contact_id) tablespace ts_indexes; 
 CREATE INDEX idx_mv_clinic_parent_id ON cht.mv_clinic USING btree (parent_id) tablespace ts_indexes;
 CREATE INDEX idx_mv_clinic_reported ON cht.mv_clinic USING btree (reported) tablespace ts_indexes;
 CREATE INDEX idx_mv_clinic_uuid ON cht.mv_clinic USING btree (uuid) tablespace ts_indexes;
-CREATE INDEX idx_mv_clinic_year_month ON cht.mv_clinic USING btree (year, month) tablespace ts_indexes;
+CREATE INDEX idx_mv_clinic_year_month_district ON cht.mv_clinic USING btree (year, month, district) tablespace ts_indexes;
 CREATE INDEX idx_mv_clinic_vht_area_id ON cht.mv_clinic USING btree (vht_area_id) tablespace ts_indexes;
 CREATE INDEX idx_mv_clinic_district ON cht.mv_clinic USING btree (district) tablespace ts_indexes;
 CREATE INDEX idx_mv_clinic_region ON cht.mv_clinic USING btree (region) tablespace ts_indexes;

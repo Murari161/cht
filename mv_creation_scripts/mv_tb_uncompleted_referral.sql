@@ -1,3 +1,4 @@
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_tb_uncompleted_referral;
 CREATE MATERIALIZED VIEW cht.mv_tb_uncompleted_referral
 TABLESPACE ts_report
 AS
@@ -16,6 +17,13 @@ SELECT
     doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
     doc ->'geolocation'->>'code' AS geolocation_code,
     doc ->'geolocation'->>'message' AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc ->> 'from'::text                             AS  from,
 
      doc #>> '{fields,inputs,source}'                                    AS source,
@@ -40,17 +48,16 @@ SELECT
 
         --- reporting hierarchy
     doc #>> '{contact,_id}'                         AS chw_id,                   
-    doc #>> '{contact,parent,_id}'                  AS chw_area_id,  
-    doc #>> '{contact,parent,parent,_id}'           AS facility_id,                                    
-    doc #>> '{contact,parent,parent,parent,_id}'    AS parish_id,              
-    doc #>> '{contact,parent,parent,parent,parent,_id}'           AS district,                 
-    doc #>> '{contact,parent,parent,parent,parent,parent,_id}'    AS region,
-    CURRENT_TIMESTAMP                                 AS last_refresh_date  
+      h.facility,
+      h.dhis2_facility_id,
+      h.village,
+      h.district,
+      h.region,
+      CURRENT_TIMESTAMP                                 AS last_refresh_date  
+FROM dwh.cht_data d LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id
+  WHERE (doc ->> 'form'::text) = 'tb_uncompleted_referral'::text AND is_current
+WITH NO DATA;
 
-FROM dwh.cht_data
-WHERE (doc ->> 'form') = 'tb_uncompleted_referral'
-  AND is_current
-WITH DATA;
-
-CREATE INDEX uncompleted_referral_reported_idx
+CREATE INDEX mv_tb_uncompleted_referral_reported_idx
     ON cht.mv_uncompleted_referral USING btree (reported);
+CREATE INDEX mv_tb_uncompleted_referral_year_month_district ON cht.mv_tb_uncompleted_referral USING btree (year, month, district) TABLESPACE ts_indexes;

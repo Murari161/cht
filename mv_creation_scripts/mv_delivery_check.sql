@@ -17,6 +17,13 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc ->> 'from'::text AS "from",
     doc #>> '{fields,inputs,source}'::text[] AS source,
     doc #>> '{fields,inputs,source_id}'::text[] AS source_id,
@@ -44,13 +51,12 @@ AS SELECT doc ->> '_id'::text AS doc_id,
    FROM dwh.cht_data
     LEFT JOIN cht.mv_chw_hierarchy h ON (dwh.cht_data.doc #>> '{contact,_id}') = h.chw_id
   WHERE (doc ->> 'form'::text) = 'delivery_check'::text AND is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX delivery_reported_idx ON cht.mv_delivery_check USING btree (reported) tablespace ts_indexes;
 CREATE INDEX delivery_date_idx ON cht.mv_delivery_check USING btree (date) tablespace ts_indexes;
-CREATE INDEX delivery_year_idx ON cht.mv_delivery_check USING btree (year) tablespace ts_indexes;
-CREATE INDEX delivery_month_idx ON cht.mv_delivery_check USING btree (month) tablespace ts_indexes;
+CREATE INDEX mv_delivery_check_year_month_district ON cht.mv_delivery_check USING btree (year, month, district) TABLESPACE ts_indexes;
 CREATE INDEX delivery_chw_id_idx ON cht.mv_delivery_check USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX delivery_district_idx ON cht.mv_delivery_check USING btree (district) tablespace ts_indexes;
 CREATE INDEX delivery_facility_idx ON cht.mv_delivery_check USING btree (facility) tablespace ts_indexes;

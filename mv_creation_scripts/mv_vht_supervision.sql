@@ -1,5 +1,5 @@
 -- cht.mv_vht_supervision source
-
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_vht_supervision;
 CREATE MATERIALIZED VIEW cht.mv_vht_supervision
 TABLESPACE ts_report
 AS SELECT couchdb.doc ->> '_id'::text AS uuid,
@@ -18,6 +18,13 @@ AS SELECT couchdb.doc ->> '_id'::text AS uuid,
     ((((couchdb.doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (couchdb.doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (couchdb.doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((couchdb.doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((couchdb.doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((couchdb.doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((couchdb.doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((couchdb.doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((couchdb.doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((couchdb.doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     couchdb.doc #>> '{contact,_id}'::text[] AS vht_supervisor_id,
     sup_users.fullname AS supervisor_name,
     vht_users.fullname AS vht_name,
@@ -40,8 +47,9 @@ AS SELECT couchdb.doc ->> '_id'::text AS uuid,
      LEFT JOIN report.contactview_vht contactview ON (couchdb.doc #>> '{fields,inputs,contact,_id}'::text[]) = contactview.area_uuid
      LEFT JOIN cht.mv_cht_users vht_users ON contactview.uuid = vht_users.contact_id
   WHERE (couchdb.doc ->> 'form'::text) = 'vht_supervision'::text AND couchdb.is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX mv_vht_supervision_chw_id ON cht.mv_vht_supervision USING btree (vht_supervisor_id);
 CREATE INDEX mv_vht_supervision_reported ON cht.mv_vht_supervision USING btree (reported);
+CREATE INDEX mv_vht_supervision_year_month_district ON cht.mv_vht_supervision USING btree (year, month, district) TABLESPACE ts_indexes;

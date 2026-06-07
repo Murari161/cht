@@ -14,6 +14,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
     (((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) ->> 'deprecatedID'::text AS deprecatedid,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc #>> '{fields,inputs,source}'::text[] AS inputs_source,
     doc #>> '{fields,inputs,source_id}'::text[] AS inputs_source_id,
     doc #>> '{fields,inputs,contact,_id}'::text[] AS inputs_contact_id,
@@ -37,14 +44,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
       CURRENT_TIMESTAMP                                 AS last_refresh_date  
 FROM dwh.cht_data d LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id 
   WHERE (doc ->> 'form'::text) = 'vht_home_location'::text AND is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX mv_vht_home_location_chw_id ON cht.mv_vht_home_location USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX mv_vht_home_location_reported ON cht.mv_vht_home_location USING btree (reported) tablespace ts_indexes;
-CREATE INDEX mv_vht_home_location_year ON cht.mv_vht_home_location USING btree (year) tablespace ts_indexes;
-CREATE INDEX mv_vht_home_location_month ON cht.mv_vht_home_location USING btree (month) tablespace ts_indexes;
 CREATE INDEX mv_vht_home_location_monthname ON cht.mv_vht_home_location USING btree (monthname) tablespace ts_indexes;
+CREATE INDEX mv_vht_home_location_year_month_district ON cht.mv_vht_home_location USING btree (year, month, district) TABLESPACE ts_indexes;
 CREATE INDEX mv_vht_home_location_region ON cht.mv_vht_home_location USING btree (region) tablespace ts_indexes;
 CREATE INDEX mv_vht_home_location_district ON cht.mv_vht_home_location USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_vht_home_location_village ON cht.mv_vht_home_location USING btree (village) tablespace ts_indexes;

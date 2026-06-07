@@ -26,16 +26,18 @@ AS SELECT doc ->> '_id'::text AS id,
     (doc -> 'field'::text) ->> 'still_has_danger_signs'::text AS still_has_danger_signs,
     (doc -> 'parent'::text) ->> '_id'::text AS parent_id,
     (doc -> 'contact'::text) ->> '_id'::text AS contact_id,
-    ((doc -> 'geolocation'::text) ->> 'speed'::text)::numeric AS speed,
-    (doc -> 'geolocation'::text) ->> 'heading'::text AS heading,
-    ((doc -> 'geolocation'::text) ->> 'accuracy'::text)::numeric AS accuracy,
-    ((doc -> 'geolocation'::text) ->> 'altitude'::text)::numeric AS altitude,
-    ((doc -> 'geolocation'::text) ->> 'latitude'::text)::numeric AS latitude,
-    ((doc -> 'geolocation'::text) ->> 'longitude'::text)::numeric AS longitude,
-    ((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text)::numeric AS altitudeaccuracy,
+    (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
+    (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc ->> 'content_type'::text AS content_type,
     doc ->> 'reported_date'::text AS reported_date,
-    (doc -> 'geolocation_log'::text) ->> 'timestamp'::text AS "timestamp",
+    doc #>> '{geolocation_log,0,timestamp}'::text[] AS "timestamp",
     doc #>> '{contact,_id}'                         AS chw_id,
       h.facility,
       h.dhis2_facility_id,
@@ -46,11 +48,11 @@ AS SELECT doc ->> '_id'::text AS id,
    FROM dwh.cht_data
 LEFT JOIN cht.mv_chw_hierarchy h ON (dwh.cht_data.doc #>> '{contact,_id}') = h.chw_id
   WHERE type = 'data_record'::text AND (doc ->> 'form'::text) = 'copy_of_danger_signs_follow_up_report'::text
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX idx_mv_danger_followup_contact_id ON cht.mv_copy_of_danger_signs_follow_up_report USING btree (contact_id) tablespace ts_indexes;
 CREATE INDEX idx_mv_danger_followup_parent_id ON cht.mv_copy_of_danger_signs_follow_up_report USING btree (parent_id) tablespace ts_indexes;
 CREATE INDEX idx_mv_danger_followup_reported_date ON cht.mv_copy_of_danger_signs_follow_up_report USING btree (reported_date) tablespace ts_indexes;
 CREATE INDEX idx_mv_danger_followup_chw_id ON cht.mv_copy_of_danger_signs_follow_up_report USING btree (chw_id) tablespace ts_indexes;
-CREATE INDEX idx_mv_danger_followup_year_month ON cht.mv_copy_of_danger_signs_follow_up_report USING btree (year, month) tablespace ts_indexes;
+CREATE INDEX idx_mv_danger_followup_year_month_district ON cht.mv_copy_of_danger_signs_follow_up_report USING btree (year, month, district) tablespace ts_indexes;

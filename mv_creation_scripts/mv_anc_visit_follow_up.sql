@@ -17,6 +17,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     ((doc -> 'fields'::text) -> 'inputs'::text) ->> 'source'::text AS source,
     ((doc -> 'fields'::text) -> 'inputs'::text) ->> 'source_id'::text AS source_id,
     ((doc -> 'fields'::text) -> 'inputs'::text) ->> 'current_edd_std'::text AS current_edd_std,
@@ -125,15 +132,15 @@ AS SELECT doc ->> '_id'::text AS uuid,
     LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id
 
   WHERE (doc ->> 'form'::text) = 'anc_visit_follow_up'::text AND is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
-CREATE INDEX mv_anc_visit_follow_up_reported ON cht.mv_anc_visit_follow_up USING btree (reported);
-CREATE INDEX mv_anc_visit_follow_up_chw_id ON cht.mv_anc_visit_follow_up USING btree (chw_id);
-CREATE INDEX mv_anc_visit_follow_up_year_month ON cht.mv_anc_visit_follow_up USING btree (year, month);
-CREATE INDEX mv_anc_visit_follow_up_date ON cht.mv_anc_visit_follow_up USING btree (date);
-CREATE INDEX mv_anc_visit_follow_up_location ON cht.mv_anc_visit_follow_up USING btree (location_lat, location_long);
-CREATE INDEX mv_anc_visit_follow_up_patient_id ON cht.mv_anc_visit_follow_up USING btree (patient_id);
-CREATE INDEX mv_anc_visit_follow_up_visited_contact_uuid ON cht.mv_anc_visit_follow_up USING btree (visited_contact_uuid);
-CREATE INDEX mv_anc_visit_follow_up_inputs_contact_id ON cht.mv_anc_visit_follow_up USING btree (inputs_contact_id);
-CREATE INDEX mv_anc_visit_follow_up_parent_id ON cht.mv_anc_visit_follow_up USING btree (parent_id);
+CREATE INDEX mv_anc_visit_follow_up_reported ON cht.mv_anc_visit_follow_up USING btree (reported) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_visit_follow_up_chw_id ON cht.mv_anc_visit_follow_up USING btree (chw_id) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_visit_follow_up_year_month_district ON cht.mv_anc_visit_follow_up USING btree (year, month, district) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_visit_follow_up_date ON cht.mv_anc_visit_follow_up USING btree (date) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_visit_follow_up_location ON cht.mv_anc_visit_follow_up USING btree (location_lat, location_long) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_visit_follow_up_patient_id ON cht.mv_anc_visit_follow_up USING btree (patient_id) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_visit_follow_up_visited_contact_uuid ON cht.mv_anc_visit_follow_up USING btree (visited_contact_uuid) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_visit_follow_up_inputs_contact_id ON cht.mv_anc_visit_follow_up USING btree (inputs_contact_id) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_visit_follow_up_parent_id ON cht.mv_anc_visit_follow_up USING btree (parent_id) TABLESPACE ts_indexes;

@@ -18,6 +18,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc #>> '{fields,inputs,source}'::text[] AS inputs_source,
     doc #>> '{fields,inputs,source_id}'::text[] AS inputs_source_id,
     doc #>> '{fields,inputs,user,contact_id}'::text[] AS inputs_user_contact_id,
@@ -92,12 +99,12 @@ AS SELECT doc ->> '_id'::text AS uuid,
    FROM dwh.cht_data couchdb
 LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id
   WHERE (doc ->> 'form'::text) = 'health_education'::text AND is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX mv_health_education_chw_id ON cht.mv_health_education USING btree (chw_id) TABLESPACE ts_indexes;
 CREATE INDEX mv_health_education_reported ON cht.mv_health_education USING btree (reported) TABLESPACE ts_indexes;
-CREATE INDEX mv_health_education_year_month ON cht.mv_health_education USING btree (year, month) TABLESPACE ts_indexes;
+CREATE INDEX mv_health_education_year_month_district ON cht.mv_health_education USING btree (year, month, district) TABLESPACE ts_indexes;
 CREATE INDEX mv_health_education_facility ON cht.mv_health_education USING btree (facility) TABLESPACE ts_indexes;
 CREATE INDEX mv_health_education_dhis2_facility_id ON cht.mv_health_education USING btree (dhis2_facility_id) TABLESPACE ts_indexes;
 CREATE INDEX mv_health_education_district ON cht.mv_health_education USING btree (district) TABLESPACE ts_indexes;  

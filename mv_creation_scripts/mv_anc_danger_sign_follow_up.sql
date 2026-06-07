@@ -6,13 +6,15 @@ AS SELECT doc_id,
     rev_id,
     ((doc -> 'fields'::text) -> 'meta'::text) ->> 'instanceID'::text AS instanceid,
     ((doc -> 'fields'::text) -> 'meta'::text) ->> 'deprecatedID'::text AS deprecatedid,
-    (doc -> 'geolocation'::text) ->> 'speed'::text AS speed,
-    (doc -> 'geolocation'::text) ->> 'heading'::text AS heading,
-    (doc -> 'geolocation'::text) ->> 'accuracy'::text AS accuracy,
-    (doc -> 'geolocation'::text) ->> 'altitude'::text AS altitude,
-    (doc -> 'geolocation'::text) ->> 'latitude'::text AS latitude,
-    (doc -> 'geolocation'::text) ->> 'longitude'::text AS longitude,
-    (doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text AS altitudeaccuracy,
+    (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
+    (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     to_timestamp((NULLIF(doc ->> 'reported_date'::text, ''::text)::bigint / 1000)::double precision) AS reported,
     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY-MM-DD'))::date AS date,
     (TO_CHAR(TO_TIMESTAMP((doc->>'reported_date')::BIGINT / 1000), 'YYYY'))::INT AS year,
@@ -59,7 +61,7 @@ AS SELECT doc_id,
     (doc -> 'fields'::text) ->> 'patient_age_in_months'::text AS patient_age_in_months,
     (doc -> 'fields'::text) ->> 'patient_age_in_years'::text AS patient_age_in_years,
     doc #>> '{contact,_id}'                         AS chw_id,
-      h.facility_name,
+      h.facility,
       h.dhis2_facility_id,
       h.village,
       h.district,
@@ -68,9 +70,9 @@ AS SELECT doc_id,
    FROM dwh.cht_data d
    LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id
   WHERE d.type = 'data_record'::text AND (d.doc ->> 'form'::text) = 'anc_danger_sign_follow_up'::text AND d.is_current IS TRUE
-WITH DATA;
+WITH NO DATA;
 
-CREATE UNIQUE INDEX idx_mv_anc_danger_sign_follow_up_doc_id_rev_id
+CREATE INDEX idx_mv_anc_danger_sign_follow_up_doc_id_rev_id
   ON cht.mv_anc_danger_sign_follow_up (doc_id, rev_id);
 CREATE INDEX idx_mv_anc_danger_sign_follow_up_chw_id
   ON cht.mv_anc_danger_sign_follow_up (chw_id);
@@ -78,9 +80,7 @@ CREATE INDEX idx_mv_anc_danger_sign_follow_up_reported
   ON cht.mv_anc_danger_sign_follow_up (reported);
 CREATE INDEX idx_mv_anc_danger_sign_follow_up_date
   ON cht.mv_anc_danger_sign_follow_up (date);
-CREATE INDEX idx_mv_anc_danger_sign_follow_up_year
-  ON cht.mv_anc_danger_sign_follow_up (year);
-CREATE INDEX idx_mv_anc_danger_sign_follow_up_month
-  ON cht.mv_anc_danger_sign_follow_up (month);
+CREATE INDEX idx_mv_anc_danger_sign_follow_up_year_month_district
+  ON cht.mv_anc_danger_sign_follow_up (year, month, district);
 CREATE INDEX idx_mv_anc_danger_sign_follow_up_monthname
   ON cht.mv_anc_danger_sign_follow_up (monthname);

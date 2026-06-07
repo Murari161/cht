@@ -17,6 +17,13 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc ->> 'from'::text AS "from",
     doc #>> '{fields,inputs,source}'::text[] AS source,
     doc #>> '{fields,inputs,source_id}'::text[] AS source_id,
@@ -117,14 +124,13 @@ AS SELECT doc ->> '_id'::text AS doc_id,
       CURRENT_TIMESTAMP                                 AS last_refresh_date  
 FROM dwh.cht_data d LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id
   WHERE (doc ->> 'form'::text) = 'tb_screening'::text AND is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX tb_screening_reported_idx ON cht.mv_tb_screening USING btree (reported);
 CREATE INDEX tb_screening_date_idx ON cht.mv_tb_screening USING btree (date);
-CREATE INDEX tb_screening_year_idx ON cht.mv_tb_screening USING btree (year);
-CREATE INDEX tb_screening_month_idx ON cht.mv_tb_screening USING btree (month);
 CREATE INDEX tb_screening_monthname_idx ON cht.mv_tb_screening USING btree (monthname);
+CREATE INDEX mv_tb_screening_year_month_district ON cht.mv_tb_screening USING btree (year, month, district) TABLESPACE ts_indexes;
 CREATE INDEX tb_screening_chw_id_idx ON cht.mv_tb_screening USING btree (chw_id);
 CREATE INDEX tb_screening_facility_idx ON cht.mv_tb_screening USING btree (facility);
 CREATE INDEX tb_screening_dhis2_facility_id_idx ON cht.mv_tb_screening USING btree (dhis2_facility_id);

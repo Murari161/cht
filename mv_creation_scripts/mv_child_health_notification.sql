@@ -17,6 +17,13 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc ->> 'form'::text AS form,
     doc ->> 'from'::text AS "from",
     doc #>> '{fields,dob}'::text[] AS dob,
@@ -62,13 +69,12 @@ AS SELECT doc ->> '_id'::text AS doc_id,
    FROM dwh.cht_data couchdb
 LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id
   WHERE (doc ->> 'form'::text) = 'child_health_notification'::text AND is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX mv_child_health_notification_reported ON cht.mv_child_health_notification USING btree (reported) tablespace ts_indexes;
 CREATE INDEX mv_child_health_notification_date ON cht.mv_child_health_notification USING btree (date) tablespace ts_indexes;
-CREATE INDEX mv_child_health_notification_year ON cht.mv_child_health_notification USING btree (year) tablespace ts_indexes;
-CREATE INDEX mv_child_health_notification_month ON cht.mv_child_health_notification USING btree (month) tablespace ts_indexes;
+CREATE INDEX mv_child_health_notification_year_month_district ON cht.mv_child_health_notification USING btree (year, month, district) TABLESPACE ts_indexes;
 CREATE INDEX mv_child_health_notification_chw_id ON cht.mv_child_health_notification USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX mv_child_health_notification_district ON cht.mv_child_health_notification USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_child_health_notification_region ON cht.mv_child_health_notification USING btree (region) tablespace ts_indexes;

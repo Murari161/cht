@@ -1,5 +1,5 @@
 -- cht.mv_child_nutrition_referral_follow_up source
-DROP MATERIALIZED VIEW IF EXISTS cht.mv_child_nutrition_referral_follow_up_new;
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_child_nutrition_referral_follow_up;
 CREATE MATERIALIZED VIEW cht.mv_child_nutrition_referral_follow_up
 TABLESPACE ts_report
 AS SELECT doc ->> '_id'::text AS uuid,
@@ -18,6 +18,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc ->> 'from'::text AS submitter,
     doc ->> '_rev'::text AS rev,
     doc ->> 'content_type'::text AS top_content_type,
@@ -63,12 +70,12 @@ AS SELECT doc ->> '_id'::text AS uuid,
    FROM dwh.cht_data
 LEFT JOIN cht.mv_chw_hierarchy h ON (doc #>> '{contact,_id}') = h.chw_id
   WHERE (doc ->> 'form'::text) = 'child_nutrition_referral_follow_up'::text AND is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX useview_child_nutrition_referral_follow_up_reported ON cht.mv_child_nutrition_referral_follow_up USING btree (reported) tablespace ts_indexes;
 CREATE INDEX useview_child_nutrition_referral_follow_up_chw_id ON cht.mv_child_nutrition_referral_follow_up USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX useview_child_nutrition_referral_follow_up_district ON cht.mv_child_nutrition_referral_follow_up USING btree (district) tablespace ts_indexes;
 CREATE INDEX useview_child_nutrition_referral_follow_up_facility ON cht.mv_child_nutrition_referral_follow_up USING btree (facility) tablespace ts_indexes; 
-CREATE INDEX useview_child_nutrition_referral_follow_up_year_month ON cht.mv_child_nutrition_referral_follow_up USING btree (year, month) tablespace ts_indexes;
+CREATE INDEX mv_child_nutrition_referral_follow_up_year_month_district ON cht.mv_child_nutrition_referral_follow_up USING btree (year, month, district) TABLESPACE ts_indexes;
 CREATE INDEX useview_child_nutrition_referral_follow_up_patient_id ON cht.mv_child_nutrition_referral_follow_up USING btree (t_patient_id) tablespace ts_indexes;

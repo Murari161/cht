@@ -1,5 +1,5 @@
 -- cht.mv_community_death_notification source
-
+DrOP MATERIALIZED VIEW IF EXISTS cht.mv_community_death_notification;
 CREATE MATERIALIZED VIEW cht.mv_community_death_notification
 TABLESPACE ts_report
 AS SELECT d.doc ->> '_id'::text AS uuid,
@@ -18,6 +18,13 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
     ((((d.doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (d.doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (d.doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     h.chw_name AS chw_name,
     h.phone,
     h.role,
@@ -91,12 +98,12 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
    FROM dwh.cht_data d
      LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id
   WHERE (d.doc ->> 'form'::text) = 'community_death_notification'::text AND d.is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX mv_community_death_notification_chw ON cht.mv_community_death_notification USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX mv_community_death_notification_reported ON cht.mv_community_death_notification USING btree (reported) tablespace ts_indexes;
-CREATE INDEX mv_community_death_notification_year_month ON cht.mv_community_death_notification USING btree (year, month) tablespace ts_indexes;
+CREATE INDEX mv_community_death_notification_year_month_district ON cht.mv_community_death_notification USING btree (year, month, district) TABLESPACE ts_indexes;
 CREATE INDEX mv_community_death_notification_district ON cht.mv_community_death_notification USING btree (district) tablespace ts_indexes;
 CREATE INDEX mv_community_death_notification_source ON cht.mv_community_death_notification USING btree (source) tablespace ts_indexes;
 CREATE INDEX mv_community_death_notification_source_id ON cht.mv_community_death_notification USING btree (source_id) tablespace ts_indexes;

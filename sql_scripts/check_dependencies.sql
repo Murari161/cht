@@ -9,7 +9,7 @@ FROM pg_depend d
 JOIN pg_rewrite r ON d.objid = r.oid 
 JOIN pg_class c ON r.ev_class = c.oid 
 JOIN pg_namespace n ON c.relnamespace = n.oid 
-WHERE d.refobjid = 'cht.mv_chw_hierarchy'::regclass;
+WHERE d.refobjid = 'cht.mv_wash_report'::regclass;
 
 
 

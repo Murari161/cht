@@ -35,8 +35,15 @@ AS SELECT doc ->> '_id'::text AS id,
     NULLIF(((doc -> 'fields'::text) -> 'malnutrition_follow_up'::text) ->> 'next_nutrition_visit_date'::text, ''::text)::date AS next_nutrition_visit_date,
     ((doc -> 'fields'::text) -> 'malnutrition_follow_up'::text) ->> 'outcome_of_follow_up_visit'::text AS outcome_of_follow_up_visit,
     ((doc -> 'fields'::text) -> 'malnutrition_follow_up'::text) ->> 'offer_and_select_nutrition_practices'::text AS offer_and_select_nutrition_practices,
-    ((doc -> 'geolocation'::text) ->> 'latitude'::text)::numeric AS latitude,
-    ((doc -> 'geolocation'::text) ->> 'longitude'::text)::numeric AS longitude,
+    (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
+    (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc #>> '{contact,_id}'                         AS chw_id,
       h.facility,
       h.dhis2_facility_id,
@@ -47,10 +54,11 @@ AS SELECT doc ->> '_id'::text AS id,
    FROM dwh.cht_data
 LEFT JOIN cht.mv_chw_hierarchy h ON (doc #>> '{contact,_id}') = h.chw_id
   WHERE type = 'data_record'::text AND (doc ->> 'form'::text) = 'child_nutrition_follow_up'::text
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX idx_mv_child_nutrition_date ON cht.mv_child_nutrition_follow_up USING btree (date) tablespace ts_indexes;
+CREATE INDEX idx_mv_child_nutrition_year_month_district ON cht.mv_child_nutrition_follow_up USING btree (year, month, district) tablespace ts_indexes;
 CREATE INDEX idx_mv_child_nutrition_district ON cht.mv_child_nutrition_follow_up USING btree (district) tablespace ts_indexes;
 CREATE INDEX idx_mv_child_nutrition_region ON cht.mv_child_nutrition_follow_up USING btree (region) tablespace ts_indexes;
 CREATE INDEX idx_mv_child_nutrition_chw_id ON cht.mv_child_nutrition_follow_up USING btree (chw_id) tablespace ts_indexes;

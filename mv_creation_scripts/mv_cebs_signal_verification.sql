@@ -17,6 +17,13 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
     ((((d.doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (d.doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (d.doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     ((d.doc -> 'fields'::text) -> 'inputs'::text) ->> 't_patient_condition'::text AS t_patient_condition,
     ((d.doc -> 'fields'::text) -> 'inputs'::text) ->> 'source'::text AS source,
     ((d.doc -> 'fields'::text) -> 'inputs'::text) ->> 'source_id'::text AS source_id,
@@ -70,12 +77,12 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
    FROM dwh.cht_data d
      LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}'::text[]) = h.chw_id
   WHERE (d.doc ->> 'form'::text) = 'cebs_signal_verification'::text AND d.is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX mv_cebs_signal_verification_eported ON cht.mv_cebs_signal_verification USING btree (reported) TABLESPACE ts_indexes;
 CREATE INDEX mv_cebs_signal_verificationchw_is ON cht.mv_cebs_signal_verification USING btree (chw_id) TABLESPACE ts_indexes;
-CREATE INDEX mv_cebs_signal_verification_year_month ON cht.mv_cebs_signal_verification USING btree (year, month) TABLESPACE ts_indexes;
 CREATE INDEX mv_cebs_signal_verification_region_district_facility ON cht.mv_cebs_signal_verification (region, district, facility) TABLESPACE ts_indexes;
+CREATE INDEX mv_cebs_signal_verification_year_month_district ON cht.mv_cebs_signal_verification USING btree (year, month, district) TABLESPACE ts_indexes;
 CREATE INDEX mv_cebs_signal_verification_district ON cht.mv_cebs_signal_verification (district) TABLESPACE ts_indexes;
 CREATE INDEX mv_cebs_signal_verification_district_facility ON cht.mv_cebs_signal_verification (district, facility) TABLESPACE ts_indexes; 

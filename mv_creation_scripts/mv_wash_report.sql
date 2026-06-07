@@ -18,6 +18,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc #>> '{fields,inputs,source}'::text[] AS inputs_source,
     doc #>> '{fields,inputs,source_id}'::text[] AS inputs_source_id,
     doc #>> '{fields,inputs,contact,_id}'::text[] AS inputs_contact_id,
@@ -30,17 +37,21 @@ AS SELECT doc ->> '_id'::text AS uuid,
     doc #>> '{fields,hh_head_name}'::text[] AS hh_head_name,
     doc #>> '{fields,chw_village}'::text[] AS chw_village,
     doc #>> '{fields,current_gps}'::text[] AS current_gps,
+    (NULLIF(split_part(doc #>> '{fields,current_gps}'::text[], ' '::text, 1), ''::text))::double precision AS gps_lat,
+    (NULLIF(split_part(doc #>> '{fields,current_gps}'::text[], ' '::text, 2), ''::text))::double precision AS gps_long,
+    (NULLIF(split_part(doc #>> '{fields,current_gps}'::text[], ' '::text, 3), ''::text))::double precision AS gps_alt,
+    (NULLIF(split_part(doc #>> '{fields,current_gps}'::text[], ' '::text, 4), ''::text))::double precision AS gps_accuracy,
     doc #>> '{fields,needs_signoff}'::text[] AS needs_signoff,
-    doc #>> '{fields,geolocation,latitude}'::text[] AS geolocation_latitude,
-    doc #>> '{fields,geolocation,longitude}'::text[] AS geolocation_longitude,
-    doc #>> '{fields,geolocation,altitude}'::text[] AS geolocation_altitude,
-    doc #>> '{fields,geolocation,accuracy}'::text[] AS geolocation_accuracy,
-    doc #>> '{fields,geolocation,note_no_hh_gps}'::text[] AS geolocation_note_no_hh_gps,
-    doc #>> '{fields,geolocation,want_to_capture_gps}'::text[] AS geolocation_want_to_capture_gps,
-    doc #>> '{fields,geolocation,ensure_gps}'::text[] AS geolocation_ensure_gps,
-    doc #>> '{fields,geolocation,gps}'::text[] AS geolocation_gps,
-    doc #>> '{fields,geolocation,coordinates}'::text[] AS geolocation_coordinates,
-    doc #>> '{fields,geolocation,additional_comments}'::text[] AS geolocation_additional_comments,
+    doc #>> '{fields,geolocation,latitude}'::text[] AS location_latitude,
+    doc #>> '{fields,geolocation,longitude}'::text[] AS location_longitude,
+    doc #>> '{fields,geolocation,altitude}'::text[] AS location_altitude,
+    doc #>> '{fields,geolocation,accuracy}'::text[] AS location_accuracy,
+    doc #>> '{fields,geolocation,note_no_hh_gps}'::text[] AS location_note_no_hh_gps,
+    doc #>> '{fields,geolocation,want_to_capture_gps}'::text[] AS location_want_to_capture_gps,
+    doc #>> '{fields,geolocation,ensure_gps}'::text[] AS location_ensure_gps,
+    doc #>> '{fields,geolocation,gps}'::text[] AS location_gps,
+    doc #>> '{fields,geolocation,coordinates}'::text[] AS location_coordinates,
+    doc #>> '{fields,geolocation,additional_comments}'::text[] AS location_additional_comments,
     doc #>> '{fields,group_wash,hh_in_sanitary_dwelling_house}'::text[] AS hh_in_sanitary_dwelling_house,
     doc #>> '{fields,group_wash,hh_access_safe_water_source}'::text[] AS hh_access_safe_water_source,
     doc #>> '{fields,group_wash,hh_have_safe_drinking_water}'::text[] AS hh_have_safe_drinking_water,
@@ -85,13 +96,12 @@ AS SELECT doc ->> '_id'::text AS uuid,
       CURRENT_TIMESTAMP                                 AS last_refresh_date  
 FROM dwh.cht_data d LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id 
   WHERE (doc ->> 'form'::text) = 'wash_report'::text AND is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX mv_wash_report_chw_id ON cht.mv_wash_report USING btree (chw_id) tablespace ts_indexes;
 CREATE INDEX mv_wash_report_reported ON cht.mv_wash_report USING btree (reported) tablespace ts_indexes;
-CREATE INDEX mv_wash_report_year ON cht.mv_wash_report USING btree (year) tablespace ts_indexes;
-CREATE INDEX mv_wash_report_month ON cht.mv_wash_report USING btree (month) tablespace ts_indexes;
+CREATE INDEX mv_wash_report_year_month_district ON cht.mv_wash_report USING btree (year, month, district) tablespace ts_indexes;
 CREATE INDEX mv_wash_report_date ON cht.mv_wash_report USING btree (date) tablespace ts_indexes;
 CREATE INDEX mv_wash_report_region ON cht.mv_wash_report USING btree (region) tablespace ts_indexes;
 CREATE INDEX mv_wash_report_district ON cht.mv_wash_report USING btree (district) tablespace ts_indexes;

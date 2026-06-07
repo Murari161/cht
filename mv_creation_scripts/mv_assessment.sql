@@ -20,6 +20,13 @@ SELECT
     doc ->'fields'->'inputs'->'meta'->'location'->>'message' AS location_message,
     doc ->'geolocation'->>'code' AS geolocation_code,
     doc ->'geolocation'->>'message' AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
 
     -- Form-specific fields (from the XML)
     doc #>> '{fields,inputs,source}'::text[] AS inputs_source,
@@ -210,8 +217,6 @@ CREATE INDEX mv_assessment_patient_id
     ON cht.mv_assessment USING btree (patient_id) TABLESPACE ts_indexes;
 CREATE INDEX mv_assessment_chw_id
     ON cht.mv_assessment USING btree (chw_id) TABLESPACE ts_indexes;
-CREATE INDEX mv_assessment_year_month
-    ON cht.mv_assessment USING btree (year, month) TABLESPACE ts_indexes;
 CREATE INDEX mv_assessment_date
     ON cht.mv_assessment USING btree (date) TABLESPACE ts_indexes;
 -- Org hierarchy

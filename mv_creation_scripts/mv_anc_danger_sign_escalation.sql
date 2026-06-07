@@ -1,5 +1,5 @@
 -- cht.mv_anc_danger_sign_escalation source
-
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_anc_danger_sign_escalation;
 CREATE MATERIALIZED VIEW cht.mv_anc_danger_sign_escalation
 TABLESPACE ts_report
 AS SELECT doc ->> '_id'::text AS uuid,
@@ -18,6 +18,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc ->> 'from'::text AS submitter,
     doc ->> 'content_type'::text AS top_content_type,
     to_timestamp((NULLIF(doc #>> '{form_version,time}'::text[], ''::text)::bigint::numeric / 1000.0)::double precision) AS form_version_time,
@@ -79,7 +86,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
    FROM dwh.cht_data couchdb
     LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id
   WHERE (couchdb.doc ->> 'form'::text) = 'anc_danger_sign_escalation'::text AND couchdb.is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX useview_anc_danger_sign_escalation_reported ON cht.mv_anc_danger_sign_escalation USING btree (reported);
@@ -88,6 +95,5 @@ CREATE INDEX useview_anc_danger_sign_escalation_facility_id ON cht.mv_anc_danger
 CREATE INDEX useview_anc_danger_sign_escalation_district ON cht.mv_anc_danger_sign_escalation USING btree (district);
 CREATE INDEX useview_anc_danger_sign_escalation_region ON cht.mv_anc_danger_sign_escalation USING btree (region);
 CREATE INDEX useview_anc_danger_sign_escalation_date ON cht.mv_anc_danger_sign_escalation USING btree (date);
-CREATE INDEX useview_anc_danger_sign_escalation_year ON cht.mv_anc_danger_sign_escalation USING btree (year);
-CREATE INDEX useview_anc_danger_sign_escalation_month ON cht.mv_anc_danger_sign_escalation USING btree (month);
 CREATE INDEX useview_anc_danger_sign_escalation_monthname ON cht.mv_anc_danger_sign_escalation USING btree (monthname);
+CREATE INDEX mv_anc_danger_sign_escalation_year_month_district ON cht.mv_anc_danger_sign_escalation USING btree (year, month, district) TABLESPACE ts_indexes;

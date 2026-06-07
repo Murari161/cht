@@ -17,6 +17,13 @@ AS SELECT d.doc ->> '_id'::text AS doc_id,
     ((((d.doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (d.doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (d.doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     d.doc ->> 'form'::text AS form,
     d.doc ->> 'from'::text AS "from",
     d.doc #>> '{fields,source}'::text[] AS source,
@@ -130,14 +137,13 @@ AS SELECT d.doc ->> '_id'::text AS doc_id,
    FROM dwh.cht_data d
      LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{fields,inputs,contact,parent,_id}'::text[]) = h.vht_area_id
   WHERE (d.doc ->> 'form'::text) = 'support_supervision'::text AND d.is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX support_supervision_reported_idx ON cht.mv_support_supervision USING btree (reported) tablespace ts_indexes;
 CREATE INDEX support_supervision_date_idx ON cht.mv_support_supervision USING btree (date) tablespace ts_indexes;
-CREATE INDEX support_supervision_year_idx ON cht.mv_support_supervision USING btree (year) tablespace ts_indexes;
-CREATE INDEX support_supervision_month_idx ON cht.mv_support_supervision USING btree (month) tablespace ts_indexes;
 CREATE INDEX support_supervision_monthname_idx ON cht.mv_support_supervision USING btree (monthname) tablespace ts_indexes;
+CREATE INDEX mv_support_supervision_year_month_district ON cht.mv_support_supervision USING btree (year, month, district) TABLESPACE ts_indexes;
 CREATE INDEX support_supervision_vht_area_id_idx ON cht.mv_support_supervision USING btree (vht_area_id) tablespace ts_indexes;
 CREATE INDEX support_supervision_facility_idx ON cht.mv_support_supervision USING btree (facility) tablespace ts_indexes;
 CREATE INDEX support_supervision_dhis2_facility_id_idx ON cht.mv_support_supervision USING btree (dhis2_facility_id) tablespace ts_indexes;

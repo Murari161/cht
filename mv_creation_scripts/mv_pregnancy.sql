@@ -18,13 +18,15 @@ AS SELECT d.doc ->> '_id'::text AS doc_id,
     ((((d.doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'long'::text AS location_long,
     ((((d.doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'error'::text AS location_error,
     ((((d.doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
-    d.doc #>> '{geolocation,speed}'              AS geo_speed,
-    d.doc #>> '{geolocation,heading}'            AS geo_heading,
-    d.doc #>> '{geolocation,accuracy}'           AS geo_accuracy,
-    d.doc #>> '{geolocation,altitude}'           AS geo_altitude,
-    d.doc #>> '{geolocation,latitude}'           AS geo_latitude,
-    d.doc #>> '{geolocation,longitude}'          AS geo_longitude,
-    d.doc #>> '{geolocation,altitudeAccuracy}'   AS geo_altitude_accuracy,
+    (d.doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
+    (d.doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((d.doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     d.doc #>> '{fields,inputs,source}'::text[] AS source,
     d.doc #>> '{fields,inputs,source_id}'::text[] AS source_id,
     d.doc #>> '{fields,inputs,user,contact_id}'::text[] AS user_contact_id,
@@ -158,13 +160,12 @@ AS SELECT d.doc ->> '_id'::text AS doc_id,
    FROM dwh.cht_data d
      LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}'::text[]) = h.chw_id
   WHERE (d.doc ->> 'form'::text) = 'pregnancy'::text AND d.is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
 CREATE INDEX pregnancy_reported_idx ON cht.mv_pregnancy USING btree (reported) tablespace ts_indexes;
 CREATE INDEX pregnancy_date_idx ON cht.mv_pregnancy USING btree (date) tablespace ts_indexes;
-CREATE INDEX pregnancy_year_idx ON cht.mv_pregnancy USING btree (year) tablespace ts_indexes;
-CREATE INDEX pregnancy_month_idx ON cht.mv_pregnancy USING btree (month) tablespace ts_indexes;
+CREATE INDEX pregnancy_year_month_district_idx ON cht.mv_pregnancy USING btree (year, month, district) tablespace ts_indexes;
 CREATE INDEX pregnancy_monthname_idx ON cht.mv_pregnancy USING btree (monthname) tablespace ts_indexes;
 CREATE INDEX pregnancy_village_idx ON cht.mv_pregnancy USING btree (village) tablespace ts_indexes;
 CREATE INDEX pregnancy_district_idx ON cht.mv_pregnancy USING btree (district) tablespace ts_indexes;

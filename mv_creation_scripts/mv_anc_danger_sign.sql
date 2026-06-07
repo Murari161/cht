@@ -1,5 +1,5 @@
 -- cht.mv_anc_danger_sign source
-
+DROP MATERIALIZED VIEW IF EXISTS cht.mv_anc_danger_sign;
 CREATE MATERIALIZED VIEW cht.mv_anc_danger_sign
 TABLESPACE ts_report
 AS SELECT doc ->> '_id'::text AS uuid,
@@ -17,6 +17,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc #>> '{fields,inputs,source_id}'::text[] AS source_id,
     doc #>> '{fields,inputs,source}'::text[] AS source,
     doc #>> '{fields,inputs,is_follow_up}'::text[] AS is_follow_up,
@@ -79,14 +86,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
    FROM dwh.cht_data couchdb
    LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id 
   WHERE (couchdb.doc ->> 'form'::text) = 'anc_danger_sign'::text AND couchdb.is_current
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
-CREATE INDEX useview_anc_danger_sign_uuid ON cht.mv_anc_danger_sign USING btree (reported);
-CREATE INDEX useview_anc_danger_sign_chw_id ON cht.mv_anc_danger_sign USING btree (chw_id);
-CREATE INDEX useview_anc_danger_sign_facility_id ON cht.mv_anc_danger_sign USING btree (facility);
-CREATE INDEX useview_anc_danger_sign_district ON cht.mv_anc_danger_sign USING btree (district);
-CREATE INDEX useview_anc_danger_sign_region ON cht.mv_anc_danger_sign USING btree (region);
-CREATE INDEX useview_anc_danger_sign_date ON cht.mv_anc_danger_sign USING btree (date);
-CREATE INDEX useview_anc_danger_sign_year ON cht.mv_anc_danger_sign USING btree (year);
-CREATE INDEX useview_anc_danger_sign_month ON cht.mv_anc_danger_sign USING btree (month);
+CREATE INDEX useview_anc_danger_sign_uuid ON cht.mv_anc_danger_sign USING btree (reported) TABLESPACE ts_indexes;
+CREATE INDEX useview_anc_danger_sign_chw_id ON cht.mv_anc_danger_sign USING btree (chw_id) TABLESPACE ts_indexes;
+CREATE INDEX useview_anc_danger_sign_facility_id ON cht.mv_anc_danger_sign USING btree (facility) TABLESPACE ts_indexes;
+CREATE INDEX useview_anc_danger_sign_district ON cht.mv_anc_danger_sign USING btree (district) TABLESPACE ts_indexes;
+CREATE INDEX useview_anc_danger_sign_region ON cht.mv_anc_danger_sign USING btree (region) TABLESPACE ts_indexes;
+CREATE INDEX useview_anc_danger_sign_date ON cht.mv_anc_danger_sign USING btree (date) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_danger_sign_year_month_district ON cht.mv_anc_danger_sign USING btree (year, month, district) TABLESPACE ts_indexes;

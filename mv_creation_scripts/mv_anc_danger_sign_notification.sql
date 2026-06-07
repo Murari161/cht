@@ -18,6 +18,13 @@ AS SELECT doc ->> '_id'::text AS doc_id,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc #>> '{fields,inputs,source}'::text[] AS source,
     doc #>> '{fields,inputs,source_id}'::text[] AS source_id,
     doc #>> '{fields,inputs,t_place_name}'::text[] AS t_place_name,
@@ -79,16 +86,15 @@ AS SELECT doc ->> '_id'::text AS doc_id,
    FROM dwh.cht_data d
    LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}') = h.chw_id
   WHERE (doc ->> 'form'::text) = 'anc_danger_sign_notification'::text AND d.is_current = true
-WITH DATA;
+WITH NO DATA;
 
 -- View indexes:
-CREATE INDEX mv_anc_danger_sign_notification_up_reported ON cht.mv_anc_danger_sign_notification USING btree (reported);
-CREATE INDEX mv_anc_danger_sign_notification_up_date ON cht.mv_anc_danger_sign_notification USING btree (date);
-CREATE INDEX mv_anc_danger_sign_notification_up_year ON cht.mv_anc_danger_sign_notification USING btree (year);
-CREATE INDEX mv_anc_danger_sign_notification_up_month ON cht.mv_anc_danger_sign_notification USING btree (month);
-CREATE INDEX mv_anc_danger_sign_notification_up_monthname ON cht.mv_anc_danger_sign_notification USING btree (monthname);
-CREATE INDEX mv_anc_danger_sign_notification_up_chw_id ON cht.mv_anc_danger_sign_notification USING btree (chw_id);
-CREATE INDEX mv_anc_danger_sign_notification_up_district ON cht.mv_anc_danger_sign_notification USING btree (district);
-CREATE INDEX mv_anc_danger_sign_notification_up_region ON cht.mv_anc_danger_sign_notification USING btree (region);
-CREATE INDEX mv_anc_danger_sign_notification_up_facility ON cht.mv_anc_danger_sign_notification USING btree (facility);
-CREATE INDEX mv_anc_danger_sign_notification_up_dhis2_facility_id ON cht.mv_anc_danger_sign_notification USING btree (dhis2_facility_id);
+CREATE INDEX mv_anc_danger_sign_notification_up_reported ON cht.mv_anc_danger_sign_notification USING btree (reported) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_danger_sign_notification_up_date ON cht.mv_anc_danger_sign_notification USING btree (date) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_danger_sign_notification_up_monthname ON cht.mv_anc_danger_sign_notification USING btree (monthname) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_danger_sign_notification_up_year_month_district ON cht.mv_anc_danger_sign_notification USING btree (year, month, district) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_danger_sign_notification_up_chw_id ON cht.mv_anc_danger_sign_notification USING btree (chw_id) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_danger_sign_notification_up_district ON cht.mv_anc_danger_sign_notification USING btree (district) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_danger_sign_notification_up_region ON cht.mv_anc_danger_sign_notification USING btree (region) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_danger_sign_notification_up_facility ON cht.mv_anc_danger_sign_notification USING btree (facility) TABLESPACE ts_indexes;
+CREATE INDEX mv_anc_danger_sign_notification_up_dhis2_facility_id ON cht.mv_anc_danger_sign_notification USING btree (dhis2_facility_id) TABLESPACE ts_indexes;

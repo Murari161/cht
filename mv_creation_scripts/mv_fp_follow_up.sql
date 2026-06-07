@@ -18,6 +18,13 @@ AS SELECT doc ->> '_id'::text AS uuid,
     ((((doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
+    (NULLIF((doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
     doc #>> '{fields,inputs,source}'::text[] AS inputs_source,
     doc #>> '{fields,inputs,source_id}'::text[] AS inputs_source_id,
     doc #>> '{fields,inputs,contact,_id}'::text[] AS inputs_contact_id,
@@ -82,7 +89,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
    FROM dwh.cht_data couchdb
 LEFT JOIN cht.mv_chw_hierarchy h ON (couchdb.doc #>> '{contact,_id}') = h.chw_id
   WHERE (doc ->> 'form'::text) = 'fp_follow_up'::text AND is_current
-WITH DATA;
+WITH NO DATA;
 
 -- Indexes for cht.mv_fp_follow_up
 -- Adjust "month" if a table uses a different period column name.
@@ -95,7 +102,5 @@ CREATE INDEX idx_mv_fp_follow_up_chw_reported
   --WHERE reported IS NOT NULL;
 CREATE INDEX idx_mv_fp_follow_up_chw_current_fp_method
   ON cht.mv_fp_follow_up (chw_id, current_fp_method) tablespace ts_indexes;
-CREATE INDEX idx_mv_fp_follow_up_year
-  ON cht.mv_fp_follow_up (year) tablespace ts_indexes;
-CREATE INDEX idx_mv_fp_follow_up_month
-  ON cht.mv_fp_follow_up (month) tablespace ts_indexes;
+CREATE INDEX idx_mv_fp_follow_up_year_month_district
+  ON cht.mv_fp_follow_up USING btree (year, month, district) TABLESPACE ts_indexes;
