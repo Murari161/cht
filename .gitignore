@@ -1,3 +1,6 @@
 
 # Excel lock/temp files
 ~$*
+
+# Claude Code local/internal state (temporary worktrees created for agent work)
+.claude/worktrees/
