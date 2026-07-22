@@ -1,0 +1,875 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms">
+  <h:head>
+    <h:title>Family Planning Follow up</h:title>
+    <model>
+      <itext>
+        <translation lang="en">
+          <text id="/fp_follow_up/additional_doc/content_type:label">
+            <value>Content type</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/created_by_doc:label">
+            <value>Created By Doc</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/form:label">
+            <value>Form</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/place_id:label">
+            <value>Patient ID</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/type:label">
+            <value>Type</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/can_supply_fp_commodities/no:label">
+            <value>No</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/can_supply_fp_commodities/yes:label">
+            <value>Yes</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/can_supply_fp_commodities:label">
+            <value>Are you able to supply FP commodities to <output value=" /fp_follow_up/patient_name "/> now?</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/commodities_supplied_qty:label">
+            <value>Quantity of <output value=" /fp_follow_up/current_fp_method_label "/> <output value=" /fp_follow_up/fp_follow_up/supply_item_units "/> supplied</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/continue_current_fp_method/no:label">
+            <value>No</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/continue_current_fp_method/yes:label">
+            <value>Yes</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/continue_current_fp_method:label">
+            <value>Does she accept to continue with the current FP method?</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/n_counsel_woman:label">
+            <value>Counsel <output value=" /fp_follow_up/patient_name "/> on all the family planning methods and importance of FP for birth spacing.
+Advice <output value=" /fp_follow_up/patient_name "/> to reach out to you if they reconsider FP adoption</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/n_enroll_pregnancy:label">
+            <value>Please enroll the pregnancy through the screening form</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/n_fp_method:label">
+            <value><output value=" /fp_follow_up/patient_name "/> is on <output value=" /fp_follow_up/current_fp_method_label "/></value></text>
+          <text id="/fp_follow_up/fp_follow_up/n_refer_change_fp:label">
+            <value>Refer <output value=" /fp_follow_up/patient_name "/> for initiation of preferred FP at the health facility</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/n_refer_patient_change_fp:label">
+            <value>Refer <output value=" /fp_follow_up/patient_name "/> for initiation of a new family planning method at the health facilities</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/n_thank_patient:label">
+            <value>Thank <output value=" /fp_follow_up/patient_name "/> for the time.</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/next_appt_date:label">
+            <value>Date for next family planning method appointment</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason/is_pregnant:label">
+            <value>If already pregnant</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason/other:label">
+            <value>Other</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason/side_effects:label">
+            <value>The FP method has adverse side effects</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason/spouse_refused:label">
+            <value>Spouse is not happy with it</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason/wants_baby:label">
+            <value>Wants to get a baby</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason/wants_change_fp:label">
+            <value>Wants to change the FP method</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason:label">
+            <value>Why did <output value=" /fp_follow_up/patient_name "/> stop using family planning?</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason_other:label">
+            <value>Specify Other</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/on_fp/no:label">
+            <value>No</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/on_fp/yes:label">
+            <value>Yes</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/on_fp:label">
+            <value>Is <output value=" /fp_follow_up/patient_name "/> still using family planning?</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/referred_patient_change_fp/no:label">
+            <value>No</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/referred_patient_change_fp/yes:label">
+            <value>Yes</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/referred_patient_change_fp:label">
+            <value>Have you referred <output value=" /fp_follow_up/patient_name "/> the to the health facility?</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/referred_patient_not_on_fp/yes:label">
+            <value>OK</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/referred_patient_not_on_fp:label">
+            <value>Confirm that you have referred the woman for initiation of preferred FP at the health facility</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up:label">
+            <value>FP Follow Up</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_follow_up_on:label">
+            <value>&lt;p style=&quot;text-align:center;&quot;&gt;Next Family Planning follow up is due on <output value=" /fp_follow_up/fp_follow_up/next_appt_date "/>&lt;/p&gt;</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_follow_up_title:label">
+            <value>Follow Up Task</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_fp_method:label">
+            <value>Current FP method: <output value=" /fp_follow_up/current_fp_method_label "/>&lt;/p&gt;</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_fp_method_title:label">
+            <value>Family Planning Method</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_patient_details:label">
+            <value>&lt;p style=&quot;text-align:center;&quot;&gt;
+<output value=" /fp_follow_up/patient_name "/>
+<output value=" /fp_follow_up/age "/> years
+&lt;/p&gt;</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_patient_details_title:label">
+            <value>Patient Details</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_referral_follow_up:label">
+            <value>Please conduct a Family Planning referral follow-up in 3 days.</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_referrals:label">
+            <value>Refer the woman to the health facility for intiation of new family planning method</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_referrals_title:label">
+            <value>Referrals</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_submit:label">
+            <value>&lt;p style="text-align:center;"&gt;_Be sure you submit to complete this action._&lt;/p&gt;</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_summary_title:label">
+            <value>Family Planning Follow up Report</value>
+          </text>
+          <text id="/fp_follow_up/group_review:label">
+            <value>Summary</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/_id:label">
+            <value>id</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/date_of_birth:label">
+            <value>Date of Birth</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/name:label">
+            <value>Name</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent/_id:label">
+            <value>CHW Area Id</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent/contact/name:label">
+            <value>CHW name</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent/contact/phone:label">
+            <value>CHW phone</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent/contact:label">
+            <value>Contact</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent/parent/_id:label">
+            <value>BRANCH ID</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent/supervisor:label">
+            <value>Supervisor</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent:label">
+            <value>Parent</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent:label">
+            <value>Parent</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/patient_id:label">
+            <value>Patient ID</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/sex:label">
+            <value>Sex</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact:label">
+            <value>Contact</value>
+          </text>
+          <text id="/fp_follow_up/inputs/source:label">
+            <value>Source</value>
+          </text>
+          <text id="/fp_follow_up/inputs/source_id:label">
+            <value>Source ID</value>
+          </text>
+          <text id="/fp_follow_up/inputs:label">
+            <value>Patient</value>
+          </text>
+        </translation>
+        <translation lang="lg">
+          <text id="/fp_follow_up/additional_doc/contact:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/content_type:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/created_by_doc:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/fields/coc_given_fp:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/fields/condoms_given_fp:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/fields/pop_given_fp:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/fields:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/form:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/parent:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/place_id:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc/type:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/additional_doc:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/age:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/branch_id:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/chw_area_id:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/chw_name:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/chw_phone:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/coc_given:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/condoms_given:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/current_fp_method_label:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/date_of_birth:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/can_supply_fp_commodities/no:label">
+            <value>Nedda</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/can_supply_fp_commodities/yes:label">
+            <value>Yee</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/can_supply_fp_commodities:label">
+            <value>Osobola kati okuwa <output value=" /fp_follow_up/patient_name "/> ebyeyambisibwa mu nkola y'ekizaalaggumba?</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/commodities_supplied_qty:label">
+            <value>Obungi bwe <output value=" /fp_follow_up/current_fp_method_label "/> <output value=" /fp_follow_up/fp_follow_up/supply_item_units "/> ezimuweereddwa</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/continue_current_fp_method/no:label">
+            <value>Nedda</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/continue_current_fp_method/yes:label">
+            <value>Yee</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/continue_current_fp_method:label">
+            <value>Akkiriza okugenda mu maaso n'okukozesa enkola y'ekizaalaggumba gy'akozesa mu kiseera kino?</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/n_counsel_woman:label">
+            <value>Buulirira <output value=" /fp_follow_up/patient_name "/> ku nkola z'ekizaalaggumba zonna wamu n'omugaso gw'enkola ezo mu kuzza ku baana mu kiseera ekigere. <output value=" /fp_follow_up/patient_name "/> muwe amagezi akomewo gy'oli singa yeekyusa n'ayagala okukozesa enkola y'ekizaalaggumba</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/n_enroll_pregnancy:label">
+            <value>Osabibwa owandiise olubuto ng'okozesa ffoomu eyeekenneenyezebwako embuto</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/n_fp_method:label">
+            <value><output value=" /fp_follow_up/patient_name "/> ali ku <output value=" /fp_follow_up/current_fp_method_label "/></value></text>
+          <text id="/fp_follow_up/fp_follow_up/n_refer_change_fp:label">
+            <value><output value=" /fp_follow_up/patient_name "/> musindike mu ddwaliro agende atandike ku nkola y'ekizaalaggumba gy'ayagala</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/n_refer_patient_change_fp:label">
+            <value><output value=" /fp_follow_up/patient_name "/> musindike mu ddwaliro agende atandike enkola y'ekizaalaggumba empya</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/n_thank_patient:label">
+            <value>Weebale nnyo <output value=" /fp_follow_up/patient_name "/> olw'okutuwa akadde.</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/next_appt_date:label">
+            <value>Ennaku z'omwezi ez'okuddamu okusisinkana okwogera ku nkola y'ekizaalaggumba</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason/is_pregnant:label">
+            <value>Bw'abeera alina olubuto</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason/other:label">
+            <value>Ekirala</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason/side_effects:label">
+            <value>Enkola y'ekizaalaggumba ng'oli lubuto eba ejja kukuleetera ebizibu</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason/spouse_refused:label">
+            <value>Omwagalwa we si musanyufu nakyo</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason/wants_baby:label">
+            <value>Ayagala kufuna mwana</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason/wants_change_fp:label">
+            <value>Ayagala kukyusa nkola ya kizaalaggumba</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason:label">
+            <value><output value=" /fp_follow_up/patient_name "/> yalekera awo okukozesa enkola y'ekizaalaggumba?</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/not_on_fp_reason_other:label">
+            <value>Laga ekirala</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/on_fp/no:label">
+            <value>Nedda</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/on_fp/yes:label">
+            <value>Yee</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/on_fp:label">
+            <value><output value=" /fp_follow_up/patient_name "/> akyakozesa enkola y'ekizaalaggumba?</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/referred_patient_change_fp/no:label">
+            <value>Nedda</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/referred_patient_change_fp/yes:label">
+            <value>Yee</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/referred_patient_change_fp:label">
+            <value><output value=" /fp_follow_up/patient_name "/> omusindise mu ddwaliro okugenda afune obujjanjabi obusingawo?</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/referred_patient_not_on_fp/yes:label">
+            <value>OK</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up/referred_patient_not_on_fp:label">
+            <value>Confirm that you have referred the woman for initiation of preferred FP at the health facility</value>
+          </text>
+          <text id="/fp_follow_up/fp_follow_up:label">
+            <value>Okulondoolwa ku bikwatagana n'enkola y'ekizaalaggumba</value>
+          </text>
+          <text id="/fp_follow_up/fp_next_appt_date:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_follow_up_on:label">
+            <value>&lt;p style=&quot;text-align:center;&quot;&gt;Okulondoolwa kw'Enkola y'Ekizaalaggumba okuddako kuliyo nga <output value=" /fp_follow_up/fp_follow_up/next_appt_date "/>&lt;/p&gt;</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_follow_up_title:label">
+            <value>Ekyokukola mu kulondoola</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_fp_method:label">
+            <value>Enkola y'ekizaalaggumba ekozesebwa mu kiseera kino: <output value=" /fp_follow_up/current_fp_method_label "/>&lt;/p&gt;</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_fp_method_title:label">
+            <value>Enkola y'Ekizaalaggumba</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_patient_details:label">
+            <value>&lt;p style=&quot;text-align:center;&quot;&gt; <output value=" /fp_follow_up/patient_name "/> <output value=" /fp_follow_up/age "/> emyaka&lt;/p&gt;</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_patient_details_title:label">
+            <value>Ebikwata ku mulwadde</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_referral_follow_up:label">
+            <value>Osabibwa mu nnaku ssatu okulondoola abaasindikiddwa okufuna obuweereza bw'enkola z'ekizzalaggumba.</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_referrals:label">
+            <value>Omukyala musindike mu ddwaliro agende atandike enkola y'ekizaalaggumba empya</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_referrals_title:label">
+            <value>Abasindikiddwa okufuna obujjanjabi obusingako</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_submit:label">
+            <value>&lt;p style="text-align:center;"&gt;_Kakasa nti osindise okusobola okumaliriza kino ekikolebwa._&lt;/p&gt;</value>
+          </text>
+          <text id="/fp_follow_up/group_review/n_summary_title:label">
+            <value>Alipoota y'Okulondoola Ebikwata ku nkola y'ekizaalaggumba</value>
+          </text>
+          <text id="/fp_follow_up/group_review:label">
+            <value>Ekifunze</value>
+          </text>
+          <text id="/fp_follow_up/has_been_referred:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/_id:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/date_of_birth:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/name:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent/_id:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent/contact/name:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent/contact/phone:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent/contact:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent/parent/_id:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent/supervisor:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent/parent:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/parent:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/patient_id:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact/sex:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/contact:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/source:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs/source_id:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/inputs:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/needs_method_change:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/patient_age_in_years:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/patient_date_of_birth:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/patient_id:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/patient_name:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/patient_uuid:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/pop_given:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/source:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/source_id:label">
+            <value>-</value>
+          </text>
+          <text id="/fp_follow_up/wants_or_is_pregnant:label">
+            <value>-</value>
+          </text>
+        </translation>
+      </itext>
+      <instance>
+        <fp_follow_up id="fp_follow_up" prefix="J1!fp_follow_up!" delimiter="#" version="2021-08-27 00:00:00">
+          <inputs>
+            <meta>
+              <location>
+                <lat/>
+                <long/>
+                <error/>
+                <message/>
+              </location>
+            </meta>
+            <source>user</source>
+            <source_id/>
+            <contact>
+              <_id/>
+              <name/>
+              <patient_id/>
+              <date_of_birth/>
+              <sex/>
+              <parent>
+                <parent>
+                  <_id/>
+                  <supervisor/>
+                  <contact>
+                    <name/>
+                    <phone/>
+                    <_id/>
+                  </contact>
+                  <parent>
+                    <_id/>
+                  </parent>
+                </parent>
+              </parent>
+            </contact>
+          </inputs>
+          <source/>
+          <source_id/>
+          <patient_uuid/>
+          <patient_id/>
+          <patient_name/>
+          <patient_date_of_birth/>
+          <patient_age_in_years/>
+          <age/>
+          <date_of_birth/>
+          <chw_name/>
+          <chw_phone/>
+          <current_fp_method_label/>
+          <current_fp_method/>
+          <fp_next_appt_date/>
+          <wants_or_is_pregnant/>
+          <needs_method_change/>
+          <has_been_referred/>
+          <chw_area_id/>
+          <branch_id/>
+          <coc_given/>
+          <condoms_given/>
+          <pop_given/>
+          <dmpa_given/>
+          <contraceptives_given/>
+          <fp_follow_up>
+            <on_fp/>
+            <not_on_fp_reason/>
+            <not_on_fp_reason_other/>
+            <n_thank_patient/>
+            <n_refer_change_fp/>
+            <referred_patient_not_on_fp/>
+            <n_enroll_pregnancy/>
+            <n_counsel_woman/>
+            <n_fp_method/>
+            <continue_current_fp_method/>
+            <n_refer_patient_change_fp/>
+            <can_supply_fp_commodities/>
+            <supply_item_units/>
+            <supply_limit/>
+            <commodities_supplied_qty/>
+            <referred_patient_change_fp/>
+            <next_appt_date/>
+          </fp_follow_up>
+          <group_review>
+            <n_summary_title/>
+            <n_submit/>
+            <n_patient_details_title/>
+            <n_patient_details/>
+            <n_fp_method_title/>
+            <n_fp_method/>
+            <n_referrals_title/>
+            <n_referrals/>
+            <n_referral_follow_up/>
+            <n_follow_up_title/>
+            <n_follow_up_on/>
+          </group_review>
+          <additional_doc db-doc="true">
+            <place_id/>
+            <type/>
+            <created_by_doc db-doc-ref="/fp_follow_up"/>
+            <content_type/>
+            <form/>
+            <contact>
+              <_id/>
+            </contact>
+            <parent>
+              <_id/>
+            </parent>
+            <fields>
+              <coc_given_fp/>
+              <condoms_given_fp/>
+              <pop_given_fp/>
+              <dmpa_given_fp/>
+              <contraceptives_given_fp/>
+            </fields>
+          </additional_doc>
+          <meta tag="hidden">
+            <instanceID/>
+          </meta>
+        </fp_follow_up>
+      </instance>
+      <instance id="contact-summary"/>
+      <bind nodeset="/fp_follow_up/inputs" constraint="field-list" relevant="./source= 'user'"/>
+      <bind nodeset="/fp_follow_up/inputs/source" type="string"/>
+      <bind nodeset="/fp_follow_up/inputs/source_id" type="string"/>
+      <bind nodeset="/fp_follow_up/inputs/contact/_id" type="db:person" constraint="db-object"/>
+      <bind nodeset="/fp_follow_up/inputs/contact/name" type="string"/>
+      <bind nodeset="/fp_follow_up/inputs/contact/patient_id" type="string"/>
+      <bind nodeset="/fp_follow_up/inputs/contact/date_of_birth" type="string"/>
+      <bind nodeset="/fp_follow_up/inputs/contact/sex" type="string"/>
+      <bind nodeset="/fp_follow_up/inputs/contact/parent/parent/_id" type="string"/>
+      <bind nodeset="/fp_follow_up/inputs/contact/parent/parent/supervisor" type="string"/>
+      <bind nodeset="/fp_follow_up/inputs/contact/parent/parent/contact/name" type="string"/>
+      <bind nodeset="/fp_follow_up/inputs/contact/parent/parent/contact/phone" type="string"/>
+      <bind nodeset="/fp_follow_up/inputs/contact/parent/parent/contact/_id" type="string"/>
+      <bind nodeset="/fp_follow_up/inputs/contact/parent/parent/parent/_id" type="string"/>
+      <bind nodeset="/fp_follow_up/source" type="string" calculate="../inputs/source"/>
+      <bind nodeset="/fp_follow_up/source_id" type="string" calculate="../inputs/source_id"/>
+      <bind nodeset="/fp_follow_up/patient_uuid" type="string" calculate="../inputs/contact/_id"/>
+      <bind nodeset="/fp_follow_up/patient_id" type="string" calculate="../inputs/contact/_id"/>
+      <bind nodeset="/fp_follow_up/patient_name" type="string" calculate="../inputs/contact/name"/>
+      <bind nodeset="/fp_follow_up/patient_date_of_birth" type="string" calculate="../inputs/contact/date_of_birth"/>
+      <bind nodeset="/fp_follow_up/patient_age_in_years" type="string" calculate="floor(difference-in-months(  /fp_follow_up/patient_date_of_birth , today() ) div 12 )"/>
+      <bind nodeset="/fp_follow_up/age" type="string" calculate="../patient_age_in_years"/>
+      <bind nodeset="/fp_follow_up/date_of_birth" type="string" calculate="../inputs/contact/date_of_birth"/>
+      <bind nodeset="/fp_follow_up/chw_name" type="string" calculate="../inputs/contact/parent/parent/contact/name"/>
+      <bind nodeset="/fp_follow_up/chw_phone" type="string" calculate="../inputs/contact/parent/parent/contact/phone"/>
+      <bind nodeset="/fp_follow_up/current_fp_method_label" type="string" calculate="instance('contact-summary')/context/fpMethodLabel"/>
+      <bind nodeset="/fp_follow_up/current_fp_method" type="string" calculate="instance('contact-summary')/context/fpMethod"/>
+      <bind nodeset="/fp_follow_up/fp_next_appt_date" type="string" calculate=" /fp_follow_up/fp_follow_up/next_appt_date "/>
+      <bind nodeset="/fp_follow_up/wants_or_is_pregnant" type="string" calculate=" /fp_follow_up/fp_follow_up/not_on_fp_reason ='is_pregnant' or  /fp_follow_up/fp_follow_up/not_on_fp_reason ='wants_baby'"/>
+      <bind nodeset="/fp_follow_up/needs_method_change" type="string" calculate=" /fp_follow_up/fp_follow_up/not_on_fp_reason ='wants_change_fp' or  /fp_follow_up/fp_follow_up/not_on_fp_reason = 'side_effects' or  /fp_follow_up/fp_follow_up/continue_current_fp_method ='no'"/>
+      <bind nodeset="/fp_follow_up/has_been_referred" type="string" calculate=" /fp_follow_up/fp_follow_up/referred_patient_not_on_fp  = 'yes' or  /fp_follow_up/fp_follow_up/referred_patient_change_fp  = 'yes'"/>
+      <bind nodeset="/fp_follow_up/chw_area_id" type="string" calculate="../inputs/contact/parent/parent/_id"/>
+      <bind nodeset="/fp_follow_up/branch_id" type="string" calculate="../inputs/contact/parent/parent/parent/_id"/>
+      <bind nodeset="/fp_follow_up/coc_given" type="string" calculate="if(( /fp_follow_up/current_fp_method  = 'combined_oral_contraceptives' and  /fp_follow_up/fp_follow_up/can_supply_fp_commodities  = 'yes'),  /fp_follow_up/fp_follow_up/commodities_supplied_qty , 0)"/>
+      <bind nodeset="/fp_follow_up/condoms_given" type="string" calculate="if(( /fp_follow_up/current_fp_method  = 'condoms' and  /fp_follow_up/fp_follow_up/can_supply_fp_commodities  = 'yes'),  /fp_follow_up/fp_follow_up/commodities_supplied_qty , 0)"/>
+      <bind nodeset="/fp_follow_up/pop_given" type="string" calculate="if(( /fp_follow_up/current_fp_method  = 'progestreone_only_pills' and  /fp_follow_up/fp_follow_up/can_supply_fp_commodities  = 'yes'),  /fp_follow_up/fp_follow_up/commodities_supplied_qty , 0)"/>
+      <bind nodeset="/fp_follow_up/dmpa_given" type="string" calculate="if(( /fp_follow_up/current_fp_method  = 'dmpa' and  /fp_follow_up/fp_follow_up/can_supply_fp_commodities  = 'yes'),  /fp_follow_up/fp_follow_up/commodities_supplied_qty , 0)"/>
+      <bind nodeset="/fp_follow_up/contraceptives_given" type="string" calculate="if(( /fp_follow_up/current_fp_method  = 'contraceptives' and  /fp_follow_up/fp_follow_up/can_supply_fp_commodities  = 'yes'),  /fp_follow_up/fp_follow_up/commodities_supplied_qty , 0)"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/on_fp" type="select1" required="true()"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/not_on_fp_reason" type="select1" required="true()" relevant="selected(../on_fp, 'no')"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/not_on_fp_reason_other" type="string" required="true()" relevant="selected(../not_on_fp_reason, 'other')"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/n_thank_patient" readonly="true()" type="string" relevant="selected(../not_on_fp_reason, 'wants_baby')"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/n_refer_change_fp" readonly="true()" type="string" relevant="selected(../not_on_fp_reason, 'wants_change_fp') or selected(../not_on_fp_reason, 'side_effects')"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/referred_patient_not_on_fp" type="select1" required="true()" relevant="selected(../not_on_fp_reason, 'wants_change_fp') or selected(../not_on_fp_reason, 'side_effects')"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/n_enroll_pregnancy" readonly="true()" type="string" relevant="selected(../not_on_fp_reason, 'wants_baby')"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/n_counsel_woman" readonly="true()" type="string" relevant="selected(../not_on_fp_reason, 'spouse_refused') or selected(../not_on_fp_reason, 'other')"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/n_fp_method" readonly="true()" type="string" relevant="selected(../on_fp, 'yes')"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/continue_current_fp_method" type="select1" required="true()" relevant="selected(../on_fp, 'yes')"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/n_refer_patient_change_fp" readonly="true()" type="string" relevant="selected(../continue_current_fp_method, 'no')"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/can_supply_fp_commodities" type="select1" required="true()" relevant="selected(../continue_current_fp_method, 'yes') and (selected( /fp_follow_up/current_fp_method ,'combined_oral_contraceptives') or selected( /fp_follow_up/current_fp_method , 'progestreone_only_pills') or selected( /fp_follow_up/current_fp_method ,'condoms') or selected( /fp_follow_up/current_fp_method , 'contraceptives') or starts-with( /fp_follow_up/current_fp_method , 'dmpa'))"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/supply_item_units" type="string" calculate="if(
+  /fp_follow_up/current_fp_method  = 'combined_oral_contraceptives' or  /fp_follow_up/current_fp_method  = 'progestreone_only_pills', 'cycles', 
+ if( /fp_follow_up/current_fp_method  = 'condoms', 'pieces', 
+ if( /fp_follow_up/current_fp_method  = 'contraceptives' , 'packs', if(starts-with( /fp_follow_up/current_fp_method , 'dmpa'), 'vials', '')))
+)"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/supply_limit" type="string" calculate="if(
+  /fp_follow_up/current_fp_method  = 'combined_oral_contraceptives' or  /fp_follow_up/current_fp_method  = 'progestreone_only_pills', 30, 
+ if( /fp_follow_up/current_fp_method  = 'condoms', 100, 
+ if( /fp_follow_up/current_fp_method  = 'contraceptives' , 5, if(starts-with( /fp_follow_up/current_fp_method , 'dmpa'), 30, 0)))
+)"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/commodities_supplied_qty" type="int" required="true()" constraint=". &gt; 0 and . &lt;= int( /fp_follow_up/fp_follow_up/supply_limit )" relevant="selected(../can_supply_fp_commodities, 'yes')"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/referred_patient_change_fp" type="select1" required="true()" relevant="selected(../continue_current_fp_method, 'no')"/>
+      <bind nodeset="/fp_follow_up/fp_follow_up/next_appt_date" type="date" required="true()" constraint="decimal-date-time(.) &gt;= decimal-date-time(today())" relevant="selected(../continue_current_fp_method, 'yes')"/>
+      <bind nodeset="/fp_follow_up/group_review/n_summary_title" readonly="true()" type="string"/>
+      <bind nodeset="/fp_follow_up/group_review/n_submit" readonly="true()" type="string"/>
+      <bind nodeset="/fp_follow_up/group_review/n_patient_details_title" readonly="true()" type="string"/>
+      <bind nodeset="/fp_follow_up/group_review/n_patient_details" readonly="true()" type="string"/>
+      <bind nodeset="/fp_follow_up/group_review/n_fp_method_title" readonly="true()" type="string" relevant=" /fp_follow_up/fp_follow_up/on_fp ='yes'"/>
+      <bind nodeset="/fp_follow_up/group_review/n_fp_method" readonly="true()" type="string" relevant=" /fp_follow_up/fp_follow_up/on_fp ='yes'"/>
+      <bind nodeset="/fp_follow_up/group_review/n_referrals_title" readonly="true()" type="string" relevant=" /fp_follow_up/fp_follow_up/not_on_fp_reason ='wants_change_fp' or  /fp_follow_up/fp_follow_up/not_on_fp_reason = 'side_effects' or  /fp_follow_up/fp_follow_up/continue_current_fp_method ='no'"/>
+      <bind nodeset="/fp_follow_up/group_review/n_referrals" readonly="true()" type="string" relevant=" /fp_follow_up/fp_follow_up/not_on_fp_reason ='wants_change_fp' or  /fp_follow_up/fp_follow_up/not_on_fp_reason = 'side_effects' or  /fp_follow_up/fp_follow_up/continue_current_fp_method ='no'"/>
+      <bind nodeset="/fp_follow_up/group_review/n_referral_follow_up" readonly="true()" type="string" relevant=" /fp_follow_up/fp_follow_up/not_on_fp_reason ='wants_change_fp' or  /fp_follow_up/fp_follow_up/not_on_fp_reason = 'side_effects' or  /fp_follow_up/fp_follow_up/continue_current_fp_method ='no'"/>
+      <bind nodeset="/fp_follow_up/group_review/n_follow_up_title" readonly="true()" type="string" relevant=" /fp_follow_up/fp_follow_up/on_fp ='yes' and  /fp_follow_up/fp_follow_up/next_appt_date  != ''"/>
+      <bind nodeset="/fp_follow_up/group_review/n_follow_up_on" readonly="true()" type="string" relevant=" /fp_follow_up/fp_follow_up/on_fp ='yes' and  /fp_follow_up/fp_follow_up/next_appt_date  != ''"/>
+      <bind nodeset="/fp_follow_up/additional_doc/place_id" type="string" calculate=" /fp_follow_up/chw_area_id "/>
+      <bind nodeset="/fp_follow_up/additional_doc/type" type="string" calculate="&quot;data_record&quot;"/>
+      <bind nodeset="/fp_follow_up/additional_doc/created_by_doc" type="string" calculate="."/>
+      <bind nodeset="/fp_follow_up/additional_doc/content_type" type="string" calculate="&quot;xml&quot;"/>
+      <bind nodeset="/fp_follow_up/additional_doc/form" type="string" calculate="&quot;prescription_summary&quot;"/>
+      <bind nodeset="/fp_follow_up/additional_doc/contact/_id" type="string" calculate=" /fp_follow_up/chw_area_id "/>
+      <bind nodeset="/fp_follow_up/additional_doc/parent/_id" type="string" calculate=" /fp_follow_up/branch_id "/>
+      <bind nodeset="/fp_follow_up/additional_doc/fields/coc_given_fp" type="string" calculate=" /fp_follow_up/coc_given "/>
+      <bind nodeset="/fp_follow_up/additional_doc/fields/condoms_given_fp" type="string" calculate=" /fp_follow_up/condoms_given "/>
+      <bind nodeset="/fp_follow_up/additional_doc/fields/pop_given_fp" type="string" calculate=" /fp_follow_up/pop_given "/>
+      <bind nodeset="/fp_follow_up/additional_doc/fields/dmpa_given_fp" type="string" calculate=" /fp_follow_up/dmpa_given "/>
+      <bind nodeset="/fp_follow_up/additional_doc/fields/contraceptives_given_fp" type="string" calculate=" /fp_follow_up/contraceptives_given "/>
+      <bind nodeset="/fp_follow_up/meta/instanceID" type="string" readonly="true()" calculate="concat('uuid:', uuid())"/>
+    </model>
+  </h:head>
+  <h:body class="pages">
+    <group ref="/fp_follow_up/inputs">
+      <label ref="jr:itext('/fp_follow_up/inputs:label')"/>
+      <group ref="/fp_follow_up/inputs/contact">
+        <label ref="jr:itext('/fp_follow_up/inputs/contact:label')"/>
+        <input ref="/fp_follow_up/inputs/contact/_id">
+          <label ref="jr:itext('/fp_follow_up/inputs/contact/_id:label')"/>
+        </input>
+        <group ref="/fp_follow_up/inputs/contact/parent">
+          <label ref="jr:itext('/fp_follow_up/inputs/contact/parent:label')"/>
+          <group ref="/fp_follow_up/inputs/contact/parent/parent">
+            <label ref="jr:itext('/fp_follow_up/inputs/contact/parent/parent:label')"/>
+            <input appearance="hidden" ref="/fp_follow_up/inputs/contact/parent/parent/_id">
+              <label ref="jr:itext('/fp_follow_up/inputs/contact/parent/parent/_id:label')"/>
+            </input>
+            <input ref="/fp_follow_up/inputs/contact/parent/parent/supervisor">
+              <label ref="jr:itext('/fp_follow_up/inputs/contact/parent/parent/supervisor:label')"/>
+            </input>
+            <group ref="/fp_follow_up/inputs/contact/parent/parent/contact">
+              <label ref="jr:itext('/fp_follow_up/inputs/contact/parent/parent/contact:label')"/>
+              <input ref="/fp_follow_up/inputs/contact/parent/parent/contact/_id"/>
+            </group>
+            <group ref="/fp_follow_up/inputs/contact/parent/parent/parent">
+              <input ref="/fp_follow_up/inputs/contact/parent/parent/parent/_id">
+                <label ref="jr:itext('/fp_follow_up/inputs/contact/parent/parent/parent/_id:label')"/>
+              </input>
+            </group>
+          </group>
+        </group>
+      </group>
+    </group>
+    <group appearance="field-list" ref="/fp_follow_up/fp_follow_up">
+      <label ref="jr:itext('/fp_follow_up/fp_follow_up:label')"/>
+      <select1 ref="/fp_follow_up/fp_follow_up/on_fp">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/on_fp:label')"/>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/on_fp/yes:label')"/>
+          <value>yes</value>
+        </item>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/on_fp/no:label')"/>
+          <value>no</value>
+        </item>
+      </select1>
+      <select1 ref="/fp_follow_up/fp_follow_up/not_on_fp_reason">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/not_on_fp_reason:label')"/>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/not_on_fp_reason/wants_baby:label')"/>
+          <value>wants_baby</value>
+        </item>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/not_on_fp_reason/wants_change_fp:label')"/>
+          <value>wants_change_fp</value>
+        </item>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/not_on_fp_reason/is_pregnant:label')"/>
+          <value>is_pregnant</value>
+        </item>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/not_on_fp_reason/side_effects:label')"/>
+          <value>side_effects</value>
+        </item>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/not_on_fp_reason/spouse_refused:label')"/>
+          <value>spouse_refused</value>
+        </item>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/not_on_fp_reason/other:label')"/>
+          <value>other</value>
+        </item>
+      </select1>
+      <input ref="/fp_follow_up/fp_follow_up/not_on_fp_reason_other">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/not_on_fp_reason_other:label')"/>
+      </input>
+      <input ref="/fp_follow_up/fp_follow_up/n_thank_patient">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/n_thank_patient:label')"/>
+      </input>
+      <input ref="/fp_follow_up/fp_follow_up/n_refer_change_fp">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/n_refer_change_fp:label')"/>
+      </input>
+      <select1 ref="/fp_follow_up/fp_follow_up/referred_patient_not_on_fp">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/referred_patient_not_on_fp:label')"/>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/referred_patient_not_on_fp/yes:label')"/>
+          <value>yes</value>
+        </item>
+      </select1>
+      <input ref="/fp_follow_up/fp_follow_up/n_enroll_pregnancy">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/n_enroll_pregnancy:label')"/>
+      </input>
+      <input ref="/fp_follow_up/fp_follow_up/n_counsel_woman">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/n_counsel_woman:label')"/>
+      </input>
+      <input ref="/fp_follow_up/fp_follow_up/n_fp_method">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/n_fp_method:label')"/>
+      </input>
+      <select1 ref="/fp_follow_up/fp_follow_up/continue_current_fp_method">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/continue_current_fp_method:label')"/>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/continue_current_fp_method/yes:label')"/>
+          <value>yes</value>
+        </item>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/continue_current_fp_method/no:label')"/>
+          <value>no</value>
+        </item>
+      </select1>
+      <input ref="/fp_follow_up/fp_follow_up/n_refer_patient_change_fp">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/n_refer_patient_change_fp:label')"/>
+      </input>
+      <select1 ref="/fp_follow_up/fp_follow_up/can_supply_fp_commodities">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/can_supply_fp_commodities:label')"/>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/can_supply_fp_commodities/yes:label')"/>
+          <value>yes</value>
+        </item>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/can_supply_fp_commodities/no:label')"/>
+          <value>no</value>
+        </item>
+      </select1>
+      <input ref="/fp_follow_up/fp_follow_up/commodities_supplied_qty">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/commodities_supplied_qty:label')"/>
+      </input>
+      <select1 ref="/fp_follow_up/fp_follow_up/referred_patient_change_fp">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/referred_patient_change_fp:label')"/>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/referred_patient_change_fp/yes:label')"/>
+          <value>yes</value>
+        </item>
+        <item>
+          <label ref="jr:itext('/fp_follow_up/fp_follow_up/referred_patient_change_fp/no:label')"/>
+          <value>no</value>
+        </item>
+      </select1>
+      <input ref="/fp_follow_up/fp_follow_up/next_appt_date">
+        <label ref="jr:itext('/fp_follow_up/fp_follow_up/next_appt_date:label')"/>
+      </input>
+    </group>
+    <group appearance="field-list summary" ref="/fp_follow_up/group_review">
+      <label ref="jr:itext('/fp_follow_up/group_review:label')"/>
+      <input appearance="h1 red" ref="/fp_follow_up/group_review/n_summary_title">
+        <label ref="jr:itext('/fp_follow_up/group_review/n_summary_title:label')"/>
+      </input>
+      <input ref="/fp_follow_up/group_review/n_submit">
+        <label ref="jr:itext('/fp_follow_up/group_review/n_submit:label')"/>
+      </input>
+      <input appearance="h1 blue" ref="/fp_follow_up/group_review/n_patient_details_title">
+        <label ref="jr:itext('/fp_follow_up/group_review/n_patient_details_title:label')"/>
+      </input>
+      <input ref="/fp_follow_up/group_review/n_patient_details">
+        <label ref="jr:itext('/fp_follow_up/group_review/n_patient_details:label')"/>
+      </input>
+      <input appearance="h1 blue" ref="/fp_follow_up/group_review/n_fp_method_title">
+        <label ref="jr:itext('/fp_follow_up/group_review/n_fp_method_title:label')"/>
+      </input>
+      <input ref="/fp_follow_up/group_review/n_fp_method">
+        <label ref="jr:itext('/fp_follow_up/group_review/n_fp_method:label')"/>
+      </input>
+      <input appearance="h1 blue" ref="/fp_follow_up/group_review/n_referrals_title">
+        <label ref="jr:itext('/fp_follow_up/group_review/n_referrals_title:label')"/>
+      </input>
+      <input appearance="li" ref="/fp_follow_up/group_review/n_referrals">
+        <label ref="jr:itext('/fp_follow_up/group_review/n_referrals:label')"/>
+      </input>
+      <input appearance="li" ref="/fp_follow_up/group_review/n_referral_follow_up">
+        <label ref="jr:itext('/fp_follow_up/group_review/n_referral_follow_up:label')"/>
+      </input>
+      <input appearance="h1 green" ref="/fp_follow_up/group_review/n_follow_up_title">
+        <label ref="jr:itext('/fp_follow_up/group_review/n_follow_up_title:label')"/>
+      </input>
+      <input ref="/fp_follow_up/group_review/n_follow_up_on">
+        <label ref="jr:itext('/fp_follow_up/group_review/n_follow_up_on:label')"/>
+      </input>
+    </group>
+    <group appearance="field-list" ref="/fp_follow_up/additional_doc">
+      <group ref="/fp_follow_up/additional_doc/contact"/>
+      <group ref="/fp_follow_up/additional_doc/parent"/>
+      <group ref="/fp_follow_up/additional_doc/fields"/>
+    </group>
+  </h:body>
+</h:html>
