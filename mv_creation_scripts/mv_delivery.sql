@@ -1,5 +1,5 @@
 -- cht.mv_delivery source
-DROP MATERIALIZED VIEW cht.mv_delivery;
+
 CREATE MATERIALIZED VIEW cht.mv_delivery
 TABLESPACE ts_report
 AS SELECT d.doc ->> '_id'::text AS uuid,
@@ -17,13 +17,13 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
     ((((d.doc -> 'fields'::text) -> 'inputs'::text) -> 'meta'::text) -> 'location'::text) ->> 'message'::text AS location_message,
     (d.doc -> 'geolocation'::text) ->> 'code'::text AS geolocation_code,
     (d.doc -> 'geolocation'::text) ->> 'message'::text AS geolocation_message,
-    (NULLIF((d.doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text))::double precision AS geolocation_latitude,
-    (NULLIF((d.doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text))::double precision AS geolocation_longitude,
-    (NULLIF((d.doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text))::double precision AS geolocation_accuracy,
-    (NULLIF((d.doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text))::double precision AS geolocation_altitude,
-    (NULLIF((d.doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text))::double precision AS geolocation_altitude_accuracy,
-    (NULLIF((d.doc -> 'geolocation'::text) ->> 'speed'::text, ''::text))::double precision AS geolocation_speed,
-    (NULLIF((d.doc -> 'geolocation'::text) ->> 'heading'::text, ''::text))::double precision AS geolocation_heading,
+    NULLIF((d.doc -> 'geolocation'::text) ->> 'latitude'::text, ''::text)::double precision AS geolocation_latitude,
+    NULLIF((d.doc -> 'geolocation'::text) ->> 'longitude'::text, ''::text)::double precision AS geolocation_longitude,
+    NULLIF((d.doc -> 'geolocation'::text) ->> 'accuracy'::text, ''::text)::double precision AS geolocation_accuracy,
+    NULLIF((d.doc -> 'geolocation'::text) ->> 'altitude'::text, ''::text)::double precision AS geolocation_altitude,
+    NULLIF((d.doc -> 'geolocation'::text) ->> 'altitudeAccuracy'::text, ''::text)::double precision AS geolocation_altitude_accuracy,
+    NULLIF((d.doc -> 'geolocation'::text) ->> 'speed'::text, ''::text)::double precision AS geolocation_speed,
+    NULLIF((d.doc -> 'geolocation'::text) ->> 'heading'::text, ''::text)::double precision AS geolocation_heading,
     d.doc #>> '{fields,inputs,source_id}'::text[] AS source_id,
     d.doc #>> '{fields,inputs,source}'::text[] AS source,
     d.doc ->> 'form'::text AS form,
@@ -135,6 +135,7 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
     d.doc #>> '{fields,group_pnc_visits,pnc_visits}'::text[] AS pnc_visits,
     d.doc #>> '{contact,_id}'::text[] AS chw_id,
     h.facility,
+    h.dhis2_facility_id,
     h.village,
     h.district,
     h.region,
@@ -142,13 +143,13 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
    FROM dwh.cht_data d
      LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id}'::text[]) = h.chw_id
   WHERE (d.doc ->> 'form'::text) = 'delivery'::text AND d.is_current = true
-WITH NO DATA;
+WITH DATA;
 
 -- View indexes:
-CREATE INDEX mv_delivery_reported ON cht.mv_delivery USING btree (reported) tablespace ts_indexes;
-CREATE INDEX mv_delivery_year_month_district ON cht.mv_delivery USING btree (year, month, district) TABLESPACE ts_indexes;
-CREATE INDEX mv_delivery_date ON cht.mv_delivery USING btree (date) tablespace ts_indexes;
-CREATE INDEX mv_delivery_inputs_contact_id ON cht.mv_delivery USING btree (inputs_contact_id) tablespace ts_indexes;
-CREATE INDEX mv_delivery_chw_id ON cht.mv_delivery USING btree (chw_id) tablespace ts_indexes;
-CREATE INDEX mv_delivery_facility ON cht.mv_delivery USING btree (facility) tablespace ts_indexes;
-CREATE INDEX mv_delivery_district ON cht.mv_delivery USING btree (district) tablespace ts_indexes;
+CREATE INDEX mv_delivery_chw_id ON cht.mv_delivery USING btree (chw_id);
+CREATE INDEX mv_delivery_date ON cht.mv_delivery USING btree (date);
+CREATE INDEX mv_delivery_district ON cht.mv_delivery USING btree (district);
+CREATE INDEX mv_delivery_facility ON cht.mv_delivery USING btree (facility);
+CREATE INDEX mv_delivery_inputs_contact_id ON cht.mv_delivery USING btree (inputs_contact_id);
+CREATE INDEX mv_delivery_reported ON cht.mv_delivery USING btree (reported);
+CREATE INDEX mv_delivery_year_month_district ON cht.mv_delivery USING btree (year, month, district);

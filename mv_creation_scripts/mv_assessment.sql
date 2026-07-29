@@ -243,6 +243,7 @@ SELECT
     -- Last column for tracking refresh
     doc #>> '{contact,_id}'                         AS chw_id,
       h.facility,
+      h.dhis2_facility_id,
       h.village,
       h.district,
       h.region,
