@@ -80,6 +80,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
       h.facility,
       h.dhis2_facility_id,
       h.village,
+      h.parish,
       h.district,
       h.region,
     CURRENT_TIMESTAMP AS last_refresh_date
@@ -89,11 +90,11 @@ AS SELECT doc ->> '_id'::text AS uuid,
 WITH NO DATA;
 
 -- View indexes:
-CREATE INDEX useview_anc_danger_sign_escalation_reported ON cht.mv_anc_danger_sign_escalation USING btree (reported);
-CREATE INDEX useview_anc_danger_sign_escalation_chw_id ON cht.mv_anc_danger_sign_escalation USING btree (chw_id);
-CREATE INDEX useview_anc_danger_sign_escalation_facility_id ON cht.mv_anc_danger_sign_escalation USING btree (facility);
-CREATE INDEX useview_anc_danger_sign_escalation_district ON cht.mv_anc_danger_sign_escalation USING btree (district);
-CREATE INDEX useview_anc_danger_sign_escalation_region ON cht.mv_anc_danger_sign_escalation USING btree (region);
-CREATE INDEX useview_anc_danger_sign_escalation_date ON cht.mv_anc_danger_sign_escalation USING btree (date);
-CREATE INDEX useview_anc_danger_sign_escalation_monthname ON cht.mv_anc_danger_sign_escalation USING btree (monthname);
+CREATE INDEX useview_anc_danger_sign_escalation_reported ON cht.mv_anc_danger_sign_escalation USING btree (reported) TABLESPACE ts_indexes;
+CREATE INDEX useview_anc_danger_sign_escalation_chw_id ON cht.mv_anc_danger_sign_escalation USING btree (chw_id) TABLESPACE ts_indexes;
+CREATE INDEX useview_anc_danger_sign_escalation_facility_id ON cht.mv_anc_danger_sign_escalation USING btree (facility) TABLESPACE ts_indexes;
+CREATE INDEX useview_anc_danger_sign_escalation_district ON cht.mv_anc_danger_sign_escalation USING btree (district) TABLESPACE ts_indexes;
+CREATE INDEX useview_anc_danger_sign_escalation_region ON cht.mv_anc_danger_sign_escalation USING btree (region) TABLESPACE ts_indexes;
+CREATE INDEX useview_anc_danger_sign_escalation_date ON cht.mv_anc_danger_sign_escalation USING btree (date) TABLESPACE ts_indexes;
+CREATE INDEX useview_anc_danger_sign_escalation_monthname ON cht.mv_anc_danger_sign_escalation USING btree (monthname) TABLESPACE ts_indexes;
 CREATE INDEX mv_anc_danger_sign_escalation_year_month_district ON cht.mv_anc_danger_sign_escalation USING btree (year, month, district) TABLESPACE ts_indexes;

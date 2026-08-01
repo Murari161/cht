@@ -119,6 +119,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
       h.facility,
       h.dhis2_facility_id,
       h.village,
+      h.parish,
       h.district,
       h.region,
       CURRENT_TIMESTAMP                                 AS last_refresh_date  
@@ -127,13 +128,13 @@ FROM dwh.cht_data d LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id
 WITH NO DATA;
 
 -- View indexes:
-CREATE INDEX tb_screening_reported_idx ON cht.mv_tb_screening USING btree (reported);
-CREATE INDEX tb_screening_date_idx ON cht.mv_tb_screening USING btree (date);
-CREATE INDEX tb_screening_monthname_idx ON cht.mv_tb_screening USING btree (monthname);
+CREATE INDEX tb_screening_reported_idx ON cht.mv_tb_screening USING btree (reported) TABLESPACE ts_indexes;
+CREATE INDEX tb_screening_date_idx ON cht.mv_tb_screening USING btree (date) TABLESPACE ts_indexes;
+CREATE INDEX tb_screening_monthname_idx ON cht.mv_tb_screening USING btree (monthname) TABLESPACE ts_indexes;
 CREATE INDEX mv_tb_screening_year_month_district ON cht.mv_tb_screening USING btree (year, month, district) TABLESPACE ts_indexes;
-CREATE INDEX tb_screening_chw_id_idx ON cht.mv_tb_screening USING btree (chw_id);
-CREATE INDEX tb_screening_facility_idx ON cht.mv_tb_screening USING btree (facility);
-CREATE INDEX tb_screening_dhis2_facility_id_idx ON cht.mv_tb_screening USING btree (dhis2_facility_id);
-CREATE INDEX tb_screening_village_idx ON cht.mv_tb_screening USING btree (village);
-CREATE INDEX tb_screening_district_idx ON cht.mv_tb_screening USING btree (district);
-CREATE INDEX tb_screening_region_idx ON cht.mv_tb_screening USING btree (region);
+CREATE INDEX tb_screening_chw_id_idx ON cht.mv_tb_screening USING btree (chw_id) TABLESPACE ts_indexes;
+CREATE INDEX tb_screening_facility_idx ON cht.mv_tb_screening USING btree (facility) TABLESPACE ts_indexes;
+CREATE INDEX tb_screening_dhis2_facility_id_idx ON cht.mv_tb_screening USING btree (dhis2_facility_id) TABLESPACE ts_indexes;
+CREATE INDEX tb_screening_village_idx ON cht.mv_tb_screening USING btree (village) TABLESPACE ts_indexes;
+CREATE INDEX tb_screening_district_idx ON cht.mv_tb_screening USING btree (district) TABLESPACE ts_indexes;
+CREATE INDEX tb_screening_region_idx ON cht.mv_tb_screening USING btree (region) TABLESPACE ts_indexes;

@@ -64,6 +64,7 @@ AS SELECT doc_id,
       h.facility,
       h.dhis2_facility_id,
       h.village,
+      h.parish,
       h.district,
       h.region,
       CURRENT_TIMESTAMP                                 AS last_refresh_date  
@@ -73,14 +74,14 @@ AS SELECT doc_id,
 WITH NO DATA;
 
 CREATE INDEX idx_mv_anc_danger_sign_follow_up_doc_id_rev_id
-  ON cht.mv_anc_danger_sign_follow_up (doc_id, rev_id);
+  ON cht.mv_anc_danger_sign_follow_up (doc_id, rev_id) TABLESPACE ts_indexes;
 CREATE INDEX idx_mv_anc_danger_sign_follow_up_chw_id
-  ON cht.mv_anc_danger_sign_follow_up (chw_id);
+  ON cht.mv_anc_danger_sign_follow_up (chw_id) TABLESPACE ts_indexes;
 CREATE INDEX idx_mv_anc_danger_sign_follow_up_reported
-  ON cht.mv_anc_danger_sign_follow_up (reported);
+  ON cht.mv_anc_danger_sign_follow_up (reported) TABLESPACE ts_indexes;
 CREATE INDEX idx_mv_anc_danger_sign_follow_up_date
-  ON cht.mv_anc_danger_sign_follow_up (date);
+  ON cht.mv_anc_danger_sign_follow_up (date) TABLESPACE ts_indexes;
 CREATE INDEX idx_mv_anc_danger_sign_follow_up_year_month_district
-  ON cht.mv_anc_danger_sign_follow_up (year, month, district);
+  ON cht.mv_anc_danger_sign_follow_up (year, month, district) TABLESPACE ts_indexes;
 CREATE INDEX idx_mv_anc_danger_sign_follow_up_monthname
-  ON cht.mv_anc_danger_sign_follow_up (monthname);
+  ON cht.mv_anc_danger_sign_follow_up (monthname) TABLESPACE ts_indexes;

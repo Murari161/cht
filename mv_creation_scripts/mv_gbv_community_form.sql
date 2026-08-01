@@ -96,6 +96,7 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
     d.doc #>> '{contact,_id}'::text[] AS chw_id,
     h.facility,
     h.village,
+    h.parish,
     h.district,
     h.region,
     CURRENT_TIMESTAMP AS last_refresh_date

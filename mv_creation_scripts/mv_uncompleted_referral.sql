@@ -47,6 +47,7 @@ AS SELECT doc ->> '_id'::text AS doc_id,
       h.facility,
       h.dhis2_facility_id,
       h.village,
+      h.parish,
       h.district,
       h.region,
       CURRENT_TIMESTAMP                                 AS last_refresh_date  
@@ -55,13 +56,13 @@ FROM dwh.cht_data d LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id
 WITH NO DATA;
 
 -- View indexes:
-CREATE INDEX uncompleted_referral_reported_idx ON cht.mv_uncompleted_referral USING btree (reported);
-CREATE INDEX uncompleted_referral_date_idx ON cht.mv_uncompleted_referral USING btree (date);
-CREATE INDEX uncompleted_referral_monthname_idx ON cht.mv_uncompleted_referral USING btree (monthname);
+CREATE INDEX uncompleted_referral_reported_idx ON cht.mv_uncompleted_referral USING btree (reported) TABLESPACE ts_indexes;
+CREATE INDEX uncompleted_referral_date_idx ON cht.mv_uncompleted_referral USING btree (date) TABLESPACE ts_indexes;
+CREATE INDEX uncompleted_referral_monthname_idx ON cht.mv_uncompleted_referral USING btree (monthname) TABLESPACE ts_indexes;
 CREATE INDEX mv_uncompleted_referral_year_month_district ON cht.mv_uncompleted_referral USING btree (year, month, district) TABLESPACE ts_indexes;
-CREATE INDEX uncompleted_referral_district_idx ON cht.mv_uncompleted_referral USING btree (district);
-CREATE INDEX uncompleted_referral_region_idx ON cht.mv_uncompleted_referral USING btree (region);
-CREATE INDEX uncompleted_referral_chw_id_idx ON cht.mv_uncompleted_referral USING btree (chw_id);
-CREATE INDEX uncompleted_referral_facility_idx ON cht.mv_uncompleted_referral USING btree (facility);
-CREATE INDEX uncompleted_referral_dhis2_facility_id_idx ON cht.mv_uncompleted_referral USING btree (dhis2_facility_id);
-CREATE INDEX uncompleted_referral_village_idx ON cht.mv_uncompleted_referral USING btree (village);
+CREATE INDEX uncompleted_referral_district_idx ON cht.mv_uncompleted_referral USING btree (district) TABLESPACE ts_indexes;
+CREATE INDEX uncompleted_referral_region_idx ON cht.mv_uncompleted_referral USING btree (region) TABLESPACE ts_indexes;
+CREATE INDEX uncompleted_referral_chw_id_idx ON cht.mv_uncompleted_referral USING btree (chw_id) TABLESPACE ts_indexes;
+CREATE INDEX uncompleted_referral_facility_idx ON cht.mv_uncompleted_referral USING btree (facility) TABLESPACE ts_indexes;
+CREATE INDEX uncompleted_referral_dhis2_facility_id_idx ON cht.mv_uncompleted_referral USING btree (dhis2_facility_id) TABLESPACE ts_indexes;
+CREATE INDEX uncompleted_referral_village_idx ON cht.mv_uncompleted_referral USING btree (village) TABLESPACE ts_indexes;

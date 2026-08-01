@@ -1,6 +1,6 @@
 --SELECT deps_save_and_drop_dependencies('public', 'useview_ai_image_assessment');
 DROP MATERIALIZED VIEW IF EXISTS cht.mv_useview_ai_image_assessment;
-CREATE MATERIALIZED VIEW IF NOT EXISTS cht.mv_useview_ai_image_assessment AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS cht.mv_useview_ai_image_assessment TABLESPACE ts_report AS
 SELECT
   doc ->> '_id'::TEXT AS uuid,
   doc #>> '{contact,_id}'::TEXT[] AS chw,
@@ -92,6 +92,7 @@ SELECT
       h.facility,
       h.dhis2_facility_id,
       h.village,
+      h.parish,
       h.district,
       h.region,
       CURRENT_TIMESTAMP                                 AS last_refresh_date 
@@ -107,7 +108,7 @@ WHERE
 --SELECT deps_restore_dependencies('public', 'useview_ai_image_assessment');
 
 /* adding indexes */
-CREATE INDEX useview_ai_image_assessment_uuid ON cht.mv_useview_ai_image_assessment USING btree(uuid);
+CREATE INDEX useview_ai_image_assessment_uuid ON cht.mv_useview_ai_image_assessment USING btree(uuid) TABLESPACE ts_indexes;
 
 /* permissions */
 --ALTER MATERIALIZED VIEW useview_ai_image_assessment OWNER TO vhtapp_access;

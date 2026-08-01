@@ -58,6 +58,7 @@ AS SELECT doc ->> '_id'::text AS uuid,
       h.facility,
       h.dhis2_facility_id,
       h.village,
+      h.parish,
       h.district,
       h.region,
     CURRENT_TIMESTAMP AS last_refresh_date
@@ -67,10 +68,10 @@ AS SELECT doc ->> '_id'::text AS uuid,
 WITH NO DATA;
 
 -- View indexes:
-CREATE INDEX mv_afp_notification_reported ON cht.mv_afp_notification USING btree (reported);
-CREATE INDEX mv_afp_notification_chw_id ON cht.mv_afp_notification USING btree (chw_id);
-create index mv_afp_notification_facility_id on cht.mv_afp_notification using btree (facility);
-CREATE INDEX mv_afp_notification_district ON cht.mv_afp_notification USING btree (district);
-CREATE INDEX mv_afp_notification_region ON cht.mv_afp_notification USING btree (region);
-CREATE INDEX mv_afp_notification_date ON cht.mv_afp_notification USING btree (date);
+CREATE INDEX mv_afp_notification_reported ON cht.mv_afp_notification USING btree (reported) TABLESPACE ts_indexes;
+CREATE INDEX mv_afp_notification_chw_id ON cht.mv_afp_notification USING btree (chw_id) TABLESPACE ts_indexes;
+create index mv_afp_notification_facility_id on cht.mv_afp_notification using btree (facility) TABLESPACE ts_indexes;
+CREATE INDEX mv_afp_notification_district ON cht.mv_afp_notification USING btree (district) TABLESPACE ts_indexes;
+CREATE INDEX mv_afp_notification_region ON cht.mv_afp_notification USING btree (region) TABLESPACE ts_indexes;
+CREATE INDEX mv_afp_notification_date ON cht.mv_afp_notification USING btree (date) TABLESPACE ts_indexes;
 CREATE INDEX mv_afp_notification_year_month_district ON cht.mv_afp_notification USING btree (year, month, district) TABLESPACE ts_indexes;

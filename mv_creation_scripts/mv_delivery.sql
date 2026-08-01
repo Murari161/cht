@@ -137,6 +137,7 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
     h.facility,
     h.dhis2_facility_id,
     h.village,
+    h.parish,
     h.district,
     h.region,
     CURRENT_TIMESTAMP AS last_refresh_date
@@ -146,10 +147,10 @@ AS SELECT d.doc ->> '_id'::text AS uuid,
 WITH DATA;
 
 -- View indexes:
-CREATE INDEX mv_delivery_chw_id ON cht.mv_delivery USING btree (chw_id);
-CREATE INDEX mv_delivery_date ON cht.mv_delivery USING btree (date);
-CREATE INDEX mv_delivery_district ON cht.mv_delivery USING btree (district);
-CREATE INDEX mv_delivery_facility ON cht.mv_delivery USING btree (facility);
-CREATE INDEX mv_delivery_inputs_contact_id ON cht.mv_delivery USING btree (inputs_contact_id);
-CREATE INDEX mv_delivery_reported ON cht.mv_delivery USING btree (reported);
-CREATE INDEX mv_delivery_year_month_district ON cht.mv_delivery USING btree (year, month, district);
+CREATE INDEX mv_delivery_chw_id ON cht.mv_delivery USING btree (chw_id) TABLESPACE ts_indexes;
+CREATE INDEX mv_delivery_date ON cht.mv_delivery USING btree (date) TABLESPACE ts_indexes;
+CREATE INDEX mv_delivery_district ON cht.mv_delivery USING btree (district) TABLESPACE ts_indexes;
+CREATE INDEX mv_delivery_facility ON cht.mv_delivery USING btree (facility) TABLESPACE ts_indexes;
+CREATE INDEX mv_delivery_inputs_contact_id ON cht.mv_delivery USING btree (inputs_contact_id) TABLESPACE ts_indexes;
+CREATE INDEX mv_delivery_reported ON cht.mv_delivery USING btree (reported) TABLESPACE ts_indexes;
+CREATE INDEX mv_delivery_year_month_district ON cht.mv_delivery USING btree (year, month, district) TABLESPACE ts_indexes;

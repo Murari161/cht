@@ -51,6 +51,7 @@ SELECT
       h.facility,
       h.dhis2_facility_id,
       h.village,
+      h.parish,
       h.district,
       h.region,
       CURRENT_TIMESTAMP                                 AS last_refresh_date  
@@ -59,5 +60,5 @@ FROM dwh.cht_data d LEFT JOIN cht.mv_chw_hierarchy h ON (d.doc #>> '{contact,_id
 WITH NO DATA;
 
 CREATE INDEX mv_tb_uncompleted_referral_reported_idx
-    ON cht.mv_uncompleted_referral USING btree (reported);
+    ON cht.mv_uncompleted_referral USING btree (reported) TABLESPACE ts_indexes;
 CREATE INDEX mv_tb_uncompleted_referral_year_month_district ON cht.mv_tb_uncompleted_referral USING btree (year, month, district) TABLESPACE ts_indexes;

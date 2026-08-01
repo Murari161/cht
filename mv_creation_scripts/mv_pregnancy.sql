@@ -155,6 +155,7 @@ AS SELECT d.doc ->> '_id'::text AS doc_id,
     h.facility,
     h.dhis2_facility_id,
     h.village,
+    h.parish,
     h.district,
     h.region,
     CURRENT_TIMESTAMP AS last_refresh_date
@@ -164,10 +165,10 @@ AS SELECT d.doc ->> '_id'::text AS doc_id,
 WITH DATA;
 
 -- View indexes:
-CREATE INDEX pregnancy_date_idx ON cht.mv_pregnancy USING btree (date);
-CREATE INDEX pregnancy_district_idx ON cht.mv_pregnancy USING btree (district);
-CREATE INDEX pregnancy_monthname_idx ON cht.mv_pregnancy USING btree (monthname);
-CREATE INDEX pregnancy_region_idx ON cht.mv_pregnancy USING btree (region);
-CREATE INDEX pregnancy_reported_idx ON cht.mv_pregnancy USING btree (reported);
-CREATE INDEX pregnancy_village_idx ON cht.mv_pregnancy USING btree (village);
-CREATE INDEX pregnancy_year_month_district_idx ON cht.mv_pregnancy USING btree (year, month, district);
+CREATE INDEX pregnancy_date_idx ON cht.mv_pregnancy USING btree (date) TABLESPACE ts_indexes;
+CREATE INDEX pregnancy_district_idx ON cht.mv_pregnancy USING btree (district) TABLESPACE ts_indexes;
+CREATE INDEX pregnancy_monthname_idx ON cht.mv_pregnancy USING btree (monthname) TABLESPACE ts_indexes;
+CREATE INDEX pregnancy_region_idx ON cht.mv_pregnancy USING btree (region) TABLESPACE ts_indexes;
+CREATE INDEX pregnancy_reported_idx ON cht.mv_pregnancy USING btree (reported) TABLESPACE ts_indexes;
+CREATE INDEX pregnancy_village_idx ON cht.mv_pregnancy USING btree (village) TABLESPACE ts_indexes;
+CREATE INDEX pregnancy_year_month_district_idx ON cht.mv_pregnancy USING btree (year, month, district) TABLESPACE ts_indexes;
