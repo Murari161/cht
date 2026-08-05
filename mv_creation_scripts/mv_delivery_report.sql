@@ -1,10 +1,14 @@
 -- cht.mv_delivery_report source
-
+-- Dependency-aware recreate: save + drop anything that reads from this view,
+-- then rebind it at the end so dependents point at the new definition.
+SELECT cht.deps_save_and_drop_dependencies('cht', 'mv_delivery_report');
+DROP MATERIALIZED VIEW cht.mv_delivery_report;
 CREATE MATERIALIZED VIEW cht.mv_delivery_report
 TABLESPACE ts_report
 AS WITH delivery_metrics AS (
          SELECT initcap(d.region) AS region,
             initcap(d.district) AS district,
+            initcap(d.parish) AS parish,
             t.total_district,
             to_char(d.delivery_date::date::timestamp with time zone, 'YYYY'::text)::integer AS delivery_year,
             to_char(d.delivery_date::date::timestamp with time zone, 'YYYY-"Q"Q'::text) AS delivery_quarter,
@@ -333,12 +337,12 @@ AS WITH delivery_metrics AS (
            FROM cht.mv_delivery d
              LEFT JOIN cht.regions_district t ON upper(d.region) = upper(t.region::text)
           WHERE d.patient_gender = 'female'::text AND d.delivery_date IS NOT NULL
-          GROUP BY d.region, d.district, t.total_district, (to_char(d.delivery_date::date::timestamp with time zone, 'YYYY'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'YYYY-"Q"Q'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'YYYY-MM'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'FMMM'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'Month'::text)), (EXTRACT(quarter FROM d.delivery_date::date))
+          GROUP BY d.region, d.district, d.parish, t.total_district, (to_char(d.delivery_date::date::timestamp with time zone, 'YYYY'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'YYYY-"Q"Q'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'YYYY-MM'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'FMMM'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'Month'::text)), (EXTRACT(quarter FROM d.delivery_date::date))
           ORDER BY (
                 CASE
                     WHEN d.region = 'Region not selected'::text THEN 1
                     ELSE 0
-                END), d.region, d.district, (to_char(d.delivery_date::date::timestamp with time zone, 'YYYY'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'YYYY-"Q"Q'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'YYYY-MM'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'FMMM'::text)), (EXTRACT(quarter FROM d.delivery_date::date))
+                END), d.region, d.district, d.parish, (to_char(d.delivery_date::date::timestamp with time zone, 'YYYY'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'YYYY-"Q"Q'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'YYYY-MM'::text)), (to_char(d.delivery_date::date::timestamp with time zone, 'FMMM'::text)), (EXTRACT(quarter FROM d.delivery_date::date))
         ), regional_summary AS (
          SELECT initcap(d.region) AS region_name,
             to_char(d.delivery_date::date::timestamp with time zone, 'YYYY-MM'::text) AS delivery_month_year,
@@ -354,6 +358,7 @@ AS WITH delivery_metrics AS (
         ), anc_summary AS (
          SELECT initcap(anc_1.region) AS region_name,
             initcap(anc_1.district) AS district_name,
+            initcap(anc_1.parish) AS parish_name,
             to_char(anc_1.reported::date::timestamp with time zone, 'YYYY'::text)::integer AS chwancvist_year,
             to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-"Q"Q'::text) AS chwancvisit_quarter,
             to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-MM'::text) AS chwancvisit_month_year,
@@ -455,19 +460,20 @@ AS WITH delivery_metrics AS (
            FROM cht.mv_pregnancy anc_1
              LEFT JOIN cht.regions_district t ON upper(anc_1.region) = upper(t.region::text)
           WHERE anc_1.patient_gender = 'female'::text AND anc_1.region IS NOT NULL
-          GROUP BY anc_1.region, anc_1.district, t.total_district, (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-"Q"Q'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-MM'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'FMMM'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'Month'::text)), (EXTRACT(quarter FROM anc_1.reported::date))
-          ORDER BY anc_1.region, anc_1.district, (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-"Q"Q'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-MM'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'FMMM'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'Month'::text)), (EXTRACT(quarter FROM anc_1.reported::date))
+          GROUP BY anc_1.region, anc_1.district, anc_1.parish, t.total_district, (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-"Q"Q'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-MM'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'FMMM'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'Month'::text)), (EXTRACT(quarter FROM anc_1.reported::date))
+          ORDER BY anc_1.region, anc_1.district, anc_1.parish, (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-"Q"Q'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-MM'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'FMMM'::text)), (to_char(anc_1.reported::date::timestamp with time zone, 'Month'::text)), (EXTRACT(quarter FROM anc_1.reported::date))
         ), regional_summary_anc AS (
          SELECT initcap(anc_1.region) AS region_name,
             to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-MM'::text) AS chwancvisit_month_year_ranc,
             string_agg(DISTINCT upper("left"(anc_1.district, 1)) || lower(SUBSTRING(anc_1.district FROM 2)), ', '::text) AS districts_anc_list
            FROM cht.mv_pregnancy anc_1
           WHERE anc_1.patient_gender = 'female'::text AND anc_1.region IS NOT NULL
-          GROUP BY anc_1.region, anc_1.district, (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-MM'::text))
-          ORDER BY anc_1.region, anc_1.district, (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-MM'::text))
+          GROUP BY anc_1.region, (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-MM'::text))
+          ORDER BY anc_1.region, (to_char(anc_1.reported::date::timestamp with time zone, 'YYYY-MM'::text))
         )
  SELECT COALESCE(dm.region, anc.region_name) AS region,
     COALESCE(dm.district, anc.district_name) AS district,
+    COALESCE(dm.parish, anc.parish_name) AS parish,
     COALESCE(dm.delivery_year, anc.chwancvist_year) AS year,
     COALESCE(dm.delivery_quarter, anc.chwancvisit_quarter) AS delivery_quarter,
     COALESCE(dm.delivery_month_year, anc.chwancvisit_month_year) AS delivery_month_year,
@@ -558,8 +564,19 @@ AS WITH delivery_metrics AS (
     anc.hivtestresult_unknown
    FROM delivery_metrics dm
      FULL JOIN regional_summary rs ON dm.region = rs.region_name AND dm.delivery_month_year = rs.delivery_month_year
-     FULL JOIN anc_summary anc ON COALESCE(dm.region, rs.region_name) = anc.region_name AND dm.district = anc.district_name AND COALESCE(dm.delivery_month_year, rs.delivery_month_year) = anc.chwancvisit_month_year
+     FULL JOIN anc_summary anc ON COALESCE(dm.region, rs.region_name) = anc.region_name AND dm.district = anc.district_name AND dm.parish = anc.parish_name AND COALESCE(dm.delivery_month_year, rs.delivery_month_year) = anc.chwancvisit_month_year
      FULL JOIN regional_summary_anc ranc ON anc.region_name = ranc.region_name AND anc.chwancvisit_month_year = ranc.chwancvisit_month_year_ranc
   WHERE COALESCE(dm.region, anc.region_name) IS NOT NULL
   ORDER BY dm.delivery_month_year DESC, dm.region
 WITH NO DATA;
+
+-- View indexes:
+CREATE INDEX idx_mv_delivery_report_region ON cht.mv_delivery_report USING btree (region) TABLESPACE ts_indexes;
+CREATE INDEX idx_mv_delivery_report_district ON cht.mv_delivery_report USING btree (district) TABLESPACE ts_indexes;
+CREATE INDEX idx_mv_delivery_report_parish ON cht.mv_delivery_report USING btree (parish) TABLESPACE ts_indexes;
+CREATE INDEX idx_mv_delivery_report_month_year ON cht.mv_delivery_report USING btree (delivery_month_year) TABLESPACE ts_indexes;
+CREATE INDEX idx_mv_delivery_report_year_month_district ON cht.mv_delivery_report USING btree (year, month, district) TABLESPACE ts_indexes;
+CREATE INDEX idx_mv_delivery_report_region_district_parish ON cht.mv_delivery_report USING btree (region, district, parish) TABLESPACE ts_indexes;
+
+-- Rebind dependent objects (views/matviews that read from mv_delivery_report):
+SELECT cht.deps_restore_dependencies('cht', 'mv_delivery_report');
